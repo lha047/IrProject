@@ -7,7 +7,7 @@
 	<bean id="twitterTemplate"
 		class="org.springframework.social.twitter.api.impl.TwitterTemplate" />
 
-	<bean id="iSearch" class="uib.info323.twitterAWSM.model.Search" >
+	<bean id="iSearch" class="uib.info323.twitterAWSM.model.search.Search" >
 	<property name="twitterTemplate" ref="twitterTemplate" />
 	</bean>
 
