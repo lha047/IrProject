@@ -12,10 +12,10 @@ import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.model.Parser;
-import uib.info323.twitterAWSM.model.impl.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.IReply;
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.ITwitterRequest;
+import uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323;
 
 @Component
 public class Search implements ISearch {
@@ -28,9 +28,9 @@ public class Search implements ISearch {
 		return twitterTemplat.timelineOperations().getPublicTimeline();
 	}
 
-	public TwitterProfile getUser(ITwitterRequest user) {
+	public ITwitterUserInfo323 getUser(ITwitterRequest user) {
 
-		return twitterTemplat.userOperations().getUserProfile("@lisaHalvors");
+		return null;// twitterTemplat.userOperations().getUserProfile("@lisaHalvors");
 	}
 
 	public List<Place> findPlace() {
@@ -52,6 +52,12 @@ public class Search implements ISearch {
 
 	}
 
+	/*
+	 * Prøver å få tak i tweets inkl replies.
+	 * 
+	 * @see
+	 * uib.info323.twitterAWSM.model.search.ISearch#search(java.lang.String)
+	 */
 	public List<ITweetInfo323> search(String string) {
 		twitterTemplat = new TwitterTemplate();
 		SearchResults sr = twitterTemplat.searchOperations().search(string);
@@ -61,14 +67,17 @@ public class Search implements ISearch {
 
 			if (t.getInReplyToStatusId() != null) {
 				System.out.println("Tweet id: " + t.getId() + " from : "
-						+ t.getFromUser() + " in reply status id :"
-						+ t.getInReplyToStatusId() + " retweet count : "
-						+ t.getRetweetCount() + " to user id: "
-						+ t.getToUserId() + " text: " + t.getText());
+						+ t.getFromUser() + " " + t.getFromUserId()
+						+ " in reply status id :" + t.getInReplyToStatusId()
+						+ " retweet count : " + t.getRetweetCount()
+						+ " to user id: " + t.getToUserId() + " text: "
+						+ t.getText());
 				List<String> liste = Parser.parseTweets(t.getText(), '@');
 				System.out.println("@@@: " + liste.get(0));
+				// SearchResults s =
+				// twitterTemplat.searchOperations().search(liste.get(0));
 				SearchResults s = twitterTemplat.searchOperations().search(
-						liste.get(0));
+						t.getFromUser());
 
 				boolean found = false;
 				for (int i = 0; i < s.getTweets().size() && !found; i++) {
@@ -76,10 +85,10 @@ public class Search implements ISearch {
 							+ "  " + s.getTweets().get(i).getText());
 					if (s.getTweets().get(i).getId() == t
 							.getInReplyToStatusId()) {
-						System.out.println("id: "
-								+ s.getTweets().get(i).getId() + " @@@@:"
-								+ s.getTweets().get(i).getFromUser()
-								+ "  TWEET: " + s.getTweets().get(i).getText());
+						// System.out.println("id: "
+						// + s.getTweets().get(i).getId() + " @@@@:"
+						// + s.getTweets().get(i).getFromUser()
+						// + "  TWEET: " + s.getTweets().get(i).getText());
 						found = true;
 					}
 				}
@@ -87,10 +96,7 @@ public class Search implements ISearch {
 
 			List<IReply> replies = new ArrayList<IReply>();
 
-			list.add(new TweetInfo323(t.getId(), t.getText(), t.getCreatedAt(),
-					t.getFromUser(), t.getProfileImageUrl(), t.getToUserId(), t
-							.getFromUserId(), t.getLanguageCode(), t
-							.getSource(), replies));
+			// list.add();
 		}
 
 		return list;
