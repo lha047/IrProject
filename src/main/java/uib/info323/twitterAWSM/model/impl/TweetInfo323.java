@@ -3,7 +3,6 @@ package uib.info323.twitterAWSM.model.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.model.Parser;
@@ -11,28 +10,18 @@ import uib.info323.twitterAWSM.model.interfaces.IReply;
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
 
 @Component
-public class TweetInfo323 extends Tweet implements ITweetInfo323 {
+public class TweetInfo323 implements ITweetInfo323 {
 
 	private List<IReply> replies;
-
-	/**
-	 * @param id
-	 * @param text
-	 * @param createdAt
-	 * @param fromUser
-	 * @param profileImageUrl
-	 * @param toUserId
-	 * @param fromUserId
-	 * @param languageCode
-	 * @param source
-	 */
-	public TweetInfo323(long id, String text, Date createdAt, String fromUser,
-			String profileImageUrl, Long toUserId, long fromUserId,
-			String languageCode, String source, List<IReply> replies) {
-		super(id, text, createdAt, fromUser, profileImageUrl, toUserId,
-				fromUserId, languageCode, source);
-		this.replies = replies;
-	}
+	private long id;
+	private String text;
+	private Date createdAt;
+	private String fromUser;
+	private String profileImageUrl;
+	private Long toUserId;
+	private long fromUserId;
+	private String languageCode;
+	private String source;
 
 	public List<IReply> getReplies() {
 		return replies;
@@ -45,6 +34,61 @@ public class TweetInfo323 extends Tweet implements ITweetInfo323 {
 
 	public List<String> getMentions() {
 		return Parser.parseTweets(getText(), '@');
+	}
+
+	public Date getCreatedAt() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getFromUser() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public long getFromUserId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public long getId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public Long getInReplyToStatusId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getLanguageCode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getProfileImageUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Integer getRetweetCount() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Long getToUserId() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
