@@ -11,9 +11,9 @@ import org.springframework.social.twitter.api.TwitterProfile;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Component;
 
-import uib.info323.twitterAWSM.model.IReply;
 import uib.info323.twitterAWSM.model.Parser;
 import uib.info323.twitterAWSM.model.impl.TweetInfo323;
+import uib.info323.twitterAWSM.model.interfaces.IReply;
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.ITwitterRequest;
 
