@@ -11,7 +11,7 @@ import java.util.List;
  * @author Lisa
  * 
  */
-public interface ITweetInfo323 {
+public interface ITweetInfo323 extends Comparable<ITweetInfo323> {
 
 	public List<IReply> getReplies();
 
@@ -41,5 +41,9 @@ public interface ITweetInfo323 {
 	public String getText();
 
 	public Long getToUserId();
-
+	
+	public double getTweetRank();
+	
+	public void setTweetRank(double tweetRank);
+	
 }

@@ -18,10 +18,36 @@ public class TweetInfo323 implements ITweetInfo323 {
 	private Date createdAt;
 	private String fromUser;
 	private String profileImageUrl;
-	private Long toUserId;
+	private long toUserId;
 	private long fromUserId;
 	private String languageCode;
 	private String source;
+	private double tweetRank;
+	
+	public TweetInfo323(
+			long id, 
+			String text, 
+			Date createdAt, 
+			String fromUser, 
+			String profileImageUrl, 
+			long toUserId, 
+			long fromUserId,
+			String languageCode,
+			String source,
+			double tweetRank) {
+		
+		this.id = id;
+		this.text = text;
+		this.createdAt = createdAt;
+		this.fromUser = fromUser;
+		this.profileImageUrl = profileImageUrl;
+		this.toUserId = toUserId;
+		this.fromUserId = fromUserId;
+		this.languageCode = languageCode;
+		this.source = source;
+		this.tweetRank = tweetRank;
+		
+	}
 
 	public List<IReply> getReplies() {
 		return replies;
@@ -90,5 +116,48 @@ public class TweetInfo323 implements ITweetInfo323 {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public double getTweetRank() {
+		return tweetRank;
+	}
+	
+	public void setTweetRank(double tweetRank) {
+		this.tweetRank = tweetRank;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof ITweetInfo323))
+			return false;
+		TweetInfo323 other = (TweetInfo323) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(ITweetInfo323 o) {
+		if(tweetRank > o.getTweetRank()) {
+			return 1;
+		} else if(tweetRank < o.getTweetRank()) {
+			return -1;
+		} else {
+			return 0;
+		}
+	}
+
+	
 
 }
