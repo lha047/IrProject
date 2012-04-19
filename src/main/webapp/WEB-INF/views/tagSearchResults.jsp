@@ -11,19 +11,21 @@
 	<div id="main-content">
 		<div>
 			<c:if test="${not empty results}">
-				<div id="dailies">
+
 					<c:forEach var="result" items="${results}">
 						<div class="tweetRow">
 							<p>${result.fromUser} ${result.text}</p>
 
 						</div>
 					</c:forEach>
-				</div>
+
+			</c:if>
+			<c:if test="${empty results}">
+				<p>Nothing matched your search...</p>
 			</c:if>
 		</div>
 	</div>
-	<p>Lalalalalalala</p>
-	<p>lololololololo</p>
+
 
 </body>
 </html>
