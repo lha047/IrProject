@@ -1,4 +1,4 @@
-package uib.info323.twitterAWSM.model.test;
+package uib.info323.twitterAWSM.model;
 
 import static org.junit.Assert.*;
 
@@ -6,9 +6,10 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import uib.info323.twitterAWSM.AbstractTwitterAWSMTest;
 import uib.info323.twitterAWSM.model.impl.TweetInfo323;
 
-public class TweetInfo323Test {
+public class TweetInfo323Test extends AbstractTwitterAWSMTest{
 
 	@Test
 	public void testEquals() {
