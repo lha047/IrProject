@@ -2,7 +2,7 @@ package uib.info323.twitterAWSM.model.interfaces;
 
 import java.util.Date;
 
-public interface ITwitterUserInfo323 {
+public interface ITwitterUserInfo323 extends Comparable<ITwitterUserInfo323> {
 
 	public int getFitnessScore();
 

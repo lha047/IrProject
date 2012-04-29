@@ -190,4 +190,13 @@ public class TwitterUserInfo323 implements ITwitterUserInfo323 {
 		this.statusesCount = statusesCount;
 	}
 
+	public int compareTo(ITwitterUserInfo323 o) {
+		if (fitnessScore == o.getFitnessScore()) {
+			return 0;
+		} else if (fitnessScore > o.getFitnessScore()) {
+			return 1;
+		} else
+			return -1;
+	}
+
 }
