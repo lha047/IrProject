@@ -6,13 +6,12 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.model.Parser;
-import uib.info323.twitterAWSM.model.interfaces.IReply;
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
 
 @Component
 public class TweetInfo323 implements ITweetInfo323 {
 
-	private List<IReply> replies;
+	private List<ITweetInfo323> replies;
 	private long id;
 	private String text;
 	private Date createdAt;
@@ -23,19 +22,15 @@ public class TweetInfo323 implements ITweetInfo323 {
 	private String languageCode;
 	private String source;
 	private double tweetRank;
-	
-	public TweetInfo323(
-			long id, 
-			String text, 
-			Date createdAt, 
-			String fromUser, 
-			String profileImageUrl, 
-			long toUserId, 
-			long fromUserId,
-			String languageCode,
-			String source,
-			double tweetRank) {
-		
+	private Long inReplyToStatusId;
+	private Integer retweetCount;
+	private List<String> mentions;
+	private List<String> tags;
+
+	public TweetInfo323(long id, String text, Date createdAt, String fromUser,
+			String profileImageUrl, long toUserId, long fromUserId,
+			String languageCode, String source, double tweetRank) {
+
 		this.id = id;
 		this.text = text;
 		this.createdAt = createdAt;
@@ -46,10 +41,32 @@ public class TweetInfo323 implements ITweetInfo323 {
 		this.languageCode = languageCode;
 		this.source = source;
 		this.tweetRank = tweetRank;
-		
+
 	}
 
-	public List<IReply> getReplies() {
+	public TweetInfo323(List<ITweetInfo323> replies, long id, String text,
+			Date createdAt, String fromUser, String profileImageUrl,
+			long toUserId, long fromUserId, String languageCode, String source,
+			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
+			List<String> mentions, List<String> tags) {
+		this.replies = replies;
+		this.id = id;
+		this.text = text;
+		this.createdAt = createdAt;
+		this.fromUser = fromUser;
+		this.profileImageUrl = profileImageUrl;
+		this.toUserId = toUserId;
+		this.fromUserId = fromUserId;
+		this.languageCode = languageCode;
+		this.source = source;
+		this.tweetRank = tweetRank;
+		this.inReplyToStatusId = inReplyToStatusId;
+		this.retweetCount = retweetCount;
+		this.mentions = mentions;
+		this.tags = tags;
+	}
+
+	public List<ITweetInfo323> getReplies() {
 		return replies;
 	}
 
@@ -63,68 +80,57 @@ public class TweetInfo323 implements ITweetInfo323 {
 	}
 
 	public Date getCreatedAt() {
-		// TODO Auto-generated method stub
-		return null;
+		return createdAt;
 	}
 
 	public String getFromUser() {
-		// TODO Auto-generated method stub
-		return null;
+		return fromUser;
 	}
 
 	public long getFromUserId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return fromUserId;
 	}
 
 	public long getId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return id;
 	}
 
 	public Long getInReplyToStatusId() {
-		// TODO Auto-generated method stub
-		return null;
+		return inReplyToStatusId;
 	}
 
 	public String getLanguageCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return languageCode;
 	}
 
 	public String getProfileImageUrl() {
-		// TODO Auto-generated method stub
-		return null;
+		return profileImageUrl;
 	}
 
 	public Integer getRetweetCount() {
-		// TODO Auto-generated method stub
-		return null;
+		return retweetCount;
 	}
 
 	public String getSource() {
-		// TODO Auto-generated method stub
-		return null;
+		return source;
 	}
 
 	public String getText() {
-		// TODO Auto-generated method stub
-		return null;
+		return text;
 	}
 
 	public Long getToUserId() {
-		// TODO Auto-generated method stub
-		return null;
+		return toUserId;
 	}
-	
+
 	public double getTweetRank() {
 		return tweetRank;
 	}
-	
+
 	public void setTweetRank(double tweetRank) {
 		this.tweetRank = tweetRank;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -147,17 +153,83 @@ public class TweetInfo323 implements ITweetInfo323 {
 		return true;
 	}
 
-	@Override
 	public int compareTo(ITweetInfo323 o) {
-		if(tweetRank > o.getTweetRank()) {
+		if (tweetRank > o.getTweetRank()) {
 			return 1;
-		} else if(tweetRank < o.getTweetRank()) {
+		} else if (tweetRank < o.getTweetRank()) {
 			return -1;
 		} else {
 			return 0;
 		}
 	}
 
-	
+	public void setReplies(List<ITweetInfo323> replies) {
+		this.replies = replies;
+
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+	public void setMentions(List<String> mentions) {
+		this.mentions = mentions;
+
+	}
+
+	public void setCreatedAt(Date date) {
+		this.createdAt = date;
+
+	}
+
+	public void setFromUser(String fromUser) {
+		this.fromUser = fromUser;
+
+	}
+
+	public void setFromUserId(long fromUserId) {
+		this.fromUserId = fromUserId;
+
+	}
+
+	public void setId(long id) {
+		this.id = id;
+
+	}
+
+	public void setInReplyToStatusId(Long inReplyToStatusId) {
+		this.inReplyToStatusId = inReplyToStatusId;
+
+	}
+
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
+
+	}
+
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+
+	}
+
+	public void setRetweetCount(Integer retweetCount) {
+		this.retweetCount = retweetCount;
+
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+
+	}
+
+	public void setText(String text) {
+		this.text = text;
+
+	}
+
+	public void setToUserId(Long toUserId) {
+		this.toUserId = toUserId;
+
+	}
 
 }
