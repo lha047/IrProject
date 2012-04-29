@@ -29,6 +29,9 @@ public class TwitterUserInfo323 implements ITwitterUserInfo323 {
 	private String profileUrl;
 	private int statusesCount;
 
+	public TwitterUserInfo323() {
+	}
+
 	/**
 	 * Constructor
 	 * 

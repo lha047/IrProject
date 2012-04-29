@@ -22,6 +22,9 @@ public class Search implements ISearch {
 	@Autowired
 	TwitterTemplate twitterTemplat;
 
+	// @Autowired
+	// RestTemplate restTemplate;
+
 	public List<Tweet> getTweets() {
 
 		return twitterTemplat.timelineOperations().getPublicTimeline();

@@ -37,14 +37,14 @@ public class HomeController {
 	public ModelAndView home(Locale locale, Model model) throws IOException {
 		logger.info("Printing homepage");
 
-		
-		ArrayList<ITweetInfo323> results = (ArrayList<ITweetInfo323>) search.search("#UIB");
+		ArrayList<ITweetInfo323> results = (ArrayList<ITweetInfo323>) search
+				.search("#UIB");
 		logger.info("Number of results for UIB: " + results.size());
-		
+
 		ModelAndView mav = new ModelAndView("home");
 		mav.addObject("publicTweets", search.getTweets());
-		mav.addObject("user", search.getUser(null));
-		mav.addObject("results", search.search("#UiB"));
+		// mav.addObject("user", search.getUser(null));
+		// mav.addObject("results", search.search("#UiB"));
 		logger.info("Number of results for UIB: " + results.size());
 
 		return mav;

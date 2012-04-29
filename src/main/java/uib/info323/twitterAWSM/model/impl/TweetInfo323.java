@@ -44,6 +44,9 @@ public class TweetInfo323 implements ITweetInfo323 {
 
 	}
 
+	public TweetInfo323() {
+	}
+
 	public TweetInfo323(List<ITweetInfo323> replies, long id, String text,
 			Date createdAt, String fromUser, String profileImageUrl,
 			long toUserId, long fromUserId, String languageCode, String source,

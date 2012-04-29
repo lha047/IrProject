@@ -23,6 +23,8 @@
 	
 	<context:component-scan base-package="uib.info323.twitterAWSM" />
 	
+	<beans:import resource="controllers.xml"/>
+	<beans:import resource="db-context.xml"/>
 	
 	
 </beans:beans>
