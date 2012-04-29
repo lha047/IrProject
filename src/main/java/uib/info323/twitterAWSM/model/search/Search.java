@@ -12,8 +12,6 @@ import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.model.Parser;
-import uib.info323.twitterAWSM.model.impl.TweetInfo323;
-import uib.info323.twitterAWSM.model.interfaces.IReply;
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.ITwitterRequest;
 import uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323;
@@ -67,14 +65,14 @@ public class Search implements ISearch {
 		for (Tweet t : tweets) {
 
 			if (t.getInReplyToStatusId() != null) {
-//				System.out.println("Tweet id: " + t.getId() + " from : "
-//						+ t.getFromUser() + " " + t.getFromUserId()
-//						+ " in reply status id :" + t.getInReplyToStatusId()
-//						+ " retweet count : " + t.getRetweetCount()
-//						+ " to user id: " + t.getToUserId() + " text: "
-//						+ t.getText());
+				// System.out.println("Tweet id: " + t.getId() + " from : "
+				// + t.getFromUser() + " " + t.getFromUserId()
+				// + " in reply status id :" + t.getInReplyToStatusId()
+				// + " retweet count : " + t.getRetweetCount()
+				// + " to user id: " + t.getToUserId() + " text: "
+				// + t.getText());
 				List<String> liste = Parser.parseTweets(t.getText(), '@');
-				//System.out.println("@@@: " + liste.get(0));
+				// System.out.println("@@@: " + liste.get(0));
 				// SearchResults s =
 				// twitterTemplat.searchOperations().search(liste.get(0));
 				SearchResults s = twitterTemplat.searchOperations().search(
@@ -95,12 +93,9 @@ public class Search implements ISearch {
 				}
 			}
 
-			List<IReply> replies = new ArrayList<IReply>();
-			
-			
 			ITweetInfo323 tweet;
 
-			//list.add();
+			// list.add();
 		}
 
 		return list;
