@@ -10,10 +10,11 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.social.twitter.api.TwitterProfile;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import uib.info323.twitterAWSM.model.Parser;
+import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323;
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
-import uib.info323.twitterAWSM.model.interfaces.ITwitterRequest;
 import uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323;
 
 @Component
@@ -22,17 +23,41 @@ public class Search implements ISearch {
 	@Autowired
 	TwitterTemplate twitterTemplat;
 
-	// @Autowired
-	// RestTemplate restTemplate;
+	@Autowired
+	RestTemplate restTemplate;
 
+	ITwitterUserInfo323 user;
+
+	/**
+	 * Construcor Creates new TwitterTemplate Remove when setup is ok
+	 */
+	public Search() {
+		twitterTemplat = new TwitterTemplate();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see uib.info323.twitterAWSM.model.search.ISearch#getTweets()
+	 */
 	public List<Tweet> getTweets() {
 
 		return twitterTemplat.timelineOperations().getPublicTimeline();
 	}
 
-	public ITwitterUserInfo323 getUser(ITwitterRequest user) {
+	public ITwitterUserInfo323 getUser(String user) {
 
-		return null;// twitterTemplat.userOperations().getUserProfile("@lisaHalvors");
+		TwitterProfile profile = twitterTemplat.userOperations()
+				.getUserProfile(user);
+		this.user = new TwitterUserInfo323();
+		this.user.setId(profile.getId());
+		this.user.setName(profile.getName());
+		this.user.setScreenName(profile.getScreenName());
+		this.user.setProfileImageUrl(profile.getProfileImageUrl());
+		this.user.setFollowersCount(profile.getFollowersCount());
+		this.user.setFriendsCount(profile.getFriendsCount());
+
+		return this.user;
 	}
 
 	public List<Place> findPlace() {
@@ -45,7 +70,7 @@ public class Search implements ISearch {
 	}
 
 	public List<TwitterProfile> getFollowers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -61,7 +86,6 @@ public class Search implements ISearch {
 	 * uib.info323.twitterAWSM.model.search.ISearch#search(java.lang.String)
 	 */
 	public List<ITweetInfo323> search(String string) {
-		twitterTemplat = new TwitterTemplate();
 		SearchResults sr = twitterTemplat.searchOperations().search(string);
 		List<Tweet> tweets = sr.getTweets();
 		List<ITweetInfo323> list = new ArrayList<ITweetInfo323>();
@@ -109,4 +133,5 @@ public class Search implements ISearch {
 		List<ITweetInfo323> liste = s.search("#Bergen");
 
 	}
+
 }
