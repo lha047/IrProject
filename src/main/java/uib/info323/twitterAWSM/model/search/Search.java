@@ -12,7 +12,7 @@ import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import uib.info323.twitterAWSM.model.Parser;
+import uib.info323.twitterAWSM.model.impl.TweetInfo323;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323;
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323;
@@ -87,42 +87,53 @@ public class Search implements ISearch {
 	 */
 	public List<ITweetInfo323> search(String string) {
 		SearchResults sr = twitterTemplat.searchOperations().search(string);
-		List<Tweet> tweets = sr.getTweets();
+		List<Tweet> searchResultTweets = sr.getTweets();
+
 		List<ITweetInfo323> list = new ArrayList<ITweetInfo323>();
-		for (Tweet t : tweets) {
+		int i = 0;
+		for (Tweet t : searchResultTweets) {
+			// if (t.getFromUser().equals("felixge")) {
+			// System.out.println("ID: " + t.getId() + " **from user "
+			// + t.getFromUser() + " fromUserId " + t.getFromUserId()
+			// + " toUserId " + t.getToUserId() + " inReplyStatusId "
+			// + t.getInReplyToStatusId() + " retweetCount "
+			// + t.getRetweetCount() + " tweet " + t.getText());
+			// }
+			// finner replies
 
-			if (t.getInReplyToStatusId() != null) {
-				// System.out.println("Tweet id: " + t.getId() + " from : "
-				// + t.getFromUser() + " " + t.getFromUserId()
-				// + " in reply status id :" + t.getInReplyToStatusId()
-				// + " retweet count : " + t.getRetweetCount()
-				// + " to user id: " + t.getToUserId() + " text: "
-				// + t.getText());
-				List<String> liste = Parser.parseTweets(t.getText(), '@');
-				// System.out.println("@@@: " + liste.get(0));
-				// SearchResults s =
-				// twitterTemplat.searchOperations().search(liste.get(0));
-				SearchResults s = twitterTemplat.searchOperations().search(
-						t.getFromUser());
-
-				boolean found = false;
-				for (int i = 0; i < s.getTweets().size() && !found; i++) {
-					System.out.println("id: " + s.getTweets().get(i).getId()
-							+ "  " + s.getTweets().get(i).getText());
-					if (s.getTweets().get(i).getId() == t
-							.getInReplyToStatusId()) {
-						// System.out.println("id: "
-						// + s.getTweets().get(i).getId() + " @@@@:"
-						// + s.getTweets().get(i).getFromUser()
-						// + "  TWEET: " + s.getTweets().get(i).getText());
-						found = true;
+			Long ideen = new Long(t.getId());
+			SearchResults searchres = twitterTemplat.searchOperations().search(
+					"@" + searchResultTweets.get(i).getFromUser());
+			List<Tweet> tempReplies = searchres.getTweets();
+			List<Tweet> replies = new ArrayList<Tweet>();
+			for (Tweet twee : tempReplies) {
+				if (twee.getInReplyToStatusId() != null) {
+					if (ideen.compareTo(twee.getInReplyToStatusId()) == 0) {
+						// System.out.println("TO**from user " +
+						// twee.getFromUser()
+						// + " fromUserId " + twee.getFromUserId()
+						// + " toUserId " + twee.getToUserId()
+						// + " inReplyStatusId " + twee.getInReplyToStatusId()
+						// + " retweetCount " + twee.getRetweetCount()
+						// + " tweet " + twee.getText());
+						replies.add(twee);
 					}
 				}
 			}
+			// Finner Twitter profilene som har retweetet
+			// System.out.println("Users of reweets");
+			List<TwitterProfile> retweeters = twitterTemplat
+					.timelineOperations().getRetweetedBy(t.getId());
+			// System.out.println("IRTSI " + t.getInReplyToStatusId());
+			// int index = 0;
+			// for (TwitterProfile p : retweeters) {
+			// System.out.println("user " + index + " " + p.getScreenName());
+			// index++;
+			// }
+			list.add(new TweetInfo323(t, replies, retweeters));
+			// System.out.println("****");
+			i++;
 
-			ITweetInfo323 tweet;
-
-			// list.add();
 		}
 
 		return list;
@@ -130,8 +141,22 @@ public class Search implements ISearch {
 
 	public static void main(String[] args) {
 		Search s = new Search();
-		List<ITweetInfo323> liste = s.search("#Bergen");
-
+		List<ITweetInfo323> tweets = s.search("#Roots2012");
+		for (ITweetInfo323 twee : tweets) {
+			System.out.println("id " + twee.getId() + "*from user "
+					+ twee.getFromUser() + " fromUserId "
+					+ twee.getFromUserId() + " toUserId " + twee.getToUserId()
+					+ " inReplyStatusId " + twee.getInReplyToStatusId()
+					+ " retweetCount " + twee.getRetweetCount() + " tweet "
+					+ twee.getText());
+			System.out.println("Replies**********");
+			for (Tweet rep : twee.getReplies()) {
+				System.out.println("reply " + rep.getText());
+			}
+			System.out.println("Retweeters**********");
+			for (TwitterProfile reTwee : twee.getRetweeters()) {
+				System.out.println("reTweeter " + reTwee.getScreenName());
+			}
+		}
 	}
-
 }
