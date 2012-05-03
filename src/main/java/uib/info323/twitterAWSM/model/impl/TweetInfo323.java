@@ -3,13 +3,14 @@ package uib.info323.twitterAWSM.model.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.model.Parser;
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
 
 @Component
-public class TweetInfo323 implements ITweetInfo323 {
+public class TweetInfo323 extends Tweet implements ITweetInfo323 {
 
 	private List<ITweetInfo323> replies;
 	private long id;
@@ -40,33 +41,67 @@ public class TweetInfo323 implements ITweetInfo323 {
 		this.fromUserId = fromUserId;
 		this.languageCode = languageCode;
 		this.source = source;
-		this.tweetRank = tweetRank;
+		this.tweetRank = calculateTweetRank();
+		mentions = getMentions();
+		tags = getTags();
 
 	}
 
-	public TweetInfo323() {
+	// public TweetInfo323(long id, String text, Date createdAt, String
+	// fromUser,
+	// String profileImageUrl, long toUserId, long fromUserId,
+	// String languageCode, String source, Long inReplyToStatusId) {
+	// this.id = id;
+	// this.text = text;
+	// this.createdAt = createdAt;
+	// this.fromUser = fromUser;
+	// this.profileImageUrl = profileImageUrl;
+	// this.toUserId = toUserId;
+	// this.fromUserId = fromUserId;
+	// this.languageCode = languageCode;
+	// this.source = source;
+	// this.tweetRank = calculateTweetRank();
+	// this.inReplyToStatusId = inReplyToStatusId;
+	// mentions = getMentions();
+	// tags = getTags();
+	//
+	// }
+
+	private double calculateTweetRank() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
-	public TweetInfo323(List<ITweetInfo323> replies, long id, String text,
-			Date createdAt, String fromUser, String profileImageUrl,
-			long toUserId, long fromUserId, String languageCode, String source,
-			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
-			List<String> mentions, List<String> tags) {
-		this.replies = replies;
-		this.id = id;
-		this.text = text;
-		this.createdAt = createdAt;
-		this.fromUser = fromUser;
-		this.profileImageUrl = profileImageUrl;
-		this.toUserId = toUserId;
-		this.fromUserId = fromUserId;
-		this.languageCode = languageCode;
-		this.source = source;
-		this.tweetRank = tweetRank;
-		this.inReplyToStatusId = inReplyToStatusId;
-		this.retweetCount = retweetCount;
-		this.mentions = mentions;
-		this.tags = tags;
+	// public TweetInfo323() {
+	// }
+
+	// public TweetInfo323(List<ITweetInfo323> replies, long id, String text,
+	// Date createdAt, String fromUser, String profileImageUrl,
+	// long toUserId, long fromUserId, String languageCode, String source,
+	// double tweetRank, Long inReplyToStatusId, Integer retweetCount,
+	// List<String> mentions, List<String> tags) {
+	// this.replies = replies;
+	// this.id = id;
+	// this.text = text;
+	// this.createdAt = createdAt;
+	// this.fromUser = fromUser;
+	// this.profileImageUrl = profileImageUrl;
+	// this.toUserId = toUserId;
+	// this.fromUserId = fromUserId;
+	// this.languageCode = languageCode;
+	// this.source = source;
+	// this.tweetRank = tweetRank;
+	// this.inReplyToStatusId = inReplyToStatusId;
+	// this.retweetCount = retweetCount;
+	// this.mentions = mentions;
+	// this.tags = tags;
+	// }
+
+	private long checkNull(Long toUserId2) {
+		if (toUserId2 == null) {
+			return 0;
+		}
+		return toUserId2;
 	}
 
 	public List<ITweetInfo323> getReplies() {
