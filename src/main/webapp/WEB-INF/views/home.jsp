@@ -1,10 +1,17 @@
+<!doctype html />
+<!-- 
+	Project: Info323/Feedjam
+	Frontend: Torstein Thune
+	Backend: Snorre Davøen, Lisa Halvorsen
+	-->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <html>
 <head>
-	<title>Home</title>
+	<title>FeedJam: A New Twitter Experience</title>
+	<link rel="stylesheet" type="text/css" href="resources/style.css" />
 </head>
-<body>
+<body class="awesome">
 
 	<h1>Hello world!</h1>
 	<div>
