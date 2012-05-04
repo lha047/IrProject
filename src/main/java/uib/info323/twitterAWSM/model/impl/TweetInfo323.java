@@ -21,6 +21,11 @@ public class TweetInfo323 extends Tweet implements ITweetInfo323 {
 	private List<String> tags;
 	private List<TwitterProfile> retweeters;
 
+	public TweetInfo323() {
+		super(0, "", new Date(), "", "", (long) 0, (long) 0, "", "");
+
+	}
+
 	public TweetInfo323(long id, String text, Date createdAt, String fromUser,
 			String profileImageUrl, Long toUserId, long fromUserId,
 			String languageCode, String source) {

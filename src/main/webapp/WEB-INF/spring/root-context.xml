@@ -8,15 +8,5 @@
 	<bean id="twitterTemplate"
 		class="org.springframework.social.twitter.api.impl.TwitterTemplate"></bean>
 
-	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-<!-- 		<property name="messageConverters"> -->
-<!-- 			<list> -->
-<!-- 				<bean -->
-<!-- 					class="org.springframework.http.converter.xml.SourceHttpMessageConverter" /> -->
-<!-- 				<bean -->
-<!-- 					class="com.springsource.samples.resttemplate.BufferedImageHttpMessageConverter" /> -->
-<!-- 			</list> -->
-<!-- 		</property> -->
-	</bean>
 
 </beans>

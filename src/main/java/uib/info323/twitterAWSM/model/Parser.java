@@ -40,12 +40,4 @@ public class Parser {
 		return list;
 	}
 
-	public static void main(String[] args) {
-		String tweet = "#Breivik shows no emotions while hearing the screams of his victims... http://gu.com/p/37v27/tw via @guardian #oslo #norway";
-		List<String> liste = Parser.parseTweets(tweet, '@');
-		System.out.println("Tweet tags:");
-		for (String s : liste) {
-			System.out.println("Tag: " + s);
-		}
-	}
 }
