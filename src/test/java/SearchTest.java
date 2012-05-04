@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.twitter.api.Tweet;
 
 import uib.info323.twitterAWSM.model.TwitterUserMock;
+import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323;
 import uib.info323.twitterAWSM.model.search.ISearch;
 import uib.info323.twitterAWSM.model.search.Search;
@@ -75,7 +76,9 @@ public class SearchTest {
 
 	@Test
 	public final void testSearch() {
-		fail("Not yet implemented"); // TODO
+		List<ITweetInfo323> tweets = search.search(tagJava);
+		Integer o = 0;
+		assertFalse(o.equals(tweets.size()));
 	}
 
 	@Test
