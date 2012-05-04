@@ -8,7 +8,7 @@ import uib.info323.twitterAWSM.io.impl.JsonUserFactory;
 public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 	
 	private final String apiUrl = "https://api.twitter.com/";
-	private final String searchApiUrl = "https://search.twitter.com/";
+	private final String searchApiUrl = "https://search.twitter.com/search.json?";
 	private final RestTemplate restTemplate = new RestTemplate();
 	
 	public JsonFeedJamFactory() {
