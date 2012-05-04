@@ -46,35 +46,5 @@
 		</section>
 	</c:if>
 	
-	
-		<c:if test="${not empty results}">
-			<div id="dailies">
-				<c:forEach var="result" items="${results}">
-					<div class="tweetRow">
-						<p>${result.fromUser} ${result.text}</p>
-
-					</div>
-				</c:forEach>
-			</div>
-		</c:if>
-	
-
-		<c:if test="${not empty publicTweets}">
-			<div id="dailies">
-				<c:forEach var="tweet" items="${publicTweets}">
-					<div class="tweetRow">
-						<img class="tweetPic" src="${tweet.profileImageUrl}"> <span
-							class="tweetUser"><c:out value="${tweet.fromUser}" /></span> <span
-							class="tweetContent"> <span class="tweetText"><c:out
-									value="${tweet.text}" /></span><br> <span class="tweetDate"><c:out
-									value="${tweet.createdAt}" /></span>
-						</span>
-					</div>
-				</c:forEach>
-			</div>
-		</c:if>
-	<jsp:include page="footer.jsp"></jsp:include>
 </div>
-
-</body>
-</html>
+<jsp:include page="footer.jsp"></jsp:include>
