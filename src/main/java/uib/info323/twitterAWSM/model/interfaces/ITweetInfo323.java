@@ -21,9 +21,9 @@ public interface ITweetInfo323 extends Comparable<ITweetInfo323> {
 	//
 	// public void setReplies(List<ITweetInfo323> replies);
 
-	public List<ITweetInfo323> getReplies();
+	public List<Long> getReplies();
 
-	public void setReplies(List<ITweetInfo323> replies);
+	public void setReplies(List<Long> replies);
 
 	public List<TwitterProfile> getRetweeters();
 

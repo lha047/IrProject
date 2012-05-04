@@ -1,5 +1,7 @@
 package uib.info323.twitterAWSM.io;
 
+import uib.info323.twitterAWSM.io.impl.JsonFeedJamFactory;
+
 public abstract class AbstractFeedJamFactory {
 	
 	private static final int JSON = 1;
