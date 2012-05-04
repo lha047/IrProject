@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
-import uib.info323.twitterAWSM.model.search.ISearch;
+
 
 /**
  * Handles requests for the application home page.
@@ -26,8 +26,6 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(HomeController.class);
 
-	@Autowired
-	private ISearch search;
 
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -38,12 +36,11 @@ public class HomeController {
 	public ModelAndView home(Locale locale, Model model) throws IOException {
 		logger.info("Printing homepage");
 
-		ArrayList<ITweetInfo323> results = (ArrayList<ITweetInfo323>) search
-				.search("#UIB");
+		ArrayList<ITweetInfo323> results = new ArrayList<ITweetInfo323>();
 		logger.info("Number of results for UIB: " + results.size());
 
 		ModelAndView mav = new ModelAndView("home");
-		mav.addObject("publicTweets", search.getTweets());
+		mav.addObject("publicTweets", results);
 		// mav.addObject("user", search.getUser(null));
 		// mav.addObject("results", search.search("#UiB"));
 		logger.info("Number of results for UIB: " + results.size());
@@ -54,7 +51,7 @@ public class HomeController {
 	@RequestMapping("/s/{s}")
 	public String getSearch(@PathVariable String s, Model model) {
 
-		model.addAttribute("s", search.search(s));
+		model.addAttribute("s", "");
 
 		return "home";
 	}
