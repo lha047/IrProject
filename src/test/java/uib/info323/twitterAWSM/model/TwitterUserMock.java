@@ -1,8 +1,8 @@
 package uib.info323.twitterAWSM.model;
 
-import uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323;
+import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
-public class TwitterUserMock implements ITwitterUserInfo323 {
+public class TwitterUserMock implements TwitterUserInfo323 {
 
 	int fitnessScoew;
 	int followers;
@@ -28,7 +28,7 @@ public class TwitterUserMock implements ITwitterUserInfo323 {
 		this.statusesCount = 213;
 	}
 
-	public int compareTo(ITwitterUserInfo323 o) {
+	public int compareTo(TwitterUserInfo323 o) {
 		if (this.fitnessScoew == o.getFitnessScore())
 			return 0;
 		else if (this.fitnessScoew < o.getFitnessScore())

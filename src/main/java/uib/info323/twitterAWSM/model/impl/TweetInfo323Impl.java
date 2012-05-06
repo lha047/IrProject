@@ -8,10 +8,10 @@ import org.springframework.social.twitter.api.TwitterProfile;
 import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.model.Parser;
-import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
+import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 
 
-public class TweetInfo323 implements ITweetInfo323 {
+public class TweetInfo323Impl implements TweetInfo323 {
 
 	private List<Long> replies;
 	private long id;
@@ -29,7 +29,7 @@ public class TweetInfo323 implements ITweetInfo323 {
 	private List<String> mentions;
 	private List<String> tags;
 
-	public TweetInfo323(List<Long> replies, long id, String text,
+	public TweetInfo323Impl(List<Long> replies, long id, String text,
 			Date createdAt, String fromUser, String profileImageUrl,
 			long toUserId, long fromUserId, String languageCode, String source,
 			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
@@ -177,15 +177,15 @@ public class TweetInfo323 implements ITweetInfo323 {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof ITweetInfo323))
+		if (!(obj instanceof TweetInfo323))
 			return false;
-		TweetInfo323 other = (TweetInfo323) obj;
+		TweetInfo323Impl other = (TweetInfo323Impl) obj;
 		if (id != other.getId())
 			return false;
 		return true;
 	}
 
-	public int compareTo(ITweetInfo323 o) {
+	public int compareTo(TweetInfo323 o) {
 		if (tweetRank > o.getTweetRank()) {
 			return 1;
 		} else if (tweetRank < o.getTweetRank()) {

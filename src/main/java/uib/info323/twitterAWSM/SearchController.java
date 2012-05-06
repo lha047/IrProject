@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
+import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 
 /**
  * 
@@ -34,7 +34,7 @@ public class SearchController {
 		
 		ModelAndView mav = new ModelAndView("tagSearchResults");
 		
-		List<ITweetInfo323> tweetList = new ArrayList<ITweetInfo323>();
+		List<TweetInfo323> tweetList = new ArrayList<TweetInfo323>();
 		logger.info("Number of tweets matching " + "#"+q + " is " + tweetList.size());
 		logger.info("Searching for: " + "#"+q);
 		mav.addObject("query", q);

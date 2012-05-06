@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
-public interface ITweetInfo323 extends Comparable<ITweetInfo323> {
+public interface TweetInfo323 extends Comparable<TweetInfo323> {
 
 	// public List<ITweetInfo323> getReplies();
 	//

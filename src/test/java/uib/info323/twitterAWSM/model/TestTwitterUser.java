@@ -11,7 +11,7 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 
-import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323;
+import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 
 /**
  * @author Lisa
@@ -19,14 +19,14 @@ import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323;
  */
 public class TestTwitterUser {
 
-	TwitterUserInfo323 user;
+	TwitterUserInfo323Impl user;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		user = new TwitterUserInfo323(0, 1, "blabla", "blabla sen",
+		user = new TwitterUserInfo323Impl(0, 1, "blabla", "blabla sen",
 				"example.com", "example.com/profileImage", "hmm", "location",
 				new Date(), 10, 10, 12, "No", "example.com/profile", 23);
 
@@ -34,7 +34,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#TwitterUserInfo323(int, long, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Date, int, int, int, java.lang.String, java.lang.String, int)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#TwitterUserInfo323(int, long, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Date, int, int, int, java.lang.String, java.lang.String, int)}
 	 * .
 	 */
 	@Test
@@ -57,7 +57,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setFitnessScore(int)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setFitnessScore(int)}
 	 * .
 	 */
 	@Test
@@ -68,7 +68,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setId(long)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setId(long)}
 	 * .
 	 */
 	@Test
@@ -79,7 +79,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setScreenName(java.lang.String)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setScreenName(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -91,7 +91,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setName(java.lang.String)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setName(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -103,7 +103,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setUrl(java.lang.String)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setUrl(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -113,7 +113,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getProfileImageUrl()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getProfileImageUrl()}
 	 * .
 	 */
 	@Test
@@ -123,7 +123,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setProfileImageUrl(java.lang.String)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setProfileImageUrl(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -133,7 +133,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getDescription()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getDescription()}
 	 * .
 	 */
 	@Test
@@ -143,7 +143,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setDescription(java.lang.String)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setDescription(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -153,7 +153,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getLocation()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getLocation()}
 	 * .
 	 */
 	@Test
@@ -163,7 +163,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setLocation(java.lang.String)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setLocation(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -173,7 +173,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getCreatedDate()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getCreatedDate()}
 	 * .
 	 */
 	@Test
@@ -183,7 +183,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setCreatedDate(java.util.Date)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setCreatedDate(java.util.Date)}
 	 * .
 	 */
 	@Test
@@ -193,7 +193,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getFavoritesCount()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getFavoritesCount()}
 	 * .
 	 */
 	@Test
@@ -203,7 +203,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setFavoritesCount(int)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setFavoritesCount(int)}
 	 * .
 	 */
 	@Test
@@ -213,7 +213,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getFollowersCount()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getFollowersCount()}
 	 * .
 	 */
 	@Test
@@ -223,7 +223,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setFollowersCount(int)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setFollowersCount(int)}
 	 * .
 	 */
 	@Test
@@ -233,7 +233,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getFriendsCount()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getFriendsCount()}
 	 * .
 	 */
 	@Test
@@ -243,7 +243,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setFriendsCount(int)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setFriendsCount(int)}
 	 * .
 	 */
 	@Test
@@ -253,7 +253,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getLanguage()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getLanguage()}
 	 * .
 	 */
 	@Test
@@ -263,7 +263,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setLanguage(java.lang.String)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setLanguage(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -273,7 +273,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getProfileUrl()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getProfileUrl()}
 	 * .
 	 */
 	@Test
@@ -283,7 +283,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setProfileUrl(java.lang.String)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setProfileUrl(java.lang.String)}
 	 * .
 	 */
 	@Test
@@ -293,7 +293,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#getStatusesCount()}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#getStatusesCount()}
 	 * .
 	 */
 	@Test
@@ -303,7 +303,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#setStatusesCount(int)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#setStatusesCount(int)}
 	 * .
 	 */
 	@Test
@@ -313,7 +313,7 @@ public class TestTwitterUser {
 
 	/**
 	 * Test method for
-	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323#compareTo(uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323)}
+	 * {@link uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl#compareTo(uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323)}
 	 * .
 	 */
 	@Test

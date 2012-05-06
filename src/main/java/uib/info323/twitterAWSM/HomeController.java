@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import uib.info323.twitterAWSM.model.interfaces.ITweetInfo323;
+import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 
 
 /**
@@ -36,7 +36,7 @@ public class HomeController {
 	public ModelAndView home(Locale locale, Model model) throws IOException {
 		logger.info("Printing homepage");
 
-		ArrayList<ITweetInfo323> results = new ArrayList<ITweetInfo323>();
+		ArrayList<TweetInfo323> results = new ArrayList<TweetInfo323>();
 		logger.info("Number of results for UIB: " + results.size());
 
 		ModelAndView mav = new ModelAndView("home");

@@ -1,7 +1,7 @@
 package uib.info323.twitterAWSM.model.interfaces;
 
 
-public interface ITwitterUserInfo323 extends Comparable<ITwitterUserInfo323> {
+public interface TwitterUserInfo323 extends Comparable<TwitterUserInfo323> {
 
 	public int getFitnessScore();
 

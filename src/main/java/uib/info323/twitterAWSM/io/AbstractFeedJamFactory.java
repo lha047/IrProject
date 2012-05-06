@@ -11,8 +11,8 @@ public abstract class AbstractFeedJamFactory {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public abstract TweetFactoryIntf getTweetFactory();
-	public abstract UserFactoryIntf getUserFactory();
+	public abstract TweetFactory getTweetFactory();
+	public abstract UserFactory getUserFactory();
 	
 	
 	public static AbstractFeedJamFactory getFactory(int type) {

@@ -1,11 +1,13 @@
 package uib.info323.twitterAWSM.io.impl;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
-import uib.info323.twitterAWSM.io.TweetFactoryIntf;
-import uib.info323.twitterAWSM.io.UserFactoryIntf;
+import uib.info323.twitterAWSM.io.TweetFactory;
+import uib.info323.twitterAWSM.io.UserFactory;
 
+@Component
 public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 	
 	private final String apiUrl = "https://api.twitter.com/";
@@ -18,13 +20,13 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 	
 
 	@Override
-	public TweetFactoryIntf getTweetFactory() {
+	public TweetFactory getTweetFactory() {
 		// TODO Auto-generated method stub
 		return new JsonTweetFactory(searchApiUrl, apiUrl, restTemplate);
 	}
 
 	@Override
-	public UserFactoryIntf getUserFactory() {
+	public UserFactory getUserFactory() {
 		// TODO Auto-generated method stub
 		return new JsonUserFactory(apiUrl, restTemplate);
 	}

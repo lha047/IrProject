@@ -2,7 +2,7 @@ package uib.info323.twitterAWSM.model.interfaces;
 
 import java.util.List;
 
-public interface ITweetSearchResults {
+public interface TweetSearchResults {
 	
 	public String getSearchTerm();
 	
@@ -10,7 +10,7 @@ public interface ITweetSearchResults {
 	
 	public String refreshUrl();
 	
-	public List<ITweetInfo323> getTweets();
+	public List<TweetInfo323> getTweets();
 	
 	public int getPageNumber();
 	

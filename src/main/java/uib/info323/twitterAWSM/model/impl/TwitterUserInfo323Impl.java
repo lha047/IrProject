@@ -4,14 +4,14 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import uib.info323.twitterAWSM.model.interfaces.ITwitterUserInfo323;
+import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 /**
  * @author Lisa
  * 
  */
 @Component
-public class TwitterUserInfo323 implements ITwitterUserInfo323 {
+public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 
 	private int fitnessScore;
 	private long id;
@@ -29,7 +29,7 @@ public class TwitterUserInfo323 implements ITwitterUserInfo323 {
 	private String profileUrl;
 	private int statusesCount;
 
-	public TwitterUserInfo323() {
+	public TwitterUserInfo323Impl() {
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class TwitterUserInfo323 implements ITwitterUserInfo323 {
 	 * @param profileUrl
 	 * @param statusesCount
 	 */
-	public TwitterUserInfo323(int fitnessScore, long id, String screenName,
+	public TwitterUserInfo323Impl(int fitnessScore, long id, String screenName,
 			String name, String url, String profileImageUrl,
 			String description, String location, Date createdDate,
 			int favoritesCount, int followersCount, int friendsCount,
@@ -193,7 +193,7 @@ public class TwitterUserInfo323 implements ITwitterUserInfo323 {
 		this.statusesCount = statusesCount;
 	}
 
-	public int compareTo(ITwitterUserInfo323 o) {
+	public int compareTo(TwitterUserInfo323 o) {
 		if (fitnessScore == o.getFitnessScore()) {
 			return 0;
 		} else if (fitnessScore > o.getFitnessScore()) {
