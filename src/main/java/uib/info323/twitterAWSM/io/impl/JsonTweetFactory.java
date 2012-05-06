@@ -70,7 +70,7 @@ public class JsonTweetFactory implements TweetFactory{
 
 	public static void main(String[] args) {
 		TweetFactory tweetFactory = new JsonTweetFactory("https://search.twitter.com/search.json?", "https://api.twitter.com/", new RestTemplate());
-		tweetFactory.searchTweets("norway");
+		tweetFactory.searchTweets("bergen");
 
 
 	}
