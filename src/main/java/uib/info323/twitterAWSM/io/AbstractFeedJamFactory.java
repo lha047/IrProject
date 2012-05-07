@@ -16,7 +16,7 @@ public abstract class AbstractFeedJamFactory {
 	
 	
 	public static AbstractFeedJamFactory getFactory(int type) {
-		if(type == 1) return new JsonFeedJamFactory();
+		if(type == JSON) return new JsonFeedJamFactory();
 		return null;
 	}
 	

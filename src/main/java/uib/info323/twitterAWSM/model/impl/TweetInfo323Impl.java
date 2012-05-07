@@ -3,17 +3,14 @@ package uib.info323.twitterAWSM.model.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.social.twitter.api.Tweet;
 import org.springframework.social.twitter.api.TwitterProfile;
-import org.springframework.stereotype.Component;
 
-import uib.info323.twitterAWSM.model.Parser;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 
 
 public class TweetInfo323Impl implements TweetInfo323 {
 
-	private List<Long> replies;
+	private List<Long> related;
 	private long id;
 	private String text;
 	private Date createdAt;
@@ -25,16 +22,16 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	private String source;
 	private double tweetRank;
 	private long inReplyToStatusId;
-	private Integer retweetCount;
+	private int retweetCount;
 	private List<String> mentions;
 	private List<String> tags;
 
-	public TweetInfo323Impl(List<Long> replies, long id, String text,
+	public TweetInfo323Impl(List<Long> related, long id, String text,
 			Date createdAt, String fromUser, String profileImageUrl,
 			long toUserId, long fromUserId, String languageCode, String source,
 			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
 			List<String> mentions, List<String> tags) {
-		this.replies = replies;
+		this.related = related;
 		this.id = id;
 		this.text = text;
 		this.createdAt = createdAt;
@@ -195,12 +192,12 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		}
 	}
 
-	public List<Long> getReplies() {
-		return replies;
+	public List<Long> getRelated() {
+		return related;
 	}
 
-	public void setReplies(List<Long> replies) {
-		this.replies = replies;
+	public void setRelated(List<Long> related) {
+		this.related = related;
 	}
 
 	public long getId() {
@@ -291,11 +288,11 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		this.inReplyToStatusId = inReplyToStatusId;
 	}
 
-	public Integer getRetweetCount() {
+	public int getRetweetCount() {
 		return retweetCount;
 	}
 
-	public void setRetweetCount(Integer retweetCount) {
+	public void setRetweetCount(int retweetCount) {
 		this.retweetCount = retweetCount;
 	}
 
