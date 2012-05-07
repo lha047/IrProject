@@ -1,7 +1,9 @@
 package uib.info323.twitterAWSM.io.impl;
 
+import java.security.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,12 +43,12 @@ public class JsonTweetFactory implements TweetFactory{
 
 	@Override
 	public TweetSearchResults searchTweets(String searchTerm) {
-
+		
 		// Construct the REST request
 		String requestUrl = searchApiUrl + "q={searchTerm}";
 		// Send the request to the Twitter search API and store JSON result in String
 		String searchResults = restTemplate.getForObject(requestUrl, String.class, searchTerm);
-
+		
 		// Parse the JSON result
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(searchResults);
@@ -79,9 +81,9 @@ public class JsonTweetFactory implements TweetFactory{
 
 	}
 
-
 	private LinkedList<TweetInfo323> jsonToTweets(JsonElement jsonTweets, JsonParser parser) {
 		
+		System.out.println("Inside jsonToTweets " + new Date());
 		LinkedList<TweetInfo323> tweets = new LinkedList<TweetInfo323>();
 
 		for(JsonElement tweetElement : jsonTweets.getAsJsonArray()) {
@@ -93,13 +95,22 @@ public class JsonTweetFactory implements TweetFactory{
 			Date createdAt = parseDate(tweetObject.get("created_at").getAsString());
 			String fromUser = tweetObject.get("from_user").getAsString();
 			String profileImageUrl = tweetObject.get("profile_image_url").getAsString();
-			long toUserId = tweetObject.get("to_user_id").getAsLong();
+			
 			long fromUserId = tweetObject.get("from_user_id").getAsLong();
 			String languageCode = tweetObject.get("iso_language_code").getAsString();
 			String source = tweetObject.get("source").getAsString();
 			double tweetRank = 0;
 			long inReplyToStatusId = 0;
 			int retweetCount = 0;
+			long toUserId = 0;
+			
+			// If tweet has a to user id element....
+			JsonElement toUserIdElement = tweetObject.get("to_user_id");
+			
+			if(!toUserIdElement.isJsonNull()) {
+				System.out.println("Include " + toUserIdElement);
+				toUserId = toUserIdElement.getAsLong();
+			}
 			
 			// Make sure retweet count actually exist
 			JsonElement retweetElement = tweetObject.get("metadata").getAsJsonObject().get("recent_retweets");
@@ -107,45 +118,36 @@ public class JsonTweetFactory implements TweetFactory{
 				retweetCount = retweetElement.getAsInt();
 			}
 			
-			LinkedList<String> tags = (LinkedList<String>) TweetParser.getTerms(text, "#".charAt(0));
-			LinkedList<String> mentions = (LinkedList<String>) TweetParser.getTerms(text, "@".charAt(0));
-			
+			ArrayList<String> tags = (ArrayList<String>) TweetParser.getTerms(text, "#".charAt(0));
+			ArrayList<String> mentions = (ArrayList<String>) TweetParser.getTerms(text, "@".charAt(0));
 			
 			// Get related tweets
 			LinkedList<Long> related = (LinkedList<Long>) getRelatedTweets(id, parser);
-			tweets.add(new TweetInfo323Impl(related, id, text, createdAt, fromUser, profileImageUrl, toUserId, fromUserId, languageCode, source, tweetRank, inReplyToStatusId, retweetCount, mentions, tags));
-
-
+			
+			tweets.add(new TweetInfo323Impl(
+					related, 
+					id, 
+					text, 
+					createdAt, 
+					fromUser, 
+					profileImageUrl, 
+					toUserId, 
+					fromUserId, 
+					languageCode, 
+					source, 
+					tweetRank, 
+					inReplyToStatusId, 
+					retweetCount, 
+					mentions, 
+					tags));
 		}
 		
-		
-//		List<Long> related, long id, String text,
-//		Date createdAt, String fromUser, String profileImageUrl,
-//		long toUserId, long fromUserId, String languageCode, String source,
-//		double tweetRank, Long inReplyToStatusId, Integer retweetCount,
-//		List<String> mentions, List<String> tags
-		
 		return tweets;
-
 	}
 
 	private List<Long> getRelatedTweets(long id, JsonParser parser) {
 		
-		System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::");
-		System.out.println("Related to id: " + id);
-		// Create request and store JSON result
-		String relatedRequest = apiUrl + "1/related_results/show/{id}.json?include_entities=1";
-		String relatedJson = restTemplate.getForObject(relatedRequest, String.class, id);
-		
-		
-		
-		
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		JsonElement elementRelateds = parser.parse(relatedJson);
-		String jsonOutput = gson.toJson(elementRelateds);
-		System.out.println(jsonOutput);
-		
-		return null;
+		return new LinkedList<Long>();
 	}
 	
 	private Date parseDate(String dateString) {
@@ -158,6 +160,4 @@ public class JsonTweetFactory implements TweetFactory{
 		}
 		return date;
 	}
-
-
 }
