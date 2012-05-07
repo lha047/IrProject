@@ -7,9 +7,7 @@
 <jsp:include page="header.jsp"></jsp:include>
 	
 	<c:if test="${not empty results}">
-		<section class="ten_cols no_padding cf tweet_wrapper" id="tweets">
 			<jsp:include page="tweetList.jsp"></jsp:include>
-		</section>
 	</c:if>
 	
 	<c:if test="${not empty nextPageUrl}">
@@ -26,9 +24,6 @@
 				var pageIterator = 2;
 				var next_url = '<c:out value="${nextPageUrl}" />'.split("&amp;"); 
 				var max_id = next_url[1];
-				
-				
-				
 				
 				$('#more').click(function() {
 					console.log("start ajax request for '" + "search/ajax?q=test&page="+pageIterator+"&"+max_id+"&"+next_url[3]+"'");
