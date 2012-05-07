@@ -25,6 +25,8 @@
 				var next_url = '<c:out value="${nextPageUrl}" />'.split("&amp;"); 
 				var max_id = next_url[1];
 				
+				console.log(next_url);
+				
 				$('#more').click(function() {
 					console.log("start ajax request for '" + "search/ajax?q=test&page="+pageIterator+"&"+max_id+"&"+next_url[3]+"'");
 					
