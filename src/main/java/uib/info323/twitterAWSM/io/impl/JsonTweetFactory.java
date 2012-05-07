@@ -23,6 +23,7 @@ import uib.info323.twitterAWSM.model.impl.TweetInfo323Impl;
 import uib.info323.twitterAWSM.model.impl.TweetSearchResultsImpl;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
+import uib.info323.twitterAWSM.utils.TweetParser;
 
 public class JsonTweetFactory implements TweetFactory{
 
@@ -98,21 +99,21 @@ public class JsonTweetFactory implements TweetFactory{
 			String source = tweetObject.get("source").getAsString();
 			double tweetRank = 0;
 			long inReplyToStatusId = 0;
+			int retweetCount = 0;
 			
-			Twitter twitter = new TwitterTemplate();
-			SearchResults tweeties = twitter.searchOperations().search("bergen");
-			LinkedList<Tweet> tweetList = (LinkedList<Tweet>) tweeties.getTweets();
-			Tweet tweet = tweetList.getFirst();
+			// Make sure retweet count actually exist
+			JsonElement retweetElement = tweetObject.get("metadata").getAsJsonObject().get("recent_retweets");
+			if(retweetElement != null) {
+				retweetCount = retweetElement.getAsInt();
+			}
+			
+			LinkedList<String> tags = (LinkedList<String>) TweetParser.getTerms(text, "#".charAt(0));
+			LinkedList<String> mentions = (LinkedList<String>) TweetParser.getTerms(text, "@".charAt(0));
 			
 			
-
 			// Get related tweets
 			LinkedList<Long> related = (LinkedList<Long>) getRelatedTweets(id, parser);
-			
-			
-			
-			
-			tweets.add(new TweetInfo323Impl(related, id, text, createdAt, fromUser, profileImageUrl, toUserId, fromUserId, languageCode, source, tweetRank, inReplyToStatusId, retweetCount, mentions, tags))
+			tweets.add(new TweetInfo323Impl(related, id, text, createdAt, fromUser, profileImageUrl, toUserId, fromUserId, languageCode, source, tweetRank, inReplyToStatusId, retweetCount, mentions, tags));
 
 
 		}
