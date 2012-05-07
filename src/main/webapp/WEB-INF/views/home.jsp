@@ -1,22 +1,6 @@
-<!doctype html />
-<!-- 
-	Project: Info323/Feedjam
-	Frontend: Torstein Thune
-	Backend: Snorre Davøen, Lisa Halvorsen
-	-->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
-<html>
-<head>
-	<link rel="icon" type="image/x-icon" href="resources/images/favicon.ico" />
-	<link rel="icon" type="image/png" href="resources/images/favicon.png" />
+<jsp:include page="htmlheader.jsp"></jsp:include>
 	<title>FeedJam: A New Twitter Experience</title>
-	<link rel="stylesheet" type="text/css" href="resources/style.css" />
-</head>
-<body class="awesome">
-<div id="wrapper">
-
-	<jsp:include page="header.jsp"></jsp:include>
+<jsp:include page="header.jsp"></jsp:include>
 	
 	<c:if test="${not empty publicTweets}">
 		<section class="ten_cols no_padding cf tweet_wrapper">
@@ -45,6 +29,5 @@
 			</c:forEach>
 		</section>
 	</c:if>
-	
-</div>
+
 <jsp:include page="footer.jsp"></jsp:include>
