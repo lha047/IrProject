@@ -6,6 +6,7 @@ import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 public interface TweetFactory {
 	
 	public TweetSearchResults searchTweets(String searchTerm, int resultsPerPage);
+	public TweetSearchResults getNextPage(String nextPageUrl);
 	public TweetSearchResults searchTweetsByDate(String searchTerm, Date date);
 	
 }
