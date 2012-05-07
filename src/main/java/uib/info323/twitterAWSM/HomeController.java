@@ -11,9 +11,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
+import uib.info323.twitterAWSM.io.TweetFactory;
+import uib.info323.twitterAWSM.io.impl.JsonFeedJamFactory;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
+import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 
 
 /**
@@ -46,12 +51,45 @@ public class HomeController {
 
 		return mav;
 	}
-
-	@RequestMapping("/s/{s}")
-	public String getSearch(@PathVariable String s, Model model) {
-
-		model.addAttribute("s", "");
-
-		return "home";
+	
+	// doesn't work as it's own controller, should fix, this is hack, this is Dog
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public ModelAndView search(@RequestParam String q, int resultsPerPage) {
+		
+		ModelAndView mav = new ModelAndView("tagSearchResults");
+		
+		JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory.getFactory(1);
+		TweetFactory tweetFactory = factory.getTweetFactory();
+		TweetSearchResults tweetResults = tweetFactory.searchTweets(q, resultsPerPage);
+		
+		
+		// logger.info("Number of tweets matching " + "#"+q + " is " + tweetResults.size());
+		logger.info("Searching for: " + "#"+q);
+		
+		mav.addObject("query", q);
+		mav.addObject("results", tweetResults);
+		mav.addObject("nextPageUrl", tweetResults.nextPageUrl());
+		
+		return mav;
+		
+	}
+	
+	// ajax requests mockup (virker ikke slik den skal =D)
+	@RequestMapping(value = "/search/ajax", method = RequestMethod.GET)
+	public ModelAndView ajax(@RequestParam String q, int rpp) {
+		
+		ModelAndView mav = new ModelAndView("tweetList");
+		
+		JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory.getFactory(1);
+		TweetFactory tweetFactory = factory.getTweetFactory();
+		TweetSearchResults tweetResults = tweetFactory.searchTweets(q, rpp);
+		
+		// logger.info("Number of tweets matching " + "#"+q + " is " + tweetResults.size());
+		logger.info("Searching for: " + "#"+q);
+		mav.addObject("query", q);
+		mav.addObject("results", tweetResults);
+		
+		return mav;
+		
 	}
 }
