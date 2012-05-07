@@ -42,12 +42,12 @@ public class JsonTweetFactory implements TweetFactory{
 	}
 
 	@Override
-	public TweetSearchResults searchTweets(String searchTerm) {
+	public TweetSearchResults searchTweets(String searchTerm, int resultsPerPage) {
 		
 		// Construct the REST request
-		String requestUrl = searchApiUrl + "q={searchTerm}";
+		String requestUrl = searchApiUrl + "q={searchTerm}&rpp={resultsPerPage}";
 		// Send the request to the Twitter search API and store JSON result in String
-		String searchResults = restTemplate.getForObject(requestUrl, String.class, searchTerm);
+		String searchResults = restTemplate.getForObject(requestUrl, String.class, searchTerm, resultsPerPage);
 		
 		// Parse the JSON result
 		JsonParser parser = new JsonParser();
@@ -76,14 +76,13 @@ public class JsonTweetFactory implements TweetFactory{
 
 	public static void main(String[] args) {
 		TweetFactory tweetFactory = new JsonTweetFactory("https://search.twitter.com/search.json?", "https://api.twitter.com/", new RestTemplate());
-		tweetFactory.searchTweets("bergen");
+		tweetFactory.searchTweets("bergen", 19);
 
 
 	}
 
 	private LinkedList<TweetInfo323> jsonToTweets(JsonElement jsonTweets, JsonParser parser) {
 		
-		System.out.println("Inside jsonToTweets " + new Date());
 		LinkedList<TweetInfo323> tweets = new LinkedList<TweetInfo323>();
 
 		for(JsonElement tweetElement : jsonTweets.getAsJsonArray()) {
@@ -108,7 +107,6 @@ public class JsonTweetFactory implements TweetFactory{
 			JsonElement toUserIdElement = tweetObject.get("to_user_id");
 			
 			if(!toUserIdElement.isJsonNull()) {
-				System.out.println("Include " + toUserIdElement);
 				toUserId = toUserIdElement.getAsLong();
 			}
 			
