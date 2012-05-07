@@ -1,3 +1,6 @@
+	
+</div>
+
 <footer class="cf clear">
 	University of Bergen<br />
 	INFO323 project spring 2012<br />
