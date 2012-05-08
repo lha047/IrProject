@@ -1,3 +1,37 @@
 FeedJam is a website which uses a PageRank implementation to grade Tweets.
 
-FeedJam is developed by Snorre Davøen, Lisa Halvorsen and Torstein Thune as a part of INFO323 at the University of Bergen.
+FeedJam is developed by Snorre Davï¿½en, Lisa Halvorsen and Torstein Thune as a part of INFO323 at the University of Bergen.
+
+Tweet info:
+ - Retweet count
+ - No Hashes
+ - No Mentions
+ - Favourited count
+
+User info:
+ - Followers count
+ - Following count
+ - Friends count
+ - Statuses count
+ 
+ Harmonic mean med normalisering.
+
+ Cache brukere i database.
+ 
+ User-model
+ 
+INT fitnessScore;
+LONG id;
+VARCHAR(15) screenName;
+VARCHAR(20) name;
+VARCHAR(300) url;
+VARCHAR(300) profileImageUrl;
+VARCHAR(160) description;
+VARCHAR(100) location;
+DATE createdDate;
+INT favoritesCount;
+INT followersCount;
+INT friendsCount;
+VARCHAR(100) language;
+VARCHAR(300) profileUrl;
+INT statusesCount;

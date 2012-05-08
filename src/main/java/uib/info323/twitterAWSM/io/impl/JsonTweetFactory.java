@@ -143,8 +143,8 @@ public class JsonTweetFactory implements TweetFactory {
 	}
 
 	private TweetSearchResults jsonToSearchResults(String searchResults) {
+		
 		// Parse the JSON result
-
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(searchResults);
 		JsonObject object = element.getAsJsonObject();
@@ -154,7 +154,6 @@ public class JsonTweetFactory implements TweetFactory {
 		String nextPageUrl = object.get("next_page").getAsString();
 		String refreshUrl = object.get("refresh_url").getAsString();
 		int pageNumber = object.get("page").getAsInt();
-		System.out.println(nextPageUrl);
 
 		// Parse and get tweets from result
 		LinkedList<TweetInfo323> tweets = jsonToTweets(object.get("results"),
