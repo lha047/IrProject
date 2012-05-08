@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.social.twitter.api.TwitterProfile;
 
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
-
+import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class TweetInfo323Impl implements TweetInfo323 {
 
@@ -25,12 +25,14 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	private int retweetCount;
 	private List<String> mentions;
 	private List<String> tags;
+	private TwitterUserInfo323 userInfo;
 
 	public TweetInfo323Impl(List<Long> related, long id, String text,
 			Date createdAt, String fromUser, String profileImageUrl,
 			long toUserId, long fromUserId, String languageCode, String source,
 			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
-			List<String> mentions, List<String> tags) {
+			List<String> mentions, List<String> tags,
+			TwitterUserInfo323 userInfo) {
 		this.related = related;
 		this.id = id;
 		this.text = text;
@@ -46,125 +48,127 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		this.retweetCount = retweetCount;
 		this.mentions = mentions;
 		this.tags = tags;
+		this.userInfo = userInfo;
 	}
 
-	//	private List<Tweet> replies;
-	//	private double tweetRank;
-	//	private Long inReplyToStatusId;
-	//	private Integer retweetCount;
-	//	private List<String> mentions;
-	//	private List<String> tags;
-	//	private List<TwitterProfile> retweeters;
+	// private List<Tweet> replies;
+	// private double tweetRank;
+	// private Long inReplyToStatusId;
+	// private Integer retweetCount;
+	// private List<String> mentions;
+	// private List<String> tags;
+	// private List<TwitterProfile> retweeters;
 	//
-	//	public TweetInfo323() {
-	//		super(0, "", new Date(), "", "", (long) 0, (long) 0, "", "");
+	// public TweetInfo323() {
+	// super(0, "", new Date(), "", "", (long) 0, (long) 0, "", "");
 	//
-	//	}
+	// }
 	//
-	//	public TweetInfo323(long id, String text, Date createdAt, String fromUser,
-	//			String profileImageUrl, Long toUserId, long fromUserId,
-	//			String languageCode, String source) {
-	//		super(id, text, createdAt, fromUser, profileImageUrl, toUserId,
-	//				fromUserId, languageCode, source);
-	//	}
+	// public TweetInfo323(long id, String text, Date createdAt, String
+	// fromUser,
+	// String profileImageUrl, Long toUserId, long fromUserId,
+	// String languageCode, String source) {
+	// super(id, text, createdAt, fromUser, profileImageUrl, toUserId,
+	// fromUserId, languageCode, source);
+	// }
 	//
-	//	public TweetInfo323(long id, String text, Date createdAt, String fromUser,
-	//			String profileImageUrl, Long toUserId, long fromUserId,
-	//			String languageCode, String source, Long inReplyToStatus,
-	//			Integer retweetCount, double tweetRank) {
-	//		super(id, text, createdAt, fromUser, profileImageUrl, toUserId,
-	//				fromUserId, languageCode, source);
-	//		this.inReplyToStatusId = inReplyToStatus;
-	//		this.retweetCount = retweetCount;
-	//		this.tweetRank = tweetRank;
-	//		mentions = getMentions();
-	//		tags = getTags();
-	//	}
+	// public TweetInfo323(long id, String text, Date createdAt, String
+	// fromUser,
+	// String profileImageUrl, Long toUserId, long fromUserId,
+	// String languageCode, String source, Long inReplyToStatus,
+	// Integer retweetCount, double tweetRank) {
+	// super(id, text, createdAt, fromUser, profileImageUrl, toUserId,
+	// fromUserId, languageCode, source);
+	// this.inReplyToStatusId = inReplyToStatus;
+	// this.retweetCount = retweetCount;
+	// this.tweetRank = tweetRank;
+	// mentions = getMentions();
+	// tags = getTags();
+	// }
 	//
-	//	public TweetInfo323(Tweet t, List<Tweet> replies2,
-	//			List<TwitterProfile> retweeters) {
-	//		super(t.getId(), t.getText(), t.getCreatedAt(), t.getFromUser(), t
-	//				.getProfileImageUrl(), t.getToUserId(), t.getFromUserId(), t
-	//				.getLanguageCode(), t.getSource());
-	//		this.replies = replies2;
-	//		this.retweeters = retweeters;
-	//	}
+	// public TweetInfo323(Tweet t, List<Tweet> replies2,
+	// List<TwitterProfile> retweeters) {
+	// super(t.getId(), t.getText(), t.getCreatedAt(), t.getFromUser(), t
+	// .getProfileImageUrl(), t.getToUserId(), t.getFromUserId(), t
+	// .getLanguageCode(), t.getSource());
+	// this.replies = replies2;
+	// this.retweeters = retweeters;
+	// }
 	//
-	//	private long checkNull(Long toUserId2) {
-	//		if (toUserId2 == null) {
-	//			return 0;
-	//		}
-	//		return toUserId2;
-	//	}
+	// private long checkNull(Long toUserId2) {
+	// if (toUserId2 == null) {
+	// return 0;
+	// }
+	// return toUserId2;
+	// }
 	//
-	//	public List<Tweet> getReplies() {
-	//		return replies;
-	//	}
+	// public List<Tweet> getReplies() {
+	// return replies;
+	// }
 	//
-	//	public List<String> getTags() {
+	// public List<String> getTags() {
 	//
-	//		return Parser.parseTweets(getText(), '#');
-	//	}
+	// return Parser.parseTweets(getText(), '#');
+	// }
 	//
-	//	public List<String> getMentions() {
-	//		return Parser.parseTweets(getText(), '@');
-	//	}
+	// public List<String> getMentions() {
+	// return Parser.parseTweets(getText(), '@');
+	// }
 	//
-	//	public Long getInReplyToStatusId() {
-	//		return inReplyToStatusId;
-	//	}
+	// public Long getInReplyToStatusId() {
+	// return inReplyToStatusId;
+	// }
 	//
-	//	public Integer getRetweetCount() {
-	//		return retweetCount;
-	//	}
+	// public Integer getRetweetCount() {
+	// return retweetCount;
+	// }
 	//
-	//	public double getTweetRank() {
-	//		return tweetRank;
-	//	}
+	// public double getTweetRank() {
+	// return tweetRank;
+	// }
 	//
-	//	public void setTweetRank(double tweetRank) {
-	//		this.tweetRank = tweetRank;
-	//	}
-	//	
-	//	public void setReplies(List<Tweet> replies) {
-	//		this.replies = replies;
+	// public void setTweetRank(double tweetRank) {
+	// this.tweetRank = tweetRank;
+	// }
 	//
-	//	}
+	// public void setReplies(List<Tweet> replies) {
+	// this.replies = replies;
 	//
-	//	public void setTags(List<String> tags) {
-	//		this.tags = tags;
-	//	}
+	// }
 	//
-	//	public void setMentions(List<String> mentions) {
-	//		this.mentions = mentions;
+	// public void setTags(List<String> tags) {
+	// this.tags = tags;
+	// }
 	//
-	//	}
+	// public void setMentions(List<String> mentions) {
+	// this.mentions = mentions;
 	//
-	//	public void setInReplyToStatusId(Long inReplyToStatusId) {
-	//		this.inReplyToStatusId = inReplyToStatusId;
+	// }
 	//
-	//	}
+	// public void setInReplyToStatusId(Long inReplyToStatusId) {
+	// this.inReplyToStatusId = inReplyToStatusId;
 	//
-	//	public void setRetweetCount(Integer retweetCount) {
-	//		this.retweetCount = retweetCount;
+	// }
 	//
-	//	}
+	// public void setRetweetCount(Integer retweetCount) {
+	// this.retweetCount = retweetCount;
 	//
-	//	public List<TwitterProfile> getRetweeters() {
-	//		return retweeters;
-	//	}
+	// }
 	//
-	//	public void setRetweeters(List<TwitterProfile> retweeters) {
-	//		this.retweeters = retweeters;
+	// public List<TwitterProfile> getRetweeters() {
+	// return retweeters;
+	// }
 	//
-	//	}
+	// public void setRetweeters(List<TwitterProfile> retweeters) {
+	// this.retweeters = retweeters;
+	//
+	// }
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ (int) (id ^ (id >>> 32));
+		result = prime * result + (int) (id ^ (id >>> 32));
 		return result;
 	}
 
@@ -329,4 +333,15 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public TwitterUserInfo323 getTwitterUserInfo323() {
+		return userInfo;
+	}
+
+	@Override
+	public void setTwitterUserInfo323(TwitterUserInfo323 userInfo) {
+		this.userInfo = userInfo;
+	}
+
 }
