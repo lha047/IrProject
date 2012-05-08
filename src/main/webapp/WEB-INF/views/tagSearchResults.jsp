@@ -18,12 +18,14 @@
 			</button>
 		</div>
 		
-		<script type="text/javascript" src="resources/js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				var pageIterator = 2;
 				var next_url = '<c:out value="${nextPageUrl}" />'.split("&amp;"); 
 				var max_id = next_url[1];
+				
+				console.log(next_url);
 				
 				$('#more').click(function() {
 					console.log("start ajax request for '" + "search/ajax?q=test&page="+pageIterator+"&"+max_id+"&"+next_url[3]+"'");

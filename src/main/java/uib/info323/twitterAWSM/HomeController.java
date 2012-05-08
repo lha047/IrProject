@@ -76,13 +76,14 @@ public class HomeController {
 	
 	// ajax requests mockup (virker ikke slik den skal =D)
 	@RequestMapping(value = "/search/ajax", method = RequestMethod.GET)
-	public ModelAndView ajax(@RequestParam String q, int rpp) {
+	public ModelAndView ajax(@RequestParam String q, String rpp, String page, String max_id) {
 		
 		ModelAndView mav = new ModelAndView("tweetList");
 		
 		JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory.getFactory(1);
 		TweetFactory tweetFactory = factory.getTweetFactory();
-		TweetSearchResults tweetResults = tweetFactory.searchTweets(q, rpp);
+		String nextPageUrl =  "?page=" + page + "&max_id=" + max_id + "&q=" + q  + "&rpp=" + rpp;
+		TweetSearchResults tweetResults = tweetFactory.getNextPage(nextPageUrl);
 		
 		// logger.info("Number of tweets matching " + "#"+q + " is " + tweetResults.size());
 		logger.info("Searching for: " + "#"+q);
