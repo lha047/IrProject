@@ -48,24 +48,8 @@ public class JsonTweetFactory implements TweetFactory {
 		String searchResults = restTemplate.getForObject(requestUrl,
 				String.class, searchTerm, resultsPerPage);
 
-		// Parse the JSON result
-		JsonParser parser = new JsonParser();
-		JsonElement element = parser.parse(searchResults);
-		JsonObject object = element.getAsJsonObject();
-
-		// Get search-info from JSON object
-		String searchTerms = object.get("query").getAsString();
-		String nextPageUrl = object.get("next_page").getAsString();
-		String refreshUrl = object.get("refresh_url").getAsString();
-		int pageNumber = object.get("page").getAsInt();
-
-		// Parse and get tweets from result
-		LinkedList<TweetInfo323> tweets = jsonToTweets(object.get("results"),
-				parser);
-
 		// Create an object for results and return this object
-		return new TweetSearchResultsImpl(searchTerms, nextPageUrl, refreshUrl,
-				tweets, pageNumber);
+		return jsonToSearchResults(searchResults);
 
 	}
 
@@ -144,6 +128,41 @@ public class JsonTweetFactory implements TweetFactory {
 		}
 
 		return tweets;
+	}
+
+	@Override
+	public TweetSearchResults getNextPage(String nextPageUrl) {
+		// Construct the REST request
+		String requestUrl = searchApiUrl + nextPageUrl;
+		String searchResults = restTemplate.getForObject(requestUrl,
+				String.class);
+		// Create an object for results and return this object
+
+		return jsonToSearchResults(searchResults);
+
+	}
+
+	private TweetSearchResults jsonToSearchResults(String searchResults) {
+		// Parse the JSON result
+
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(searchResults);
+		JsonObject object = element.getAsJsonObject();
+
+		// Get search-info from JSON object
+		String searchTerms = object.get("query").getAsString();
+		String nextPageUrl = object.get("next_page").getAsString();
+		String refreshUrl = object.get("refresh_url").getAsString();
+		int pageNumber = object.get("page").getAsInt();
+		System.out.println(nextPageUrl);
+
+		// Parse and get tweets from result
+		LinkedList<TweetInfo323> tweets = jsonToTweets(object.get("results"),
+				parser);
+
+		return new TweetSearchResultsImpl(searchTerms, nextPageUrl, refreshUrl,
+				tweets, pageNumber);
+
 	}
 
 	private List<Long> getRelatedTweets(long id, JsonParser parser) {
