@@ -308,12 +308,23 @@ px      68    160    252    344    436    528    620    712    804    896    */
   outline: 0;
 }
 
-.spinner {
-	border: 1px solid #ccc;
-	height: 16px;
-	border-radius: 5px;
-	
-	background: url(spinner.gif) no-repeat center center #fff;
+.btn.disabled, .btn[disabled] {
+  cursor: default;
+  background-image: none;
+  background-color: #e6e6e6;
+  opacity: 0.65;
+  filter: alpha(opacity=65);
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.btn.no_text {
+	text-indent: -9999px;
+}
+
+.spinner {	
+	background: url(spinner.gif) no-repeat center center #e6e6e6 !important;
 }
 	
 	/*	Header
@@ -428,7 +439,7 @@ px      68    160    252    344    436    528    620    712    804    896    */
 	/*	Tweets
 		------ */
 	.tweet_container {
-		min-width: 194px;
+		width: 248px;
 		position: relative;
 	}
 	.rating {
@@ -445,7 +456,7 @@ px      68    160    252    344    436    528    620    712    804    896    */
 	}
 	.tweet {
 		display:block;
-		height: 185px;
+		/*height: 185px;*/
 		/*margin-right: 12px;
 		margin-bottom: 12px;*/
 		
@@ -523,7 +534,7 @@ px      68    160    252    344    436    528    620    712    804    896    */
 	/*	Footer
 		------ */
 	footer {
-		
+		position:relative;
 		width: 100%;
 		padding: 12px;
 		margin-top: 24px;
