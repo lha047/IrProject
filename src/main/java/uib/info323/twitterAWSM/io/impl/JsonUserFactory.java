@@ -44,7 +44,6 @@ public class JsonUserFactory implements UserFactory {
 
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(searchResult);
-		System.out.println(element);
 
 		JsonObject obj = element.getAsJsonObject();
 
