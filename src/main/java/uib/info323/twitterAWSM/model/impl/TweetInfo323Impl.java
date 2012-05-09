@@ -4,9 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.social.twitter.api.TwitterProfile;
+import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
+
 
 public class TweetInfo323Impl implements TweetInfo323 {
 
@@ -335,7 +337,7 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	}
 
 	@Override
-	public TwitterUserInfo323 getTwitterUserInfo323() {
+	public TwitterUserInfo323 getUserInfo() {
 		return userInfo;
 	}
 
