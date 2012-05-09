@@ -5,5 +5,7 @@
 
 	
 <jsp:include page="header.jsp"></jsp:include>
+
+<!-- Add some JSP to print todays trends somewhere here... Or maybe in header. -->
 	
 <jsp:include page="footer.jsp"></jsp:include>
