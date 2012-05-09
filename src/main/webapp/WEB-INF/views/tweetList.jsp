@@ -2,7 +2,7 @@
 <%@ page session="false" %>
 
 			<c:forEach var="tweet" items="${results.tweets}">
-				<article class="left two_half_cols tweet_container five_stars">
+				<article class="left two_half_cols tweet_container five_stars" style="opacity: <c:out value="${tweet.fitness * 10}" />">
 					<section class="rating">
 						UsrRnk: 10, TweetRnk: 5
 					</section>
