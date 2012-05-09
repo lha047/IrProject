@@ -31,21 +31,54 @@ public class SearchController {
 			.getLogger(SearchController.class);
 	
 	
-	public ModelAndView search(@RequestParam String q, int resultsPerPage) {
-		
-		ModelAndView mav = new ModelAndView("tagSearchResults");
-		
-		JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory.getFactory(1);
-		TweetFactory tweetFactory = factory.getTweetFactory();
-		TweetSearchResults tweetList = tweetFactory.searchTweets(q, resultsPerPage);
-		//logger.info("Number of tweets matching " + "#"+q + " is " + tweetList.size());
-		logger.info("Searching for: " + "#"+q);
-		mav.addObject("query", q);
-		mav.addObject(tweetList);
-		mav.addObject("results", tweetList);
-		
-		return mav;
-		
-	}
+	
+	// doesn't work as it's own controller, should fix, this is hack, this is
+		// Dog
+		@RequestMapping(method = RequestMethod.GET)
+		public ModelAndView search(@RequestParam String q, int resultsPerPage) {
+
+			ModelAndView mav = new ModelAndView("tagSearchResults");
+
+			JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory
+					.getFactory(1);
+			TweetFactory tweetFactory = factory.getTweetFactory();
+			TweetSearchResults tweetResults = tweetFactory.searchTweets(q,
+					resultsPerPage);
+
+			// logger.info("Number of tweets matching " + "#"+q + " is " +
+			// tweetResults.size());
+			logger.info("Searching for: " + "#" + q);
+
+			mav.addObject("query", q);
+			mav.addObject("results", tweetResults);
+			mav.addObject("nextPageUrl", tweetResults.nextPageUrl());
+
+			return mav;
+
+		}
+
+		// ajax requests mockup (virker ikke slik den skal =D)
+		@RequestMapping(value = "/ajax", method = RequestMethod.GET)
+		public ModelAndView ajax(@RequestParam String q, String rpp, String page,
+				String max_id) {
+
+			ModelAndView mav = new ModelAndView("tweetList");
+
+			JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory
+					.getFactory(1);
+			TweetFactory tweetFactory = factory.getTweetFactory();
+			String nextPageUrl = "?page=" + page + "&max_id=" + max_id + "&q=" + q
+					+ "&rpp=" + rpp;
+			TweetSearchResults tweetResults = tweetFactory.getNextPage(nextPageUrl);
+
+			// logger.info("Number of tweets matching " + "#"+q + " is " +
+			// tweetResults.size());
+			logger.info("Searching for: " + "#" + q);
+			mav.addObject("query", q);
+			mav.addObject("results", tweetResults);
+
+			return mav;
+
+		}
 	
 }
