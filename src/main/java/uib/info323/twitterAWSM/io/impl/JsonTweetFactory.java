@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.web.client.RestTemplate;
 
@@ -118,7 +119,10 @@ public class JsonTweetFactory implements TweetFactory {
 
 			// TODO litt hack???
 			JsonUserFactory juf = new JsonUserFactory(apiUrl, restTemplate);
-			TwitterUserInfo323Impl userInfo = null;//(TwitterUserInfo323Impl) juf.searchUserByNameId(fromUserId);
+			Random rand = new Random();
+			int score = rand.nextInt(10) + 1;
+			System.out.println(score);
+			TwitterUserInfo323Impl userInfo = new TwitterUserInfo323Impl(score, toUserId, "Bob the builder", "Torstein", "Pow.com", "http://a0.twimg.com/profile_images/2203232049/PrincesLussy_2005810652208353760_normal.jpg", "Lorem Ipsum", "Nordpolen", new Date(), 5, 10000, 0, "ankicansk", "https://twitter.com/#!/PrincesLussy", 50000);//(TwitterUserInfo323Impl) juf.searchUserByNameId(fromUserId);
 
 			tweets.add(new TweetInfo323Impl(related, id, text, createdAt,
 					fromUser, profileImageUrl, toUserId, fromUserId,
