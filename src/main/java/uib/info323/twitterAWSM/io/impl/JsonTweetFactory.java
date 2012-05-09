@@ -118,8 +118,7 @@ public class JsonTweetFactory implements TweetFactory {
 
 			// TODO litt hack???
 			JsonUserFactory juf = new JsonUserFactory(apiUrl, restTemplate);
-			TwitterUserInfo323Impl userInfo = (TwitterUserInfo323Impl) juf
-					.searchUserByNameId(fromUserId);
+			TwitterUserInfo323Impl userInfo = null;//(TwitterUserInfo323Impl) juf.searchUserByNameId(fromUserId);
 
 			tweets.add(new TweetInfo323Impl(related, id, text, createdAt,
 					fromUser, profileImageUrl, toUserId, fromUserId,

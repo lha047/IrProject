@@ -13,6 +13,7 @@ public abstract class AbstractFeedJamFactory {
 	
 	public abstract TweetFactory getTweetFactory();
 	public abstract UserFactory getUserFactory();
+	public abstract TrendFactory getTrendFactory();
 	
 	
 	public static AbstractFeedJamFactory getFactory(int type) {
