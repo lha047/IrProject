@@ -442,18 +442,67 @@ px      68    160    252    344    436    528    620    712    804    896    */
 		width: 248px;
 		position: relative;
 	}
-	.rating {
-		position: absolute;
-		top: -11px;
-		text-align:center;
-		width: 100%;
-		left: 17px;
-		background: #BF1F1F;
-		color: #fff;
-		
-		border-top-right-radius: 5px;
-		border-top-left-radius: 5px;
+	.tweet_container:hover {
+		opacity: 1 !important;
 	}
+	.tweet .avatar img {
+		width: 80%;
+		height: auto;
+	}
+	.user_info {
+		
+		width: 176px;
+		position: absolute;
+		top: 84px;
+		
+		
+		background: rgba(0,0,0,0.8);
+		border-radius: 5px;
+		
+		color: #fff;
+		padding: 12px;
+		
+		z-index:10;
+		
+		-webkit-box-shadow: 5px 5px 5px rgba(0,0,0,0.1);
+		
+		display: none;
+	}
+		.user_info:before {
+			position: absolute;
+			left: 12px;
+			top:-10px;
+			border-left: 10px solid transparent;
+			border-right: 10px solid transparent;
+			border-bottom: 10px solid #333;
+			
+			content:'';
+		}
+		.user_info .scores {
+			list-style:none;
+			font-size: 13px;
+		}
+		.user_info .user_score {
+			background: #BF1F1F;
+			width: 50px;
+			float:right;
+			color: #fff;
+			border-radius: 3px;
+			border:1px solid #EA7979;
+			text-align:center;
+			display: block;
+		}
+		.user_info .description {
+			position:relative;
+			clear:both;
+			border-top: 1px solid #555555;
+		}
+			.user_info .description:before {
+				position: absolute; 
+				top: -2px;
+				width: 100%;
+				border-top: 1px solid #000;
+			}
 	.tweet {
 		display:block;
 		/*height: 185px;*/
@@ -493,42 +542,16 @@ px      68    160    252    344    436    528    620    712    804    896    */
 			float:left;
 			margin-right: 12px;
 			margin-bottom: 0px;
+			width: auto;
+			height: auto;
 		}
-	.tweet_container .inline_absolute_wrapper, .tweet_container .rating {
-		left: -9999px;
-		opacity:0;
-		-webkit-transition: opacity .2s ease-in;
-	}
-		.tweet_container:hover .tweet {
-			border-top-left-radius: 0;
-			border-top-right-radius: 0;
-		}
-		.tweet_container:hover .inline_absolute_wrapper, .tweet_container:hover .rating {
-			left:12px;
+
+
+		.user:hover .user_info {
 			display: block;
 			opacity:1;
 			-webkit-transition: opacity .2s ease-in;
 		}
-	.inline_absolute_wrapper {
-		position: absolute;
-		width: 224px;
-		margin-top: 5px;
-		z-index: 20;
-		-webkit-box-sizing: content-box; /* Safari/Chrome, other WebKit */
-		-moz-box-sizing: content-box;    /* Firefox, other Gecko */
-		box-sizing: content-box;         /* Opera/IE 8+ */
-		
-	}
-	.retweets, .replies {
-		padding: 12px;
-		background: #333;
-		color: #fff;
-		border-radius: 5px;
-		margin-bottom: 5px;
-		z-index: 20;
-	}
-	.replies {
-	}
 	
 	
 	/*	Footer
