@@ -4,8 +4,8 @@ import uib.info323.twitterAWSM.io.impl.JsonFeedJamFactory;
 
 public abstract class AbstractFeedJamFactory {
 	
-	private static final int JSON = 1;
-	private static final int MYSQL = 2;
+	public static final int JSON = 1;
+	public static final int MYSQL = 2;
 	
 	public AbstractFeedJamFactory() {
 		// TODO Auto-generated constructor stub
