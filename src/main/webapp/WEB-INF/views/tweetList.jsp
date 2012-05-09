@@ -1,7 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 
-		<section class="ten_cols no_padding cf tweet_wrapper" id="tweets">
 			<c:forEach var="tweet" items="${results.tweets}">
 				<article class="left two_half_cols tweet_container five_stars">
 					<section class="rating">
@@ -25,4 +24,3 @@
 					</div>
 				</article>
 			</c:forEach>
-		</section>
