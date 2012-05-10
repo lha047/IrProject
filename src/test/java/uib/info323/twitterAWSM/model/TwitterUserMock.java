@@ -1,5 +1,7 @@
 package uib.info323.twitterAWSM.model;
 
+import java.util.Date;
+
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class TwitterUserMock implements TwitterUserInfo323 {
@@ -37,7 +39,7 @@ public class TwitterUserMock implements TwitterUserInfo323 {
 			return 1;
 	}
 
-	public int getFitnessScore() {
+	public float getFitnessScore() {
 
 		return fitnessScoew;
 	}
@@ -124,6 +126,84 @@ public class TwitterUserMock implements TwitterUserInfo323 {
 	public void setStatusesCount(int statusesCount) {
 		// TODO Auto-generated method stub
 		this.statusesCount = statusesCount;
+	}
+
+	@Override
+	public void setFitnessScore(float fitnessScore) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Date getCreatedDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setCreatedDate(Date createdDate) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getDescription() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDescription(String description) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int getFavoritesCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setFavoritesCount(int favoritesCount) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getLanguage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setLanguage(String language) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getProfileUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setProfileUrl(String profileUrl) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setUrl(String url) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

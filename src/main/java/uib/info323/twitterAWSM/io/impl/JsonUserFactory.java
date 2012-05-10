@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.springframework.web.client.RestTemplate;
 
-import uib.info323.twitterAWSM.io.UserFactory;
+import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
@@ -14,7 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class JsonUserFactory implements UserFactory {
+public class JsonUserFactory implements UserSearchFactory {
 
 	private final String apiUri;
 	private final RestTemplate restTemplate;
@@ -92,12 +92,12 @@ public class JsonUserFactory implements UserFactory {
 
 	}
 
-	public static void main(String[] args) {
-		UserFactory uf = new JsonUserFactory("https://api.twitter.com/",
-				new RestTemplate());
-		uf.searchUserByScreenName("lisaHalvors");
-		uf.searchUserByNameId(96887286);
-	}
+	// public static void main(String[] args) {
+	// UserFactory uf = new JsonUserFactory("https://api.twitter.com/",
+	// new RestTemplate());
+	// uf.searchUserByScreenName("lisaHalvors");
+	// uf.searchUserByNameId(96887286);
+	// }
 
 	@Override
 	public TwitterUserInfo323 searchUserByNameId(long nameId) {

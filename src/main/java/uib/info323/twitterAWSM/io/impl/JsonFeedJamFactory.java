@@ -6,19 +6,20 @@ import org.springframework.web.client.RestTemplate;
 import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
 import uib.info323.twitterAWSM.io.TrendFactory;
 import uib.info323.twitterAWSM.io.TweetFactory;
+import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserFactory;
+import uib.info323.twitterAWSM.io.UserSearchFactory;
 
 @Component
 public class JsonFeedJamFactory extends AbstractFeedJamFactory {
-	
+
 	private final String apiUrl = "https://api.twitter.com/";
 	private final String searchApiUrl = "https://search.twitter.com/search.json?";
 	private final RestTemplate restTemplate = new RestTemplate();
-	
+
 	public JsonFeedJamFactory() {
 		super();
 	}
-	
 
 	@Override
 	public TweetFactory getTweetFactory() {
@@ -26,14 +27,25 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 	}
 
 	@Override
-	public UserFactory getUserFactory() {
+	public UserSearchFactory getUserSearchFactory() {
 		return new JsonUserFactory(apiUrl, restTemplate);
 	}
-
 
 	@Override
 	public TrendFactory getTrendFactory() {
 		return new JsonTrendFactory(apiUrl, restTemplate);
+	}
+
+	@Override
+	public UserFactory getUserFactory() {
+
+		return new UserFactoryImpl();
+	}
+
+	@Override
+	public UserDAO getUserDAO() {
+
+		return new MySQLUserFactory(null);
 	}
 
 }
