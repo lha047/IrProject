@@ -1,24 +1,25 @@
 package uib.info323.twitterAWSM.model.interfaces;
 
+import java.util.Date;
 
 public interface TwitterUserInfo323 extends Comparable<TwitterUserInfo323> {
 
-	public int getFitnessScore();
+	public float getFitnessScore();
 
-	public void setFitnessScore(int fitnessScore);
+	public void setFitnessScore(float fitnessScore);
 
 	// methods from TwitterProfile
-	// public Date getCreatedDate();
-	//
-	// public void setCreatedDate(Date createdDate);
-	//
-	// public String getDescription();
-	//
-	// public void setDescription(String description);
-	//
-	// public int getFavoritesCount();
-	//
-	// public void setFavoritesCount(int favoritesCount);
+	public Date getCreatedDate();
+
+	public void setCreatedDate(Date createdDate);
+
+	public String getDescription();
+
+	public void setDescription(String description);
+
+	public int getFavoritesCount();
+
+	public void setFavoritesCount(int favoritesCount);
 
 	public int getFollowersCount();
 
@@ -32,9 +33,9 @@ public interface TwitterUserInfo323 extends Comparable<TwitterUserInfo323> {
 
 	public void setId(long id);
 
-	// public String getLanguage();
-	//
-	// public void setLanguage(String language);
+	public String getLanguage();
+
+	public void setLanguage(String language);
 
 	public String getLocation();
 
@@ -48,10 +49,9 @@ public interface TwitterUserInfo323 extends Comparable<TwitterUserInfo323> {
 
 	public void setProfileImageUrl(String profileImageUrl);
 
-	//
-	// public String getProfileUrl();
-	//
-	// public void setProfileUrl(String profileUrl);
+	public String getProfileUrl();
+
+	public void setProfileUrl(String profileUrl);
 
 	public String getScreenName();
 
@@ -61,8 +61,8 @@ public interface TwitterUserInfo323 extends Comparable<TwitterUserInfo323> {
 
 	public void setStatusesCount(int statusesCount);
 
-	// public String getUrl();
-	//
-	// public void setUrl(String url);
+	public String getUrl();
+
+	public void setUrl(String url);
 
 }

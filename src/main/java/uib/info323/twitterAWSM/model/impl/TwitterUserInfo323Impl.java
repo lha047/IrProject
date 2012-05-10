@@ -13,7 +13,7 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 @Component
 public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 
-	private int fitnessScore;
+	private float fitnessScore;
 	private long id;
 	private String screenName;
 	private String name;
@@ -51,8 +51,8 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 	 * @param profileUrl
 	 * @param statusesCount
 	 */
-	public TwitterUserInfo323Impl(int fitnessScore, long id, String screenName,
-			String name, String url, String profileImageUrl,
+	public TwitterUserInfo323Impl(float fitnessScore, long id,
+			String screenName, String name, String url, String profileImageUrl,
 			String description, String location, Date createdDate,
 			int favoritesCount, int followersCount, int friendsCount,
 			String language, String profileUrl, int statusesCount) {
@@ -73,11 +73,11 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 		this.statusesCount = statusesCount;
 	}
 
-	public int getFitnessScore() {
+	public float getFitnessScore() {
 		return fitnessScore;
 	}
 
-	public void setFitnessScore(int fitnessScore) {
+	public void setFitnessScore(float fitnessScore) {
 		this.fitnessScore = fitnessScore;
 	}
 
