@@ -40,7 +40,7 @@ public class SearchController {
 			ModelAndView mav = new ModelAndView("tagSearchResults");
 
 			JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory
-					.getFactory(1);
+					.getFactory(AbstractFeedJamFactory.JSON);
 			TweetFactory tweetFactory = factory.getTweetFactory();
 			TweetSearchResults tweetResults = tweetFactory.searchTweets(q,
 					resultsPerPage);
@@ -65,7 +65,7 @@ public class SearchController {
 			ModelAndView mav = new ModelAndView("tweetList");
 
 			JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory
-					.getFactory(1);
+					.getFactory(AbstractFeedJamFactory.JSON);
 			TweetFactory tweetFactory = factory.getTweetFactory();
 			String nextPageUrl = "?page=" + page + "&max_id=" + max_id + "&q=" + q
 					+ "&rpp=" + rpp;

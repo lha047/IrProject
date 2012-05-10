@@ -7,7 +7,9 @@
 <jsp:include page="header.jsp"></jsp:include>
 	
 	<c:if test="${not empty results}">
+		<section class="ten_cols no_padding cf tweet_wrapper" id="tweets">
 			<jsp:include page="tweetList.jsp"></jsp:include>
+		</section>
 	</c:if>
 	
 	<c:if test="${not empty nextPageUrl}">
@@ -51,7 +53,7 @@
 					}).done(function(data) { 
 						$('#more').find('.btn').removeClass('disabled no_text spinner');
 					 	pageIterator += 1;
-					 	$('#tweets').append(data).masonry('appended', data);
+					 	$('#tweets').append(data).masonry('reload');
 						console.log("ajax returned");
 					});
 					
