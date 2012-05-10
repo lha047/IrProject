@@ -1,5 +1,6 @@
 package uib.info323.twitterAWSM.io.impl;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
+import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class MySQLUserFactory implements UserSearchFactory, UserDAO {
@@ -20,10 +24,16 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 	private static final String SQL_INSERT_USER = "insert into users(id, screen_name, name, url, profile_image_url, description, location, date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
 			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
 
+	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = null;
+
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
 	private Date date;
 	private UserRowMapper userRowMapper;
+
+	public MySQLUserFactory() {
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	}
 
 	@Autowired
 	public MySQLUserFactory(
@@ -43,21 +53,34 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 
 	@Override
 	public TwitterUserInfo323 searchUserByScreenName(String screenName) {
-		// TODO Auto-generated method stub
+		//
+		// return namedParameterJdbcTemplate.queryForObject(
+		// SQL_SELECT_USER_BY_SCREEN_NAME, ;
 		return null;
 	}
 
-	// public static void main(String[] args) {
-	// ApplicationContext context = new ClassPathXmlApplicationContext(
-	// "servlet-context.xml");
-	//
-	// UserFactory userFactory = (UserFactory) context.getBean("userFacory");
-	// userFactory.searchUserByNameId(1234);
-	// }
+	public static void main(String[] args) {
+		ApplicationContext context = new FileSystemXmlApplicationContext("src"
+				+ File.separator + "main" + File.separator + "webapp"
+				+ File.separator + "WEB-INF" + File.separator + "spring"
+				+ File.separator + "appServlet" + File.separator
+				+ "db-context.xml");
+
+		MySQLUserFactory userFactory = (MySQLUserFactory) context
+				.getBean("mySqlUserFactory");
+
+		TwitterUserInfo323Impl user = new TwitterUserInfo323Impl((float) 23,
+				(long) 2222, "screenName", "name", "http://url.com",
+				"profileImageUrl", "description", "location", new Date(), 12,
+				23, 23, "No", "http://profile.url", 12);
+
+		System.out.println(userFactory.addUser(user));
+		userFactory.searchUserByNameId(1234);
+	}
 
 	@Override
 	public TwitterUserInfo323 searchUserByNameId(long id) {
-		// TODO
+
 		return null;
 	}
 
