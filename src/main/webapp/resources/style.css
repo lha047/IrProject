@@ -138,6 +138,9 @@ ul {
 .hidden {
 	display: none;
 }
+.full_opacity {
+	opacity: 1 !important;
+}
 
 /* clearfix */
 /* For modern browsers */
@@ -440,8 +443,7 @@ px      68    160    252    344    436    528    620    712    804    896    */
 	.tweet_container {
 		width: 248px;
 		position: relative;
-		
-		-webkit-transition: opacity 0.4s ease;
+		-webkit-transition: opacity 0.4s ease-in;
 	}
 	.tweet_container:hover {
 		opacity: 1 !important;
@@ -451,13 +453,15 @@ px      68    160    252    344    436    528    620    712    804    896    */
 		width: 48px;
 		height: 48px;
 	}
+	.user:hover, .user.active {
+		background: #ccc;
+		border-radius: 5px;
+		cursor: pointer;
+	}
 	.user_info {
-		
 		width: 176px;
 		position: absolute;
 		top: 84px;
-		
-		-webkit-transition: opacity .4s ease-in 1s;
 		
 		background: rgba(0,0,0,0.8);
 		border-radius: 5px;
@@ -469,7 +473,6 @@ px      68    160    252    344    436    528    620    712    804    896    */
 		
 		-webkit-box-shadow: 5px 5px 5px rgba(0,0,0,0.1);
 		display:none;
-		opacity:0;
 	}
 		.user_info:before {
 			position: absolute;
@@ -548,14 +551,6 @@ px      68    160    252    344    436    528    620    712    804    896    */
 			float:left;
 			margin-right: 12px;
 			margin-bottom: 0px;
-			width: auto;
-			height: auto;
-		}
-
-		.user:hover .user_info {
-			display: block;
-			-webkit-transition: opacity .1s ease-in .1s;
-			opacity:1;
 		}
 	
 	
