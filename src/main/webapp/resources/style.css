@@ -337,6 +337,10 @@ px      68    160    252    344    436    528    620    712    804    896    */
 		vertical-align:bottom;
 	}
 	
+	header .logo-white {
+		display:none;
+	}
+	
 	header {
 		position: relative;
 		margin: 0 auto;
@@ -694,6 +698,9 @@ px      68    160    252    344    436    528    620    712    */
 		background: #BF1F1F;
 	}
 		header .logo {
+			display: none;
+		}
+		header .logo-white {
 			display: block;
 		}
 
@@ -778,6 +785,9 @@ px      68    160    252    */
 		background: #BF1F1F;
 	}
 		header .logo {
+			display: none;
+		}
+		header .logo-white {
 			display: block;
 		}
 }
