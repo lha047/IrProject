@@ -10,9 +10,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
@@ -21,14 +25,21 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 
-	private static final String SQL_INSERT_USER = "insert into users(id, screen_name, name, url, profile_image_url, description, location, date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
-			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
+	private static final String SQL_INSERT_USER = "insert into users(ID, SCREEN_NAME, NAME, URL, PROFILE_IMAGE_URL, DESCRIPTION, LOCATION, CREATED_DATE, FAVORITES_COUNT, FOLLOWERS_COUNT, FRIENDS_COUNT, LANGUAGE, PROFILE_URL, STATUSES_COUNT, FITNESS_SCORE, LAST_UPDATED) "
+			+ "values(:ID, :SCREEN_NAME, :NAME, :URL, :PROFILE_IMAGE_URL, :DESCRIPTION, :LOCATION, :CREATED_DATE, :FAVORITES_COUNT, :FOLLOWERS_COUNT, :FRIENDS_COUNT, :LANGUAGE, :PROFILE_URL, :STATUSES_COUNT, :FITNESS_SCORE, :LAST_UPDATED)";
 
-	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = null;
+	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE SCREEN_NAME = :SCREEN_NAME";
+
+	private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE ID = :ID";
+
+	private static final String SQL_UPDATE_USER = "UPDATE users	SET SCREEN_NAME=:SCREEN_NAME, NAME=:NAME, URL=:URL, PROFILE_IMAGE_URL=:PROFILE_IMAGE_URL, DESCRIPTION=:DESCRIPTION, LOCATION=:LOCATION, CREATED_DATE=:CREATED_DATE, FAVORITES_COUNT=:FAVORITES_COUNT,"
+			+ " FOLLOWERS_COUNT=:FAVORITES_COUNT, FRIENDS_COUNT=:FRIENDS_COUNT, LANGUAGE=:LANGUAGE, PROFILE_URL=:PROFILE_URL, STATUSES_COUNT=:STATUSES_COUNT, FITNESS_SCORE=:FITNESS_SCORE, LAST_UPDATED=:LAST_UPDATED "
+			+ "WHERE ID=:ID";
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
 	private Date date;
+
 	private UserRowMapper userRowMapper;
 
 	public MySQLUserFactory() {
@@ -52,15 +63,24 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 	}
 
 	@Override
-	public TwitterUserInfo323 searchUserByScreenName(String screenName) {
-		//
-		// return namedParameterJdbcTemplate.queryForObject(
-		// SQL_SELECT_USER_BY_SCREEN_NAME, ;
-		return null;
+	public TwitterUserInfo323 searchUserByScreenName(String screenName)
+			throws UserNotFoundException {
+		SqlParameterSource namedParameter = new MapSqlParameterSource(
+				"SCREEN_NAME", screenName);
+		TwitterUserInfo323Impl user = null;
+		try {
+			user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
+					.queryForObject(SQL_SELECT_USER_BY_SCREEN_NAME,
+							namedParameter, new UserRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			throw new UserNotFoundException();
+		}
+		return user;
 	}
 
 	public static void main(String[] args) {
-		ApplicationContext context = new FileSystemXmlApplicationContext("src"
+
+		ApplicationContext context = new ClassPathXmlApplicationContext("src"
 				+ File.separator + "main" + File.separator + "webapp"
 				+ File.separator + "WEB-INF" + File.separator + "spring"
 				+ File.separator + "appServlet" + File.separator
@@ -72,53 +92,87 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 		TwitterUserInfo323Impl user = new TwitterUserInfo323Impl((float) 23,
 				(long) 2222, "screenName", "name", "http://url.com",
 				"profileImageUrl", "description", "location", new Date(), 12,
-				23, 23, "No", "http://profile.url", 12);
+				23, 23, "No", "http://profile.url", 12, new Date());
 
 		System.out.println(userFactory.addUser(user));
-		userFactory.searchUserByNameId(1234);
+		TwitterUserInfo323Impl t = null;
+		try {
+			t = (TwitterUserInfo323Impl) userFactory.searchUserByNameId(1111);
+		} catch (UserNotFoundException e) {
+
+		}
+
+		System.out.println(userFactory.searchUserByNameId(2222).getId()
+
+		+ userFactory.searchUserByScreenName("trolloso").getScreenName());
+		TwitterUserInfo323Impl user2 = new TwitterUserInfo323Impl((float) 23,
+				(long) 2222, "øløløløløl", "TrlololololloMannen",
+				"http://url.com", "profileImageUrl", "description", "location",
+				new Date(), 12, 23, 23, "No", "http://profile.url", 12,
+				new Date());
+		userFactory.updateUser(user2);
+		System.out.println(userFactory.searchUserByNameId(2222).getId() + " "
+				+ userFactory.searchUserByNameId(2222).getScreenName());
+
 	}
 
 	@Override
-	public TwitterUserInfo323 searchUserByNameId(long id) {
+	public TwitterUserInfo323 searchUserByNameId(long id)
+			throws UserNotFoundException {
 
-		return null;
+		SqlParameterSource namedParameter = new MapSqlParameterSource("ID", id);
+		TwitterUserInfo323Impl user = null;
+		try {
+			user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
+					.queryForObject(SQL_SELECT_USER_BY_ID, namedParameter,
+							new UserRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			throw new UserNotFoundException();
+		}
+
+		return user;
+	}
+
+	@Override
+	public boolean updateUser(TwitterUserInfo323 user) {
+		Map<String, Object> params = userToMap(user);
+		namedParameterJdbcTemplate.update(SQL_UPDATE_USER, params);
+		return false;
 	}
 
 	@Override
 	public boolean addUser(TwitterUserInfo323 user) {
 		Map<String, Object> params = userToMap(user);
-		int inserted = namedParameterJdbcTemplate.update(SQL_INSERT_USER,
-				params);
-
+		int inserted = -1;
+		try {
+			inserted = namedParameterJdbcTemplate.update(SQL_INSERT_USER,
+					params);
+		} catch (Exception e) {
+			// TODO existing entety
+		}
 		return inserted == 1;
 	}
 
 	private Map<String, Object> userToMap(TwitterUserInfo323 user) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("id", user.getId());
-		params.put("screen_name", user.getScreenName());
-		params.put("name", user.getName());
-		params.put("url", user.getUrl());
-		params.put("profile_image_url", user.getProfileImageUrl());
-		params.put("description", user.getDescription());
-		params.put("location", user.getLocation());
-		params.put("date", user.getCreatedDate());
-		params.put("favorites_count", user.getFavoritesCount());
-		params.put("followers_count", user.getFollowersCount());
-		params.put("friends_count", user.getFriendsCount());
-		params.put("language", user.getLanguage());
-		params.put("profile_url", user.getProfileUrl());
-		params.put("statuses_count", user.getStatusesCount());
-		params.put("fitness_score", user.getFitnessScore());
+		params.put("ID", user.getId());
+		params.put("SCREEN_NAME", user.getScreenName());
+		params.put("NAME", user.getName());
+		params.put("URL", user.getUrl());
+		params.put("PROFILE_IMAGE_URL", user.getProfileImageUrl());
+		params.put("DESCRIPTION", user.getDescription());
+		params.put("LOCATION", user.getLocation());
+		params.put("CREATED_DATE", user.getCreatedDate());
+		params.put("FAVORITES_COUNT", user.getFavoritesCount());
+		params.put("FOLLOWERS_COUNT", user.getFollowersCount());
+		params.put("FRIENDS_COUNT", user.getFriendsCount());
+		params.put("LANGUAGE", user.getLanguage());
+		params.put("PROFILE_URL", user.getProfileUrl());
+		params.put("STATUSES_COUNT", user.getStatusesCount());
+		params.put("FITNESS_SCORE", user.getFitnessScore());
 		date = new Date();
-		params.put("last_updated", dateFormat.format(date));
+		params.put("LAST_UPDATED", dateFormat.format(date));
 		return params;
-	}
-
-	@Override
-	public boolean saveUser(TwitterUserInfo323 user) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

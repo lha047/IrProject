@@ -8,7 +8,7 @@ public interface UserDAO {
 
 	public boolean addUser(TwitterUserInfo323 user);
 
-	public boolean saveUser(TwitterUserInfo323 user);
+	public boolean updateUser(TwitterUserInfo323 user);
 
 	public boolean addListUsers(List<TwitterUserInfo323> users);
 

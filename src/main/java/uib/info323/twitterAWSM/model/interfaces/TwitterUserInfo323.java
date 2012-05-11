@@ -64,5 +64,9 @@ public interface TwitterUserInfo323 extends Comparable<TwitterUserInfo323> {
 	public String getUrl();
 
 	public void setUrl(String url);
+	
+	public Date getLastUpdated();
+	
+	public void setLastUpdated(Date lastUpdated);
 
 }

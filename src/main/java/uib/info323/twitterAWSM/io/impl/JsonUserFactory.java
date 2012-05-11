@@ -77,7 +77,7 @@ public class JsonUserFactory implements UserSearchFactory {
 		user = new TwitterUserInfo323Impl(0, id, screenName, name, url,
 				profileImageUrl, description, location, createdDate,
 				favoritesCount, followersCount, friendsCount, language,
-				profileUrl, statusesCount);
+				profileUrl, statusesCount, new Date());
 
 	}
 

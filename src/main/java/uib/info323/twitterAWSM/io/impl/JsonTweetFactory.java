@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.web.client.RestTemplate;
 
@@ -117,12 +116,7 @@ public class JsonTweetFactory implements TweetFactory {
 			LinkedList<Long> related = (LinkedList<Long>) getRelatedTweets(id,
 					parser);
 
-			// TODO litt hack???
-			JsonUserFactory juf = new JsonUserFactory(apiUrl, restTemplate);
-			Random rand = new Random();
-			int score = rand.nextInt(10) + 1;
-			System.out.println(score);
-			TwitterUserInfo323Impl userInfo = new TwitterUserInfo323Impl(score, toUserId, "Bob the builder", "Torstein", "Pow.com", "http://a0.twimg.com/profile_images/2203232049/PrincesLussy_2005810652208353760_normal.jpg", "Lorem Ipsum", "Nordpolen", new Date(), 5, 10000, 0, "ankicansk", "https://twitter.com/#!/PrincesLussy", 50000);//(TwitterUserInfo323Impl) juf.searchUserByNameId(fromUserId);
+			TwitterUserInfo323Impl userInfo = null;
 
 			tweets.add(new TweetInfo323Impl(related, id, text, createdAt,
 					fromUser, profileImageUrl, toUserId, fromUserId,
@@ -134,19 +128,21 @@ public class JsonTweetFactory implements TweetFactory {
 	}
 
 	@Override
-	public TweetSearchResults getNextPage(String nextPageUrl) {
+	public TweetSearchResults getNextPage(String query, int rpp, int page,
+			long maxId) {
 		// Construct the REST request
+		String nextPageUrl = "?page=" + page + "&max_id=" + maxId + "&q="
+				+ query + "&rpp=" + rpp;
 		String requestUrl = searchApiUrl + nextPageUrl;
 		String searchResults = restTemplate.getForObject(requestUrl,
 				String.class);
 		// Create an object for results and return this object
 
 		return jsonToSearchResults(searchResults);
-
 	}
 
 	private TweetSearchResults jsonToSearchResults(String searchResults) {
-		
+
 		// Parse the JSON result
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(searchResults);
@@ -154,7 +150,10 @@ public class JsonTweetFactory implements TweetFactory {
 
 		// Get search-info from JSON object
 		String searchTerms = object.get("query").getAsString();
-		String nextPageUrl = object.get("next_page").getAsString();
+		String nextPageUrl = null;
+		if (object.get("next_page") != null) {
+			nextPageUrl = object.get("next_page").getAsString();
+		}
 		String refreshUrl = object.get("refresh_url").getAsString();
 		int pageNumber = object.get("page").getAsInt();
 

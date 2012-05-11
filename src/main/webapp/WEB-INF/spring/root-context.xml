@@ -8,5 +8,8 @@
 	<bean id="twitterTemplate"
 		class="org.springframework.social.twitter.api.impl.TwitterTemplate"></bean>
 
-
+	<!-- RowMapper -->
+	<bean id="userRowMapper" class="uib.info323.twitterAWSM.io.rowmapper.UserRowMapper" />
+	
+	
 </beans>

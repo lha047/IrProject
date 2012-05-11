@@ -28,6 +28,7 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 	private String language;
 	private String profileUrl;
 	private int statusesCount;
+	private Date lastUpdated;
 
 	public TwitterUserInfo323Impl() {
 	}
@@ -50,12 +51,13 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 	 * @param language
 	 * @param profileUrl
 	 * @param statusesCount
+	 * @param lastUpdated
 	 */
 	public TwitterUserInfo323Impl(float fitnessScore, long id,
 			String screenName, String name, String url, String profileImageUrl,
 			String description, String location, Date createdDate,
 			int favoritesCount, int followersCount, int friendsCount,
-			String language, String profileUrl, int statusesCount) {
+			String language, String profileUrl, int statusesCount, Date lastUpdated) {
 		this.fitnessScore = fitnessScore;
 		this.id = id;
 		this.screenName = screenName;
@@ -71,6 +73,7 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 		this.language = language;
 		this.profileUrl = profileUrl;
 		this.statusesCount = statusesCount;
+		this.lastUpdated = lastUpdated;
 	}
 
 	private float calculateFitnessScore() {
@@ -198,6 +201,14 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 
 	public void setStatusesCount(int statusesCount) {
 		this.statusesCount = statusesCount;
+	}
+
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 
 	public int compareTo(TwitterUserInfo323 o) {
