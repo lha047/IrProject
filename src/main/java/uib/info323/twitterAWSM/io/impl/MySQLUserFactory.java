@@ -1,5 +1,6 @@
 package uib.info323.twitterAWSM.io.impl;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,9 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import uib.info323.twitterAWSM.io.UserDAO;
+import uib.info323.twitterAWSM.io.UserFactory;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
@@ -47,13 +52,14 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 		return null;
 	}
 
-	// public static void main(String[] args) {
-	// ApplicationContext context = new ClassPathXmlApplicationContext(
-	// "servlet-context.xml");
-	//
-	// UserFactory userFactory = (UserFactory) context.getBean("userFacory");
-	// userFactory.searchUserByNameId(1234);
-	// }
+	public static void main(String[] args) {
+
+		ApplicationContext context = new FileSystemXmlApplicationContext(
+				"src/main/" +  "webapp" + File.separator + "WEB-INF" + File.separator + "spring" + File.separator + "appServlet" + File.separator + "servlet-context.xml");
+
+		UserFactory userFactory = (UserFactory) context.getBean("userFacory");
+		((UserSearchFactory) userFactory).searchUserByNameId(1234);
+	}
 
 	@Override
 	public TwitterUserInfo323 searchUserByNameId(long id) {

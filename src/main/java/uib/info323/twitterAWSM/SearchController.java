@@ -59,17 +59,16 @@ public class SearchController {
 
 		// ajax requests mockup (virker ikke slik den skal =D)
 		@RequestMapping(value = "/ajax", method = RequestMethod.GET)
-		public ModelAndView ajax(@RequestParam String q, String rpp, String page,
-				String max_id) {
+		public ModelAndView ajax(@RequestParam String q, int rpp, int page,
+				long max_id) {
 
 			ModelAndView mav = new ModelAndView("tweetList");
 
 			JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory
 					.getFactory(AbstractFeedJamFactory.JSON);
 			TweetFactory tweetFactory = factory.getTweetFactory();
-			String nextPageUrl = "?page=" + page + "&max_id=" + max_id + "&q=" + q
-					+ "&rpp=" + rpp;
-			TweetSearchResults tweetResults = tweetFactory.getNextPage(nextPageUrl);
+			
+			TweetSearchResults tweetResults = tweetFactory.getNextPage(q, rpp, page, max_id);
 
 			// logger.info("Number of tweets matching " + "#"+q + " is " +
 			// tweetResults.size());

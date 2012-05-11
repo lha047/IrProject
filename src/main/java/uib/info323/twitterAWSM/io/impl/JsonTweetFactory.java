@@ -134,15 +134,16 @@ public class JsonTweetFactory implements TweetFactory {
 	}
 
 	@Override
-	public TweetSearchResults getNextPage(String nextPageUrl) {
+	public TweetSearchResults getNextPage(String query, int rpp, int page, long maxId) {
 		// Construct the REST request
+		String nextPageUrl = "?page=" + page + "&max_id=" + maxId + "&q=" + query
+				+ "&rpp=" + rpp;
 		String requestUrl = searchApiUrl + nextPageUrl;
 		String searchResults = restTemplate.getForObject(requestUrl,
 				String.class);
 		// Create an object for results and return this object
 
 		return jsonToSearchResults(searchResults);
-
 	}
 
 	private TweetSearchResults jsonToSearchResults(String searchResults) {
