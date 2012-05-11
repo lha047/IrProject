@@ -102,6 +102,27 @@ public class SearchController {
 			
 			TweetSearchResults tweetResults = tweetFactory.getNextPage(q, rpp, page, max_id);
 
+			// For each tweet get user info
+						for(TweetInfo323 tweet : tweetResults.getTweets()) {
+							long userId = tweet.getFromUserId();
+							TwitterUserInfo323 user;
+							System.out.println("User id: " + userId);
+							
+							try {
+								
+								user = mySQLUserFactory.searchUserByNameId(userId);
+								System.out.println("Find in database");
+
+							} catch (UserNotFoundException e) {
+								e.printStackTrace();
+								user = factory.getUserSearchFactory().searchUserByNameId(userId);
+								logger.info("Insert user into DB!");
+								mySQLUserFactory.addUser(user);
+							}
+							tweet.setTwitterUserInfo323(user);
+							
+						}
+			
 			// logger.info("Number of tweets matching " + "#"+q + " is " +
 			// tweetResults.size());
 			logger.info("Searching for: " + "#" + q);
