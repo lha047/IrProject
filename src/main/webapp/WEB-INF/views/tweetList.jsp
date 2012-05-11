@@ -3,7 +3,7 @@
 <%@ page session="false" %>
 
 			<c:forEach var="tweet" items="${results.tweets}">
-				<article class="left two_half_cols tweet_container five_stars" style="opacity: 0.<c:out value="${tweet.userInfo.fitnessScore}" />;"><!-- <c:out value="${tweet.tweetRank}" /> -->
+				<article class="left two_half_cols tweet_container five_stars" style="opacity: <c:out value="${tweet.userInfo.fitnessScore}" />;"><!-- <c:out value="${tweet.tweetRank}" /> -->
 					
 					<section class="padding tweet">
 						<section class="cf user">
