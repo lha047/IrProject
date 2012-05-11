@@ -41,6 +41,7 @@ public class UserRowMapper implements RowMapper<TwitterUserInfo323> {
 				rs.getString("LOCATION"), createdDate,
 				rs.getInt("FAVORITES_COUNT"), rs.getInt("FOLLOWERS_COUNT"),
 				rs.getInt("FRIENDS_COUNT"), rs.getString("LANGUAGE"),
-				rs.getString("PROFILE_URL"), rs.getInt("STATUSES_COUNT"));
+				rs.getString("PROFILE_URL"), rs.getInt("STATUSES_COUNT"),
+				rs.getDate("LAST_UPDATED"));
 	}
 }
