@@ -11,10 +11,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
@@ -30,9 +32,14 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 
 	private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE ID = :ID";
 
+	private static final String SQL_UPDATE_USER = "UPDATE users	SET SCREEN_NAME=:SCREEN_NAME, NAME=:NAME, URL=:URL, PROFILE_IMAGE_URL=:PROFILE_IMAGE_URL, DESCRIPTION=:DESCRIPTION, LOCATION=:LOCATION, CREATED_DATE=:CREATED_DATE, FAVORITES_COUNT=:FAVORITES_COUNT,"
+			+ " FOLLOWERS_COUNT=:FAVORITES_COUNT, FRIENDS_COUNT=:FRIENDS_COUNT, LANGUAGE=:LANGUAGE, PROFILE_URL=:PROFILE_URL, STATUSES_COUNT=:STATUSES_COUNT, FITNESS_SCORE=:FITNESS_SCORE, LAST_UPDATED=:LAST_UPDATED "
+			+ "WHERE ID=:ID";
+
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
 	private Date date;
+
 	private UserRowMapper userRowMapper;
 
 	public MySQLUserFactory() {
@@ -56,12 +63,18 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 	}
 
 	@Override
-	public TwitterUserInfo323 searchUserByScreenName(String screenName) {
+	public TwitterUserInfo323 searchUserByScreenName(String screenName)
+			throws UserNotFoundException {
 		SqlParameterSource namedParameter = new MapSqlParameterSource(
 				"SCREEN_NAME", screenName);
-		TwitterUserInfo323Impl user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
-				.queryForObject(SQL_SELECT_USER_BY_SCREEN_NAME, namedParameter,
-						new UserRowMapper());
+		TwitterUserInfo323Impl user = null;
+		try {
+			user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
+					.queryForObject(SQL_SELECT_USER_BY_SCREEN_NAME,
+							namedParameter, new UserRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			throw new UserNotFoundException();
+		}
 		return user;
 	}
 
@@ -81,27 +94,48 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 				23, 23, "No", "http://profile.url", 12);
 
 		System.out.println(userFactory.addUser(user));
+		TwitterUserInfo323Impl t = null;
+		try {
+			t = (TwitterUserInfo323Impl) userFactory.searchUserByNameId(1111);
+		} catch (UserNotFoundException e) {
+
+		}
+
+		System.out.println(userFactory.searchUserByNameId(2222).getId()
+				+ userFactory.searchUserByScreenName("trolloso")
+						.getScreenName());
+		TwitterUserInfo323Impl user2 = new TwitterUserInfo323Impl((float) 23,
+				(long) 2222, "øløløløløl", "TrlololololloMannen",
+				"http://url.com", "profileImageUrl", "description", "location",
+				new Date(), 12, 23, 23, "No", "http://profile.url", 12);
+		userFactory.updateUser(user2);
 		System.out.println(userFactory.searchUserByNameId(2222).getId() + " "
 				+ userFactory.searchUserByNameId(2222).getScreenName());
-		System.out.println(userFactory.searchUserByNameId(2222).getId()
-				+ userFactory.searchUserByScreenName("screenName")
-						.getScreenName());
+
 	}
 
 	@Override
-	public TwitterUserInfo323 searchUserByNameId(long id) {
+	public TwitterUserInfo323 searchUserByNameId(long id)
+			throws UserNotFoundException {
 
 		SqlParameterSource namedParameter = new MapSqlParameterSource("ID", id);
-		TwitterUserInfo323Impl user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
-				.queryForObject(SQL_SELECT_USER_BY_ID, namedParameter,
-						new UserRowMapper());
+		TwitterUserInfo323Impl user = null;
+		try {
+			user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
+					.queryForObject(SQL_SELECT_USER_BY_ID, namedParameter,
+							new UserRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			new UserNotFoundException();
+		}
+
 		return user;
 	}
 
-	private Map<String, Object> mapSqlToUser() {
-		Map<String, Object> m = new HashMap<String, Object>();
-		// m.put(key, value)
-		return null;
+	@Override
+	public boolean updateUser(TwitterUserInfo323 user) {
+		Map<String, Object> params = userToMap(user);
+		namedParameterJdbcTemplate.update(SQL_UPDATE_USER, params);
+		return false;
 	}
 
 	@Override
@@ -137,12 +171,6 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 		date = new Date();
 		params.put("LAST_UPDATED", dateFormat.format(date));
 		return params;
-	}
-
-	@Override
-	public boolean saveUser(TwitterUserInfo323 user) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
