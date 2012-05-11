@@ -11,3 +11,5 @@
 	<link rel="icon" type="image/x-icon" href="resources/images/favicon.ico" />
 	<link rel="icon" type="image/png" href="resources/images/favicon.png" />
 	<link rel="stylesheet" type="text/css" href="resources/style.css" />
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="resources/js/jquery.masonry.min.js"></script>
