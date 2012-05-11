@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.web.client.RestTemplate;
 
@@ -129,10 +128,11 @@ public class JsonTweetFactory implements TweetFactory {
 	}
 
 	@Override
-	public TweetSearchResults getNextPage(String query, int rpp, int page, long maxId) {
+	public TweetSearchResults getNextPage(String query, int rpp, int page,
+			long maxId) {
 		// Construct the REST request
-		String nextPageUrl = "?page=" + page + "&max_id=" + maxId + "&q=" + query
-				+ "&rpp=" + rpp;
+		String nextPageUrl = "?page=" + page + "&max_id=" + maxId + "&q="
+				+ query + "&rpp=" + rpp;
 		String requestUrl = searchApiUrl + nextPageUrl;
 		String searchResults = restTemplate.getForObject(requestUrl,
 				String.class);
@@ -142,7 +142,7 @@ public class JsonTweetFactory implements TweetFactory {
 	}
 
 	private TweetSearchResults jsonToSearchResults(String searchResults) {
-		
+
 		// Parse the JSON result
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(searchResults);
@@ -150,7 +150,10 @@ public class JsonTweetFactory implements TweetFactory {
 
 		// Get search-info from JSON object
 		String searchTerms = object.get("query").getAsString();
-		String nextPageUrl = object.get("next_page").getAsString();
+		String nextPageUrl = null;
+		if (object.get("next_page") != null) {
+			nextPageUrl = object.get("next_page").getAsString();
+		}
 		String refreshUrl = object.get("refresh_url").getAsString();
 		int pageNumber = object.get("page").getAsInt();
 
