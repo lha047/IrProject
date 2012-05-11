@@ -26,20 +26,21 @@ public class UserRowMapper implements RowMapper<TwitterUserInfo323> {
 	public TwitterUserInfo323 mapRow(ResultSet rs, int rowNum)
 			throws SQLException {
 		Date createdDate = null;
+		java.sql.Date d = rs.getDate("CREATED_DATE");
 		try {
-			createdDate = dateFormat.parse(rs.getDate("date").toString());
+			createdDate = dateFormat.parse(d.toString());
 		} catch (ParseException e) {
 			System.out.println("Error in parson of date, UserRowMapper");
 			e.printStackTrace();
 		}
 
-		return userFactory.createTwitterUser(rs.getFloat("fitness_score"),
-				rs.getLong("id"), rs.getString("screen_name"),
-				rs.getString("name"), rs.getString("url"),
-				rs.getString("profile_image_url"), rs.getString("description"),
-				rs.getString("location"), createdDate,
-				rs.getInt("favorites_count"), rs.getInt("followers_count"),
-				rs.getInt("friends_count"), rs.getString("language"),
-				rs.getString("profile_url"), rs.getInt("statuses_count"));
+		return userFactory.createTwitterUser(rs.getFloat("FITNESS_SCORE"),
+				rs.getLong("ID"), rs.getString("SCREEN_NAME"),
+				rs.getString("NAME"), rs.getString("URL"),
+				rs.getString("PROFILE_IMAGE_URL"), rs.getString("DESCRIPTION"),
+				rs.getString("LOCATION"), createdDate,
+				rs.getInt("FAVORITES_COUNT"), rs.getInt("FOLLOWERS_COUNT"),
+				rs.getInt("FRIENDS_COUNT"), rs.getString("LANGUAGE"),
+				rs.getString("PROFILE_URL"), rs.getInt("STATUSES_COUNT"));
 	}
 }

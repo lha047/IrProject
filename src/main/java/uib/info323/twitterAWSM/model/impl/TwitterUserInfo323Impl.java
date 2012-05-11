@@ -73,6 +73,13 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 		this.statusesCount = statusesCount;
 	}
 
+	private float calculateFitnessScore() {
+
+		fitnessScore = statusesCount + friendsCount + followersCount;
+		System.out.println(fitnessScore);
+		return fitnessScore;
+	}
+
 	public float getFitnessScore() {
 		return fitnessScore;
 	}
