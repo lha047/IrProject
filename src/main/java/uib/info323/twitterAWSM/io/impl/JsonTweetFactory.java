@@ -7,8 +7,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import uib.info323.twitterAWSM.exceptions.BadRequestException;
 import uib.info323.twitterAWSM.io.TweetFactory;
 import uib.info323.twitterAWSM.model.impl.TweetInfo323Impl;
 import uib.info323.twitterAWSM.model.impl.TweetSearchResultsImpl;
@@ -45,11 +47,16 @@ public class JsonTweetFactory implements TweetFactory {
 				+ "q={searchTerm}&rpp={resultsPerPage}";
 		// Send the request to the Twitter search API and store JSON result in
 		// String
-		String searchResults = restTemplate.getForObject(requestUrl,
-				String.class, searchTerm, resultsPerPage);
+		try {
+			String searchResults = restTemplate.getForObject(requestUrl,
+					String.class, searchTerm, resultsPerPage);
+			// Create an object for results and return this object
+			return jsonToSearchResults(searchResults);
+		} catch (HttpClientErrorException e){
+			throw new BadRequestException();
+		}
 
-		// Create an object for results and return this object
-		return jsonToSearchResults(searchResults);
+		
 
 	}
 
@@ -134,11 +141,18 @@ public class JsonTweetFactory implements TweetFactory {
 		String nextPageUrl = "?page=" + page + "&max_id=" + maxId + "&q="
 				+ query + "&rpp=" + rpp;
 		String requestUrl = searchApiUrl + nextPageUrl;
+		
+		try {
 		String searchResults = restTemplate.getForObject(requestUrl,
 				String.class);
 		// Create an object for results and return this object
-
 		return jsonToSearchResults(searchResults);
+		} catch (HttpClientErrorException e) {
+			throw new BadRequestException();
+		}
+		
+
+		
 	}
 
 	private TweetSearchResults jsonToSearchResults(String searchResults) {
