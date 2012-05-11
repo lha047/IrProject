@@ -5,7 +5,9 @@
 
 	
 <jsp:include page="header.jsp"></jsp:include>
-	
+	<c:if test="${empty nextPageUrl}">
+	<div class="text_center error">Found no tweets fitting search term "<c:out value="${query}" /></div>
+	</c:if>
 	<c:if test="${not empty results}">
 		<section class="ten_cols no_padding cf tweet_wrapper" id="tweets">
 			<jsp:include page="tweetList.jsp"></jsp:include>
@@ -19,12 +21,15 @@
 				Load more
 			</div>
 		</div>
-		
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script type="text/javascript" src="resources/js/jquery.masonry.min.js"></script>
+
 		
 		<script type="text/javascript">
 			$(document).ready(function() {
+				
+				// toggle user info
+				$('.user').click(function () {
+					$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().parent().toggleClass("full_opacity");
+				});
 				
 				// run masonry
 				var $container = $('#tweets');
