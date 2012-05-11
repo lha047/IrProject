@@ -438,6 +438,89 @@ px      68    160    252    344    436    528    620    712    804    896    */
 					content: ' ';
 				}
 	
+	/*	Trending
+		-------- */
+	h1.trending_topics {
+		font-size: 25px;
+		font-weight: normal;
+		display: block;
+		width: 100%;
+		text-align:center;
+	}
+		.slider, ul.trending_topics, .trending_hour {
+		margin: 0 auto;
+		width: 100%;
+	}
+	ul.trending_topics {
+		list-style:none;
+		height: 145px;
+		padding:0;
+		padding-top: 16px;
+		padding-bottom: 24px;
+		position: relative;
+		overflow:hidden;
+	}
+	.slider {
+		position:relative;
+		padding:0;
+	}
+		.slide {
+			position:absolute;
+			left:0;
+			top:0;
+		}
+		.prev, .next {
+			position:absolute;
+			top: 5px;
+			z-index:200;
+			border-top: 10px solid transparent;
+			border-bottom: 10px solid transparent;
+			cursor:pointer;
+		}
+			.prev:active, .next:active {
+				top:6px;
+			}
+		.prev {
+			position:absolute;
+			left: 50%;
+			margin-left:-90px;
+			border-right: 15px solid #ccc;
+		}
+			.prev:hover {
+				border-right-color: #666;
+			}
+		.next {
+			right: 50%;
+			margin-right:-90px;
+			border-left: 15px solid #ccc;
+		}
+			.next:hover {
+				border-left-color: #666;
+			}
+		.trending_topics .trending_hour {
+			margin-bottom: 36px;
+			padding: 0px;
+			padding-top: 28px;
+			
+			list-style:none;
+			text-align:center;
+		}
+			.trending_topics .date {
+				background: #BF1F1F;
+				color: #fff;
+				font-size: 14px;
+				padding: 3px;
+				border-radius: 3px;
+				position:absolute; 
+				top:0;
+				left:50%;
+				margin-left: -47px;
+			}
+			.trending_topics .trending_hour li {
+				display: inline-block;
+				margin: 6px;
+			}
+	
 	/*	Tweets
 		------ */
 	.tweet_container {
@@ -581,27 +664,6 @@ px      68    160    252    344    436    528    620    712    804    896    */
 		footer img {
 			margin-top: 20px;
 		}
-		
-	
-	/*#wrapper {min-height: 100%;}
-html,body {
-	height: 100%;
-}
-.tweet_wrapper {/*overflow:auto;*/margin-bottom: 150px;}  /* must be same height as the footer 
-
-footer {position: relative;
-	margin-top: -150px; /* negative value of footer height 
-	height: 150px;
-	clear:both;} 
-*/
-/*Opera Fix*/
-body:before {
-	content:"";
-	height:100%;
-	float:left;
-	width:0;
-	margin-top:-32767px;/
-}
 	
 
 /*		Tablet Layout: 768px.
