@@ -127,7 +127,7 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 					.queryForObject(SQL_SELECT_USER_BY_ID, namedParameter,
 							new UserRowMapper());
 		} catch (EmptyResultDataAccessException e) {
-			new UserNotFoundException();
+			throw new UserNotFoundException();
 		}
 
 		return user;

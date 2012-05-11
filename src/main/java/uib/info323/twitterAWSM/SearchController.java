@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
 import uib.info323.twitterAWSM.io.TweetFactory;
 import uib.info323.twitterAWSM.io.impl.JsonFeedJamFactory;
@@ -54,17 +55,23 @@ public class SearchController {
 			TweetSearchResults tweetResults = tweetFactory.searchTweets(q,
 					resultsPerPage);
 			
+			System.out.println(tweetResults.getTweets().size());
 			// For each tweet get user info
 			for(TweetInfo323 tweet : tweetResults.getTweets()) {
 				long userId = tweet.getFromUserId();
 				TwitterUserInfo323 user;
+				System.out.println("User id: " + userId);
 				
 				try {
-					user = mySQLUserFactory.searchUserByNameId(userId);
 					
-				} catch (Exception e) {
+					user = mySQLUserFactory.searchUserByNameId(userId);
+					System.out.println("Find in database");
+
+				} catch (UserNotFoundException e) {
 					e.printStackTrace();
 					user = factory.getUserSearchFactory().searchUserByNameId(userId);
+					logger.info("Insert user into DB!");
+					mySQLUserFactory.addUser(user);
 				}
 				tweet.setTwitterUserInfo323(user);
 				
