@@ -5,6 +5,11 @@
 
 	
 <jsp:include page="header.jsp"></jsp:include>
+	<c:if test="${not empty error}">
+		<div class="error">
+			<c:out value="${error }" />
+		</div>
+	</c:if>
 	<c:if test="${empty nextPageUrl}">
 	<div class="text_center error">Found no tweets fitting search term "<c:out value="${query}" /></div>
 	</c:if>
