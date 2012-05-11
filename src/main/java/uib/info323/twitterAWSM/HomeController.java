@@ -45,9 +45,10 @@ public class HomeController {
 		logger.info("Get todays trends with factory");
 		TrendFactory factory = AbstractFeedJamFactory.getFactory(AbstractFeedJamFactory.JSON).getTrendFactory();
 		Trends trends = factory.getDailyTrendsForDate(new Date()); // Get todays trends
+		
 		logger.info("Got todays trends...");
 		
-		//mav.addObject("trends", trends);
+		mav.addObject("trends", trends);
 
 		return mav;
 	}
