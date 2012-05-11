@@ -10,5 +10,5 @@ public interface UserFactory {
 			String screenName, String name, String url, String profileImageUrl,
 			String description, String location, Date createdDate,
 			int favoritesCount, int followersCount, int friendsCount,
-			String language, String profileUrl, int statusesCount);
+			String language, String profileUrl, int statusesCount, Date lastUpdated);
 }

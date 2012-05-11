@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -79,7 +79,8 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 	}
 
 	public static void main(String[] args) {
-		ApplicationContext context = new FileSystemXmlApplicationContext("src"
+
+		ApplicationContext context = new ClassPathXmlApplicationContext("src"
 				+ File.separator + "main" + File.separator + "webapp"
 				+ File.separator + "WEB-INF" + File.separator + "spring"
 				+ File.separator + "appServlet" + File.separator
@@ -91,7 +92,7 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 		TwitterUserInfo323Impl user = new TwitterUserInfo323Impl((float) 23,
 				(long) 2222, "screenName", "name", "http://url.com",
 				"profileImageUrl", "description", "location", new Date(), 12,
-				23, 23, "No", "http://profile.url", 12);
+				23, 23, "No", "http://profile.url", 12, new Date());
 
 		System.out.println(userFactory.addUser(user));
 		TwitterUserInfo323Impl t = null;
@@ -102,12 +103,13 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 		}
 
 		System.out.println(userFactory.searchUserByNameId(2222).getId()
-				+ userFactory.searchUserByScreenName("trolloso")
-						.getScreenName());
+
+		+ userFactory.searchUserByScreenName("trolloso").getScreenName());
 		TwitterUserInfo323Impl user2 = new TwitterUserInfo323Impl((float) 23,
 				(long) 2222, "øløløløløl", "TrlololololloMannen",
 				"http://url.com", "profileImageUrl", "description", "location",
-				new Date(), 12, 23, 23, "No", "http://profile.url", 12);
+				new Date(), 12, 23, 23, "No", "http://profile.url", 12,
+				new Date());
 		userFactory.updateUser(user2);
 		System.out.println(userFactory.searchUserByNameId(2222).getId() + " "
 				+ userFactory.searchUserByNameId(2222).getScreenName());

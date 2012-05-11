@@ -10,6 +10,6 @@ public interface TweetFactory {
 
 	public TweetSearchResults searchTweetsByDate(String searchTerm, Date date);
 
-	public TweetSearchResults getNextPage(String nextPageUrl);
+	public TweetSearchResults getNextPage(String query, int rpp, int page, long maxId);
 
 }
