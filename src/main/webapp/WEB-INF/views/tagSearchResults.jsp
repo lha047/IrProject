@@ -5,7 +5,9 @@
 
 	
 <jsp:include page="header.jsp"></jsp:include>
-	
+	<c:if test="${empty nextPageUrl}">
+	<div class="text_center error">Found no tweets fitting search term "<c:out value="${query}" /></div>
+	</c:if>
 	<c:if test="${not empty results}">
 		<section class="ten_cols no_padding cf tweet_wrapper" id="tweets">
 			<jsp:include page="tweetList.jsp"></jsp:include>
