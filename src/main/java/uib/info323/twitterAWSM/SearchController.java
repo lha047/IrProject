@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import uib.info323.twitterAWSM.exceptions.BadRequestException;
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
 import uib.info323.twitterAWSM.io.TweetSearchFactory;
