@@ -11,7 +11,7 @@ public abstract class AbstractFeedJamFactory {
 		// TODO Auto-generated constructor stub
 	}
 
-	public abstract TweetFactory getTweetFactory();
+	public abstract TweetSearchFactory getTweetFactory();
 
 	public abstract UserFactory getUserFactory();
 
@@ -20,6 +20,8 @@ public abstract class AbstractFeedJamFactory {
 	public abstract UserDAO getUserDAO();
 
 	public abstract UserSearchFactory getUserSearchFactory();
+
+	public abstract TweetDAO getTweetDAO();
 
 	public static AbstractFeedJamFactory getFactory(int type) {
 		if (type == JSON)

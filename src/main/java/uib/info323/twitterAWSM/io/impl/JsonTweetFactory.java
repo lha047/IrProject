@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.springframework.web.client.RestTemplate;
 
-import uib.info323.twitterAWSM.io.TweetFactory;
+import uib.info323.twitterAWSM.io.TweetSearchFactory;
 import uib.info323.twitterAWSM.model.impl.TweetInfo323Impl;
 import uib.info323.twitterAWSM.model.impl.TweetSearchResultsImpl;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class JsonTweetFactory implements TweetFactory {
+public class JsonTweetFactory implements TweetSearchFactory {
 
 	private final String searchApiUrl;
 	private final String apiUrl;
@@ -60,7 +60,7 @@ public class JsonTweetFactory implements TweetFactory {
 	};
 
 	public static void main(String[] args) {
-		TweetFactory tweetFactory = new JsonTweetFactory(
+		TweetSearchFactory tweetFactory = new JsonTweetFactory(
 				"https://search.twitter.com/search.json?",
 				"https://api.twitter.com/", new RestTemplate());
 		tweetFactory.searchTweets("bergen", 19);

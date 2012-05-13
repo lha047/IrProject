@@ -7,9 +7,12 @@ import java.util.Date;
 import org.springframework.web.client.RestTemplate;
 
 import uib.info323.twitterAWSM.io.UserSearchFactory;
+import uib.info323.twitterAWSM.model.impl.FollowersResultPageImpl;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
+import uib.info323.twitterAWSM.model.interfaces.FollowersResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,11 +24,13 @@ public class JsonUserFactory implements UserSearchFactory {
 
 	private TwitterUserInfo323 user;
 	private SimpleDateFormat dateFormatter;
+	private JsonParser parser;
 
 	public JsonUserFactory(String apiUrl, RestTemplate restTemplate) {
 		this.apiUri = apiUrl;
 		this.restTemplate = restTemplate;
 		dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
+		parser = new JsonParser();
 	}
 
 	@Override
@@ -38,11 +43,10 @@ public class JsonUserFactory implements UserSearchFactory {
 		return user;
 	}
 
-	private void jsonToUser(String request, String twitterUser) {
+	private TwitterUserInfo323 jsonToUser(String request, String twitterUser) {
 		String searchResult = restTemplate.getForObject(request, String.class,
 				twitterUser);
 
-		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(searchResult);
 
 		JsonObject obj = element.getAsJsonObject();
@@ -78,6 +82,7 @@ public class JsonUserFactory implements UserSearchFactory {
 				profileImageUrl, description, location, createdDate,
 				favoritesCount, followersCount, friendsCount, language,
 				profileUrl, statusesCount, new Date());
+		return user;
 
 	}
 
@@ -92,12 +97,17 @@ public class JsonUserFactory implements UserSearchFactory {
 
 	}
 
-	// public static void main(String[] args) {
-	// UserFactory uf = new JsonUserFactory("https://api.twitter.com/",
-	// new RestTemplate());
-	// uf.searchUserByScreenName("lisaHalvors");
-	// uf.searchUserByNameId(96887286);
-	// }
+	public static void main(String[] args) {
+		UserSearchFactory uf = new JsonUserFactory("https://api.twitter.com/",
+				new RestTemplate());
+		TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
+				.searchUserByScreenName("HalvorsenMari");
+		System.out.println(t.getId());
+		FollowersResultPage f = uf.findUsersFollowers(t.getId());
+
+		FollowersResultPage f2 = uf.findUsersFriends(t.getId());
+
+	}
 
 	@Override
 	public TwitterUserInfo323 searchUserByNameId(long nameId) {
@@ -108,6 +118,43 @@ public class JsonUserFactory implements UserSearchFactory {
 		jsonToUser(request, l.toString());
 
 		return user;
+	}
+
+	public FollowersResultPage findUsersFriends(long userId) {
+		String request = "https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id={userId}";
+		FollowersResultPage resPage = findFollowersFriends(userId, request);
+		return resPage;
+	}
+
+	@Override
+	public FollowersResultPage findUsersFollowers(long userId) {
+		String request = "https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id={userId}";
+		FollowersResultPage resPage = findFollowersFriends(userId, request);
+		return resPage;
+	}
+
+	private FollowersResultPage findFollowersFriends(long userId, String request) {
+		String s = restTemplate.getForObject(request, String.class, userId);
+		JsonElement element = parser.parse(s);
+		JsonObject object = element.getAsJsonObject();
+		JsonArray array = object.get("ids").getAsJsonArray();
+		long[] userIds = new long[array.size()];
+		System.out.println("number of followers" + array.size());
+		for (int i = 0; i < array.size(); i++) {
+			userIds[i] = array.get(i).getAsJsonPrimitive().getAsLong();
+			System.out.println("followersId :" + i + " " + userIds[i]);
+		}
+
+		int previous = object.get("previous_cursor").getAsInt();
+		int next = -1;
+		if (!object.get("next_cursor").isJsonObject()) {
+			next = object.get("next_cursor").getAsInt();
+		}
+		FollowersResultPage resPage = new FollowersResultPageImpl();
+		resPage.setFollowersIds(userIds);
+		resPage.setNextCursor(next);
+		resPage.setPreviousCursor(previous);
+		return resPage;
 	}
 
 }

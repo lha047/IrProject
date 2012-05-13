@@ -10,6 +10,10 @@ public interface UserDAO {
 
 	public boolean updateUser(TwitterUserInfo323 user);
 
+	public TwitterUserInfo323 selectUserById(long userId);
+
+	public TwitterUserInfo323 selectUserByScreenName(String screenName);
+
 	public boolean addListUsers(List<TwitterUserInfo323> users);
 
 }

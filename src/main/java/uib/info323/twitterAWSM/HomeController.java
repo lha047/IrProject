@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
 import uib.info323.twitterAWSM.io.TrendFactory;
-import uib.info323.twitterAWSM.io.TweetFactory;
+import uib.info323.twitterAWSM.io.TweetSearchFactory;
 import uib.info323.twitterAWSM.io.impl.JsonFeedJamFactory;
 import uib.info323.twitterAWSM.model.interfaces.Trends;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;

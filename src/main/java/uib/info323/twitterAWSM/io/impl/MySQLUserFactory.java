@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,12 +18,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
-import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
-public class MySQLUserFactory implements UserSearchFactory, UserDAO {
+public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_INSERT_USER = "insert into users(ID, SCREEN_NAME, NAME, URL, PROFILE_IMAGE_URL, DESCRIPTION, LOCATION, CREATED_DATE, FAVORITES_COUNT, FOLLOWERS_COUNT, FRIENDS_COUNT, LANGUAGE, PROFILE_URL, STATUSES_COUNT, FITNESS_SCORE, LAST_UPDATED) "
 			+ "values(:ID, :SCREEN_NAME, :NAME, :URL, :PROFILE_IMAGE_URL, :DESCRIPTION, :LOCATION, :CREATED_DATE, :FAVORITES_COUNT, :FOLLOWERS_COUNT, :FRIENDS_COUNT, :LANGUAGE, :PROFILE_URL, :STATUSES_COUNT, :FITNESS_SCORE, :LAST_UPDATED)";
@@ -63,7 +62,7 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 	}
 
 	@Override
-	public TwitterUserInfo323 searchUserByScreenName(String screenName)
+	public TwitterUserInfo323 selectUserByScreenName(String screenName)
 			throws UserNotFoundException {
 		SqlParameterSource namedParameter = new MapSqlParameterSource(
 				"SCREEN_NAME", screenName);
@@ -80,7 +79,7 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 
 	public static void main(String[] args) {
 
-		ApplicationContext context = new ClassPathXmlApplicationContext("src"
+		ApplicationContext context = new FileSystemXmlApplicationContext("src"
 				+ File.separator + "main" + File.separator + "webapp"
 				+ File.separator + "WEB-INF" + File.separator + "spring"
 				+ File.separator + "appServlet" + File.separator
@@ -89,35 +88,38 @@ public class MySQLUserFactory implements UserSearchFactory, UserDAO {
 		MySQLUserFactory userFactory = (MySQLUserFactory) context
 				.getBean("mySqlUserFactory");
 
-		TwitterUserInfo323Impl user = new TwitterUserInfo323Impl((float) 23,
-				(long) 2222, "screenName", "name", "http://url.com",
-				"profileImageUrl", "description", "location", new Date(), 12,
-				23, 23, "No", "http://profile.url", 12, new Date());
+		TwitterUserInfo323Impl s = (TwitterUserInfo323Impl) userFactory
+				.selectUserByScreenName("lisaHalvors");
+		System.out.println(s.getId() + " " + s.getScreenName());
+		// TwitterUserInfo323Impl user = new TwitterUserInfo323Impl((float) 23,
+		// (long) 2222, "screenName", "name", "http://url.com",
+		// "profileImageUrl", "description", "location", new Date(), 12,
+		// 23, 23, "No", "http://profile.url", 12, new Date());
+		//
+		// System.out.println(userFactory.addUser(user));
+		// TwitterUserInfo323Impl t = null;
+		// try {
+		// t = (TwitterUserInfo323Impl) userFactory.searchUserByNameId(1111);
+		// } catch (UserNotFoundException e) {
+		//
+		// }
 
-		System.out.println(userFactory.addUser(user));
-		TwitterUserInfo323Impl t = null;
-		try {
-			t = (TwitterUserInfo323Impl) userFactory.searchUserByNameId(1111);
-		} catch (UserNotFoundException e) {
-
-		}
-
-		System.out.println(userFactory.searchUserByNameId(2222).getId()
-
-		+ userFactory.searchUserByScreenName("trolloso").getScreenName());
-		TwitterUserInfo323Impl user2 = new TwitterUserInfo323Impl((float) 23,
-				(long) 2222, "øløløløløl", "TrlololololloMannen",
-				"http://url.com", "profileImageUrl", "description", "location",
-				new Date(), 12, 23, 23, "No", "http://profile.url", 12,
-				new Date());
-		userFactory.updateUser(user2);
-		System.out.println(userFactory.searchUserByNameId(2222).getId() + " "
-				+ userFactory.searchUserByNameId(2222).getScreenName());
+		// System.out.println(userFactory.searchUserByNameId(2222).getId()
+		//
+		// + userFactory.searchUserByScreenName("trolloso").getScreenName());
+		// TwitterUserInfo323Impl user2 = new TwitterUserInfo323Impl((float) 23,
+		// (long) 2222, "øløløløløl", "TrlololololloMannen",
+		// "http://url.com", "profileImageUrl", "description", "location",
+		// new Date(), 12, 23, 23, "No", "http://profile.url", 12,
+		// new Date());
+		// userFactory.updateUser(user2);
+		// System.out.println(userFactory.searchUserByNameId(2222).getId() + " "
+		// + userFactory.searchUserByNameId(2222).getScreenName());
 
 	}
 
 	@Override
-	public TwitterUserInfo323 searchUserByNameId(long id)
+	public TwitterUserInfo323 selectUserById(long id)
 			throws UserNotFoundException {
 
 		SqlParameterSource namedParameter = new MapSqlParameterSource("ID", id);

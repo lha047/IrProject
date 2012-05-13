@@ -4,11 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.social.twitter.api.TwitterProfile;
-import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
-
 
 public class TweetInfo323Impl implements TweetInfo323 {
 
@@ -28,6 +26,9 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	private List<String> mentions;
 	private List<String> tags;
 	private TwitterUserInfo323 userInfo;
+
+	public TweetInfo323Impl() {
+	}
 
 	public TweetInfo323Impl(List<Long> related, long id, String text,
 			Date createdAt, String fromUser, String profileImageUrl,

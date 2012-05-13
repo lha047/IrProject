@@ -5,7 +5,8 @@ import org.springframework.web.client.RestTemplate;
 
 import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
 import uib.info323.twitterAWSM.io.TrendFactory;
-import uib.info323.twitterAWSM.io.TweetFactory;
+import uib.info323.twitterAWSM.io.TweetDAO;
+import uib.info323.twitterAWSM.io.TweetSearchFactory;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserFactory;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
@@ -22,7 +23,7 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 	}
 
 	@Override
-	public TweetFactory getTweetFactory() {
+	public TweetSearchFactory getTweetFactory() {
 		return new JsonTweetFactory(searchApiUrl, apiUrl, restTemplate);
 	}
 
@@ -46,6 +47,12 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 	public UserDAO getUserDAO() {
 
 		return new MySQLUserFactory(null);
+	}
+
+	@Override
+	public TweetDAO getTweetDAO() {
+		// TODO Auto-generated method stub
+		return new MySQLTweetFactory();
 	}
 
 }
