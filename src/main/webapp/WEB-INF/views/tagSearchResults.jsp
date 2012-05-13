@@ -5,6 +5,11 @@
 
 	
 <jsp:include page="header.jsp"></jsp:include>
+	<c:if test="${not empty error}">
+		<div class="error">
+			<c:out value="${error }" />
+		</div>
+	</c:if>
 	<c:if test="${empty nextPageUrl}">
 	<div class="text_center error">Found no tweets fitting search term "<c:out value="${query}" /></div>
 	</c:if>
@@ -27,9 +32,17 @@
 			$(document).ready(function() {
 				
 				// toggle user info
-				$('.user').click(function () {
-					$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().parent().toggleClass("full_opacity");
-				});
+				var usrClickVar = $('.user');
+				function usrClick() {
+					usrClickVar.unbind();
+					usrClickVar = $('.user');
+					usrClickVar.click(function () {
+						console.log("click");
+						$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().parent().toggleClass("full_opacity");
+					});
+				}
+				
+				usrClick();
 				
 				// run masonry
 				var $container = $('#tweets');
@@ -46,6 +59,8 @@
 				
 				console.log(next_url);
 				
+				
+				
 				$('#more').click(function() {
 					console.log("start ajax request for '" + "search/ajax?q=test&page="+pageIterator+"&"+max_id+"&"+next_url[3]+"'");
 					
@@ -55,11 +70,13 @@
 					$.ajax({
 					  url: "search/ajax?q=test&page="+pageIterator+"&"+max_id+"&"+next_url[3],
 					  context: '#more'
-					}).done(function(data) { 
+					}).done(function(data) {
+						
 						$('#more').find('.btn').removeClass('disabled no_text spinner');
 					 	pageIterator += 1;
 					 	$('#tweets').append(data).masonry('reload');
 						console.log("ajax returned");
+						usrClick();
 					});
 					
 				});

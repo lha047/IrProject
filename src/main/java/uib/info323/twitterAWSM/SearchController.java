@@ -41,40 +41,46 @@ public class SearchController {
 		ModelAndView mav = new ModelAndView("tagSearchResults");
 		JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory
 				.getFactory(AbstractFeedJamFactory.JSON);
+
 		TweetSearchFactory tweetFactory = factory.getTweetFactory();
-		TweetSearchResults tweetResults = tweetFactory.searchTweets(q,
-				resultsPerPage);
 
-		System.out.println(tweetResults.getTweets().size());
-		// For each tweet get user info
-		for (TweetInfo323 tweet : tweetResults.getTweets()) {
-			long userId = tweet.getFromUserId();
-			TwitterUserInfo323 user;
-			System.out.println("User id: " + userId);
+		TweetSearchResults tweetResults;
+		try {
+			tweetResults = tweetFactory.searchTweets(q, resultsPerPage);
+			System.out.println(tweetResults.getTweets().size());
+			// For each tweet get user info
+			for (TweetInfo323 tweet : tweetResults.getTweets()) {
+				long userId = tweet.getFromUserId();
+				TwitterUserInfo323 user;
+				System.out.println("User id: " + userId);
 
-			try {
+				try {
 
-				user = mySQLUserFactory.selectUserById(userId);
-				System.out.println("Find in database");
+					user = mySQLUserFactory.selectUserById(userId);
+					System.out.println("Find in database");
 
-			} catch (UserNotFoundException e) {
-				e.printStackTrace();
-				user = factory.getUserSearchFactory()
-						.searchUserByNameId(userId);
-				logger.info("Insert user into DB!");
-				mySQLUserFactory.addUser(user);
+				} catch (UserNotFoundException e) {
+					e.printStackTrace();
+					user = factory.getUserSearchFactory().searchUserByNameId(
+							userId);
+					logger.info("Insert user into DB!");
+					mySQLUserFactory.addUser(user);
+				}
+				tweet.setTwitterUserInfo323(user);
+
 			}
-			tweet.setTwitterUserInfo323(user);
 
+			// logger.info("Number of tweets matching " + "#"+q + " is " +
+			// tweetResults.size());
+			logger.info("Searching for: " + "#" + q);
+
+			mav.addObject("query", q);
+			mav.addObject("results", tweetResults);
+			mav.addObject("nextPageUrl", tweetResults.nextPageUrl());
+
+		} catch (BadRequestException e) {
+			mav.addObject("error", "Ran out of requests.");
 		}
-
-		// logger.info("Number of tweets matching " + "#"+q + " is " +
-		// tweetResults.size());
-		logger.info("Searching for: " + "#" + q);
-
-		mav.addObject("query", q);
-		mav.addObject("results", tweetResults);
-		mav.addObject("nextPageUrl", tweetResults.nextPageUrl());
 
 		return mav;
 
@@ -91,36 +97,40 @@ public class SearchController {
 				.getFactory(AbstractFeedJamFactory.JSON);
 		TweetSearchFactory tweetFactory = factory.getTweetFactory();
 
-		TweetSearchResults tweetResults = tweetFactory.getNextPage(q, rpp,
-				page, max_id);
+		try {
+			TweetSearchResults tweetResults = tweetFactory.getNextPage(q, rpp,
+					page, max_id);
 
-		// For each tweet get user info
-		for (TweetInfo323 tweet : tweetResults.getTweets()) {
-			long userId = tweet.getFromUserId();
-			TwitterUserInfo323 user;
-			System.out.println("User id: " + userId);
+			// For each tweet get user info
+			for (TweetInfo323 tweet : tweetResults.getTweets()) {
+				long userId = tweet.getFromUserId();
+				TwitterUserInfo323 user;
+				System.out.println("User id: " + userId);
 
-			try {
+				try {
 
-				user = mySQLUserFactory.selectUserById(userId);
-				System.out.println("Find in database");
+					user = mySQLUserFactory.selectUserById(userId);
+					System.out.println("Find in database");
 
-			} catch (UserNotFoundException e) {
-				e.printStackTrace();
-				user = factory.getUserSearchFactory()
-						.searchUserByNameId(userId);
-				logger.info("Insert user into DB!");
-				mySQLUserFactory.addUser(user);
+				} catch (UserNotFoundException e) {
+					e.printStackTrace();
+					user = factory.getUserSearchFactory().searchUserByNameId(
+							userId);
+					logger.info("Insert user into DB!");
+					mySQLUserFactory.addUser(user);
+				}
+				tweet.setTwitterUserInfo323(user);
+
 			}
-			tweet.setTwitterUserInfo323(user);
 
+			// logger.info("Number of tweets matching " + "#"+q + " is " +
+			// tweetResults.size());
+			logger.info("Searching for: " + "#" + q);
+			mav.addObject("query", q);
+			mav.addObject("results", tweetResults);
+		} catch (BadRequestException e) {
+			mav.addObject("error", "Ran out of requests.");
 		}
-
-		// logger.info("Number of tweets matching " + "#"+q + " is " +
-		// tweetResults.size());
-		logger.info("Searching for: " + "#" + q);
-		mav.addObject("query", q);
-		mav.addObject("results", tweetResults);
 
 		return mav;
 
