@@ -26,6 +26,7 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	private List<String> mentions;
 	private List<String> tags;
 	private TwitterUserInfo323 userInfo;
+	private Date lastUpdated;
 
 	public TweetInfo323Impl() {
 	}
@@ -345,6 +346,15 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	@Override
 	public void setTwitterUserInfo323(TwitterUserInfo323 userInfo) {
 		this.userInfo = userInfo;
+	}
+
+	public Date getLastUpdated() {
+
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 
 }
