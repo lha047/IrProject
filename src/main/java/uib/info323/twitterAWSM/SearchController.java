@@ -45,6 +45,12 @@ public class SearchController {
 	public ModelAndView search(@RequestParam String q, int resultsPerPage) {
 
 		ModelAndView mav = new ModelAndView("tagSearchResults");
+		
+		if(q.isEmpty()) {
+			mav.addObject("error", "Please specify a search term.");
+			return mav;
+		}
+		
 		JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory
 				.getFactory(AbstractFeedJamFactory.JSON);
 
