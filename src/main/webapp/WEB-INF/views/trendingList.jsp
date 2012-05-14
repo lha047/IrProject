@@ -11,7 +11,7 @@
 			<ul class="">
 				
 				<c:forEach var="trend" items="${hourTrends.value}">
-		 			<li><a href="search?q=<c:out value="${trend.name}" />&resultsPerPage=20"><c:out value="${trend.name}" /></a></li>	
+		 			<li><a href="search?q=<c:out value="${trend.query}" />&resultsPerPage=20"><c:out value="${trend.name}" /></a></li>	
 				</c:forEach>
 			</ul>
 		</li>	
