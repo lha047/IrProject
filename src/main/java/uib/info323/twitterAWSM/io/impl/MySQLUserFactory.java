@@ -20,6 +20,7 @@ import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
+import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class MySQLUserFactory implements UserDAO {
@@ -34,6 +35,12 @@ public class MySQLUserFactory implements UserDAO {
 	private static final String SQL_UPDATE_USER = "UPDATE users	SET SCREEN_NAME=:SCREEN_NAME, NAME=:NAME, URL=:URL, PROFILE_IMAGE_URL=:PROFILE_IMAGE_URL, DESCRIPTION=:DESCRIPTION, LOCATION=:LOCATION, CREATED_DATE=:CREATED_DATE, FAVORITES_COUNT=:FAVORITES_COUNT,"
 			+ " FOLLOWERS_COUNT=:FAVORITES_COUNT, FRIENDS_COUNT=:FRIENDS_COUNT, LANGUAGE=:LANGUAGE, PROFILE_URL=:PROFILE_URL, STATUSES_COUNT=:STATUSES_COUNT, FITNESS_SCORE=:FITNESS_SCORE, LAST_UPDATED=:LAST_UPDATED "
 			+ "WHERE ID=:ID";
+
+	private static final String SQL_SELECT_USERS_ID = "SELECT ID FROM users";
+
+	private static final String SQL_INSERT_FOLLOWING = "INSERT INTO following (userId, following) values (:userId, :following)";
+
+	private static final String SQL_INSERT_FOLLOWERS = "INSERT INTO followers (userId, follower) values (:userId, :follower)";
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
@@ -91,6 +98,10 @@ public class MySQLUserFactory implements UserDAO {
 		TwitterUserInfo323Impl s = (TwitterUserInfo323Impl) userFactory
 				.selectUserByScreenName("lisaHalvors");
 		System.out.println(s.getId() + " " + s.getScreenName());
+
+		List<Long> users = userFactory.findUsersFromDB();
+		System.out.println(users.size());
+
 		// TwitterUserInfo323Impl user = new TwitterUserInfo323Impl((float) 23,
 		// (long) 2222, "screenName", "name", "http://url.com",
 		// "profileImageUrl", "description", "location", new Date(), 12,
@@ -116,6 +127,48 @@ public class MySQLUserFactory implements UserDAO {
 		// System.out.println(userFactory.searchUserByNameId(2222).getId() + " "
 		// + userFactory.searchUserByNameId(2222).getScreenName());
 
+	}
+
+	private List<Long> findUsersFromDB() {
+		Map<String, Long> map = new HashMap<String, Long>();
+		List<Long> list = namedParameterJdbcTemplate.queryForList(
+				SQL_SELECT_USERS_ID, map, Long.class);
+		return list;
+	}
+
+	public void addFollowers(FollowersFollowingResultPage f) {
+
+		long[] followers = f.getFollowersIds();
+		for (long follower : followers) {
+			Map<String, Object> paramMap = followersToMap(f.getUserId(),
+					follower);
+			namedParameterJdbcTemplate.update(SQL_INSERT_FOLLOWERS, paramMap);
+		}
+
+	}
+
+	private Map<String, Object> followersToMap(long userId, long follower) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("userId", userId);
+		params.put("follower", follower);
+		return params;
+	}
+
+	public void addFollowing(FollowersFollowingResultPage f) {
+		long[] following = f.getFollowersIds();
+		for (long follow : following) {
+			Map<String, Object> paramMap = followingToMap(f.getUserId(), follow);
+			namedParameterJdbcTemplate.update(SQL_INSERT_FOLLOWING, paramMap);
+		}
+	}
+
+	private Map<String, Object> followingToMap(long userId, long following) {
+		Map<String, Object> params = new HashMap<String, Object>();
+
+		params.put("userId", userId);
+		params.put("following", following);
+
+		return params;
 	}
 
 	@Override
