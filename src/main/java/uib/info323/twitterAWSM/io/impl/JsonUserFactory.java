@@ -122,18 +122,27 @@ public class JsonUserFactory implements UserSearchFactory {
 
 	public FollowersFollowingResultPage findUsersFriends(long userId) {
 		String request = "https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id={userId}";
-		FollowersFollowingResultPage resPage = findFollowersFriends(userId, request);
+		FollowersFollowingResultPage resPage = findFollowersFriends(userId,
+				request);
 		return resPage;
 	}
 
 	@Override
 	public FollowersFollowingResultPage findUsersFollowers(long userId) {
 		String request = "https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id={userId}";
-		FollowersFollowingResultPage resPage = findFollowersFriends(userId, request);
+		FollowersFollowingResultPage resPage = findFollowersFriends(userId,
+				request);
 		return resPage;
 	}
 
-	private FollowersFollowingResultPage findFollowersFriends(long userId, String request) {
+	private FollowersFollowingResultPage findFollowersFriends(long userId,
+			String request) {
+		try {
+			Thread.sleep(24 * 1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String s = restTemplate.getForObject(request, String.class, userId);
 		JsonElement element = parser.parse(s);
 		JsonObject object = element.getAsJsonObject();

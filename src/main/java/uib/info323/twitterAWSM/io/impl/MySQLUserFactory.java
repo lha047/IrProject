@@ -15,9 +15,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.web.client.RestTemplate;
 
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
+import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
@@ -40,7 +42,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_INSERT_FOLLOWING = "INSERT INTO following (userId, following) values (:userId, :following)";
 
-	private static final String SQL_INSERT_FOLLOWERS = "INSERT INTO followers (userId, follower) values (:userId, :follower)";
+	private static final String SQL_INSERT_FOLLOWERS = "INSERT INTO followers (userId, followerId) values (:userId, :followerId)";
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
@@ -95,37 +97,38 @@ public class MySQLUserFactory implements UserDAO {
 		MySQLUserFactory userFactory = (MySQLUserFactory) context
 				.getBean("mySqlUserFactory");
 
-		TwitterUserInfo323Impl s = (TwitterUserInfo323Impl) userFactory
-				.selectUserByScreenName("lisaHalvors");
-		System.out.println(s.getId() + " " + s.getScreenName());
+		// TwitterUserInfo323Impl s = (TwitterUserInfo323Impl) userFactory
+		// .selectUserByScreenName("lisaHalvors");
+		// System.out.println(s.getId() + " " + s.getScreenName());
 
 		List<Long> users = userFactory.findUsersFromDB();
 		System.out.println(users.size());
 
-		// TwitterUserInfo323Impl user = new TwitterUserInfo323Impl((float) 23,
-		// (long) 2222, "screenName", "name", "http://url.com",
-		// "profileImageUrl", "description", "location", new Date(), 12,
-		// 23, 23, "No", "http://profile.url", 12, new Date());
-		//
-		// System.out.println(userFactory.addUser(user));
-		// TwitterUserInfo323Impl t = null;
-		// try {
-		// t = (TwitterUserInfo323Impl) userFactory.searchUserByNameId(1111);
-		// } catch (UserNotFoundException e) {
-		//
-		// }
+		UserSearchFactory uf = new JsonUserFactory("https://api.twitter.com/",
+				new RestTemplate());
 
-		// System.out.println(userFactory.searchUserByNameId(2222).getId()
-		//
-		// + userFactory.searchUserByScreenName("trolloso").getScreenName());
-		// TwitterUserInfo323Impl user2 = new TwitterUserInfo323Impl((float) 23,
-		// (long) 2222, "øløløløløl", "TrlololololloMannen",
-		// "http://url.com", "profileImageUrl", "description", "location",
-		// new Date(), 12, 23, 23, "No", "http://profile.url", 12,
-		// new Date());
-		// userFactory.updateUser(user2);
-		// System.out.println(userFactory.searchUserByNameId(2222).getId() + " "
-		// + userFactory.searchUserByNameId(2222).getScreenName());
+		int TO_NUMBER = users.size();
+		FollowersFollowingResultPage[] l = new FollowersFollowingResultPage[TO_NUMBER];
+		FollowersFollowingResultPage[] l2 = new FollowersFollowingResultPage[TO_NUMBER];
+
+		for (int i = 0; i < TO_NUMBER; i++) {
+			System.out.println("Teller " + i);
+			System.out.println("*******Twitter " + users.get(i) + "*********");
+			FollowersFollowingResultPage f = uf
+					.findUsersFollowers(users.get(i));
+			FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
+			System.out.println("*******DB " + users.get(i) + "*********");
+			userFactory.addFollowers(f);
+			userFactory.addFollowing(f2);
+		}
+
+		// userFactory.addFollowers(f);
+		// userFactory.addFollowing(f2);
+
+		for (int i = 0; i < TO_NUMBER; i++) {
+
+			System.out.println("******** USER " + i + " ********");
+		}
 
 	}
 
@@ -150,7 +153,7 @@ public class MySQLUserFactory implements UserDAO {
 	private Map<String, Object> followersToMap(long userId, long follower) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("userId", userId);
-		params.put("follower", follower);
+		params.put("followerId", follower);
 		return params;
 	}
 
