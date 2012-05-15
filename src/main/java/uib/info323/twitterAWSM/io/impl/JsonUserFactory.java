@@ -7,9 +7,9 @@ import java.util.Date;
 import org.springframework.web.client.RestTemplate;
 
 import uib.info323.twitterAWSM.io.UserSearchFactory;
-import uib.info323.twitterAWSM.model.impl.FollowersResultPageImpl;
+import uib.info323.twitterAWSM.model.impl.FollowersFollowingResultPageImpl;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
-import uib.info323.twitterAWSM.model.interfaces.FollowersResultPage;
+import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 import com.google.gson.JsonArray;
@@ -103,9 +103,9 @@ public class JsonUserFactory implements UserSearchFactory {
 		TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
 				.searchUserByScreenName("HalvorsenMari");
 		System.out.println(t.getId());
-		FollowersResultPage f = uf.findUsersFollowers(t.getId());
+		FollowersFollowingResultPage f = uf.findUsersFollowers(t.getId());
 
-		FollowersResultPage f2 = uf.findUsersFriends(t.getId());
+		FollowersFollowingResultPage f2 = uf.findUsersFriends(t.getId());
 
 	}
 
@@ -120,20 +120,20 @@ public class JsonUserFactory implements UserSearchFactory {
 		return user;
 	}
 
-	public FollowersResultPage findUsersFriends(long userId) {
+	public FollowersFollowingResultPage findUsersFriends(long userId) {
 		String request = "https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id={userId}";
-		FollowersResultPage resPage = findFollowersFriends(userId, request);
+		FollowersFollowingResultPage resPage = findFollowersFriends(userId, request);
 		return resPage;
 	}
 
 	@Override
-	public FollowersResultPage findUsersFollowers(long userId) {
+	public FollowersFollowingResultPage findUsersFollowers(long userId) {
 		String request = "https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id={userId}";
-		FollowersResultPage resPage = findFollowersFriends(userId, request);
+		FollowersFollowingResultPage resPage = findFollowersFriends(userId, request);
 		return resPage;
 	}
 
-	private FollowersResultPage findFollowersFriends(long userId, String request) {
+	private FollowersFollowingResultPage findFollowersFriends(long userId, String request) {
 		String s = restTemplate.getForObject(request, String.class, userId);
 		JsonElement element = parser.parse(s);
 		JsonObject object = element.getAsJsonObject();
@@ -150,7 +150,7 @@ public class JsonUserFactory implements UserSearchFactory {
 		if (!object.get("next_cursor").isJsonObject()) {
 			next = object.get("next_cursor").getAsInt();
 		}
-		FollowersResultPage resPage = new FollowersResultPageImpl();
+		FollowersFollowingResultPage resPage = new FollowersFollowingResultPageImpl();
 		resPage.setFollowersIds(userIds);
 		resPage.setNextCursor(next);
 		resPage.setPreviousCursor(previous);
