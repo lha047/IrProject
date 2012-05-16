@@ -1,12 +1,21 @@
 package uib.info323.twitterAWSM.model.impl;
 
-import uib.info323.twitterAWSM.model.interfaces.FollowersResultPage;
+import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 
-public class FollowersResultPageImpl implements FollowersResultPage {
+public class FollowersFollowingResultPageImpl implements FollowersFollowingResultPage {
 
 	private long[] followersIds;
 	private int previousCursor;
 	private int nextCursor;
+	private long userId;
+
+	public long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
 
 	@Override
 	public long[] getFollowersIds() {

@@ -1,6 +1,10 @@
 package uib.info323.twitterAWSM.model.interfaces;
 
-public interface FollowersResultPage {
+public interface FollowersFollowingResultPage {
+
+	public long getUserId();
+
+	public void setUserId(long userId);
 
 	public long[] getFollowersIds();
 
