@@ -3,6 +3,7 @@ package uib.info323.twitterAWSM;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -18,9 +19,11 @@ import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
 import uib.info323.twitterAWSM.io.TrendFactory;
 import uib.info323.twitterAWSM.io.TweetSearchFactory;
 import uib.info323.twitterAWSM.io.impl.JsonFeedJamFactory;
+import uib.info323.twitterAWSM.model.interfaces.Trend;
 import uib.info323.twitterAWSM.model.interfaces.Trends;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
+import uib.info323.twitterAWSM.utils.TweetParser;
 
 /**
  * Handles requests for the application home page.
@@ -44,11 +47,16 @@ public class HomeController {
 		
 		logger.info("Get todays trends with factory");
 		TrendFactory factory = AbstractFeedJamFactory.getFactory(AbstractFeedJamFactory.JSON).getTrendFactory();
-		Trends trends = factory.getDailyTrendsForDate(new Date()); // Get todays trends
-		
+		Trends trendsByHour = factory.getDailyTrendsForDate(new Date()); // Get todays trends
+		for(List<Trend> trends : trendsByHour.getTrends().values()) {
+			for(Trend trend : trends) {
+				trend.setQuery(TweetParser.toHtmlEntities(trend.getQuery()));
+				System.out.println(trend.getQuery());
+			}
+		}
 		logger.info("Got todays trends...");
 		
-		mav.addObject("trends", trends);
+		mav.addObject("trends", trendsByHour);
 
 		return mav;
 	}
