@@ -45,12 +45,12 @@ public class SearchController {
 	public ModelAndView search(@RequestParam String q, int resultsPerPage) {
 
 		ModelAndView mav = new ModelAndView("tagSearchResults");
-		
-		if(q.isEmpty()) {
+
+		if (q.isEmpty()) {
 			mav.addObject("error", "Please specify a search term.");
 			return mav;
 		}
-		
+
 		JsonFeedJamFactory factory = (JsonFeedJamFactory) AbstractFeedJamFactory
 				.getFactory(AbstractFeedJamFactory.JSON);
 
@@ -64,7 +64,7 @@ public class SearchController {
 			// For each tweet get user info
 			for (TweetInfo323 tweet : tweetResults.getTweets()) {
 				long userId = tweet.getFromUserId();
-				TwitterUserInfo323 user;
+				TwitterUserInfo323 user = null;
 				System.out.println("User id: " + userId);
 
 				try {
@@ -78,6 +78,8 @@ public class SearchController {
 							userId);
 					logger.info("Insert user into DB!");
 					mySQLUserFactory.addUser(user);
+				} catch (BadRequestException bre) {
+					mav.addObject("error", "Ran out of requests.");
 				}
 				tweet.setTwitterUserInfo323(user);
 

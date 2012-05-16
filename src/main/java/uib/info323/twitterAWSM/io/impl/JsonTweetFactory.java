@@ -51,6 +51,7 @@ public class JsonTweetFactory implements TweetSearchFactory {
 			String searchResults = restTemplate.getForObject(requestUrl,
 					String.class, searchTerm, resultsPerPage);
 			// Create an object for results and return this object
+			System.out.println("SearchResult bad request:::::" + searchResults);
 			return jsonToSearchResults(searchResults);
 		} catch (HttpClientErrorException e) {
 			throw new BadRequestException();
