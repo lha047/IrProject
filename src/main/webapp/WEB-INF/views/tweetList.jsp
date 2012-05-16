@@ -1,5 +1,6 @@
 <%@page import="java.util.Random"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page session="false" %>
 
 			<c:forEach var="tweet" items="${results.tweets}">
@@ -13,6 +14,9 @@
 								</strong><br />
 								<small style="color:#666;">@<c:out value="${tweet.fromUser}" /></small>
 								
+							</section>
+							<section class="tweet_date">
+								<fmt:formatDate value="${tweet.createdAt}" pattern="dd.MMM HH:mm" />
 							</section>
 							<section class="user_info">
 									<span class="user_score">score<br /><strong><c:out value="${tweet.userInfo.fitnessScore}" /></strong></span>

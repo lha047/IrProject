@@ -568,6 +568,10 @@ px      68    160    252    344    436    528    620    712    804    896    */
 		width: 48px;
 		height: 48px;
 	}
+		.tweet .tweet_date {
+			font-style: italic;
+			color: #666;
+		}
 	.user {
 		border: 1px solid #fff;
 		padding: 3px;
