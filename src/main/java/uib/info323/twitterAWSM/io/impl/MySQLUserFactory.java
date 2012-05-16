@@ -44,6 +44,10 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_INSERT_FOLLOWERS = "INSERT INTO followers (userId, followerId) values (:userId, :followerId)";
 
+	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
+
+	private static final String SELECT_FOLLOWING_BY_ID = "SELECT following FROM following WHERE userId = :userId";
+
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
 	private Date date;
@@ -107,28 +111,30 @@ public class MySQLUserFactory implements UserDAO {
 		UserSearchFactory uf = new JsonUserFactory("https://api.twitter.com/",
 				new RestTemplate());
 
-		int TO_NUMBER = users.size();
-		FollowersFollowingResultPage[] l = new FollowersFollowingResultPage[TO_NUMBER];
-		FollowersFollowingResultPage[] l2 = new FollowersFollowingResultPage[TO_NUMBER];
+		// To test selectFollowersByUserId(id);
+		// long id = 1;
+		// List<Long> followers = userFactory.selectFollowersByUserId(id );
+		// for (Long l : followers) {
+		// System.out.println(l);
+		// }
 
-		for (int i = 0; i < TO_NUMBER; i++) {
-			System.out.println("Teller " + i);
-			System.out.println("*******Twitter " + users.get(i) + "*********");
-			FollowersFollowingResultPage f = uf
-					.findUsersFollowers(users.get(i));
-			FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
-			System.out.println("*******DB " + users.get(i) + "*********");
-			userFactory.addFollowers(f);
-			userFactory.addFollowing(f2);
-		}
-
+		// To run insert follower following
+		// int TO_NUMBER = users.size();
+		// FollowersFollowingResultPage[] l = new
+		// FollowersFollowingResultPage[TO_NUMBER];
+		// FollowersFollowingResultPage[] l2 = new
+		// FollowersFollowingResultPage[TO_NUMBER];
+		//
+		// for (int i = 0; i < TO_NUMBER; i++) {
+		// System.out.println("Teller " + i);
+		// System.out.println("*******Twitter " + users.get(i) + "*********");
+		// FollowersFollowingResultPage f = uf
+		// .findUsersFollowers(users.get(i));
+		// FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
+		// System.out.println("*******DB " + users.get(i) + "*********");
 		// userFactory.addFollowers(f);
 		// userFactory.addFollowing(f2);
-
-		for (int i = 0; i < TO_NUMBER; i++) {
-
-			System.out.println("******** USER " + i + " ********");
-		}
+		// }
 
 	}
 
@@ -136,6 +142,24 @@ public class MySQLUserFactory implements UserDAO {
 		Map<String, Long> map = new HashMap<String, Long>();
 		List<Long> list = namedParameterJdbcTemplate.queryForList(
 				SQL_SELECT_USERS_ID, map, Long.class);
+		return list;
+	}
+
+	public List<Long> selectFollowersByUserId(long userId) {
+
+		SqlParameterSource parameter = new MapSqlParameterSource("userId",
+				userId);
+		List<Long> list = namedParameterJdbcTemplate.queryForList(
+				SELECT_FOLLOWERS_BY_ID, parameter, Long.class);
+		return list;
+	}
+
+	public List<Long> selectFollowingByUserId(long userId) {
+
+		SqlParameterSource parameter = new MapSqlParameterSource("userId",
+				userId);
+		List<Long> list = namedParameterJdbcTemplate.queryForList(
+				SELECT_FOLLOWING_BY_ID, parameter, Long.class);
 		return list;
 	}
 
