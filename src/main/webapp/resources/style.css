@@ -561,18 +561,20 @@ px      68    160    252    344    436    528    620    712    804    896    */
 	.tweet_container {
 		width: 248px;
 		position: relative;
-		-webkit-transition: opacity 0.4s ease-in;
-	}
-	.tweet_container:hover {
-		opacity: 1 !important;
 		
 	}
+	
 	.tweet .avatar img {
 		width: 48px;
 		height: 48px;
 	}
+		.tweet .tweet_date {
+			font-style: italic;
+			color: #666;
+		}
 	.user {
 		border: 1px solid #fff;
+		padding: 3px;
 	}
 	.user:hover, .user.active {
 		background: rgb(255,255,255); /* Old browsers */
@@ -588,6 +590,7 @@ px      68    160    252    344    436    528    620    712    804    896    */
 		border: 1px solid #ccc;
 		cursor: pointer;
 	}
+		
 	.user_info {
 		width: 176px;
 		position: absolute;
@@ -642,18 +645,20 @@ px      68    160    252    344    436    528    620    712    804    896    */
 				border-top: 1px solid #000;
 				content: '';
 			}
+	.tweet_border {
+		border: 1px solid #ccc;
+		border-radius: 5px;
+	}
 	.tweet {
 		display:block;
-		/*height: 185px;*/
-		/*margin-right: 12px;
-		margin-bottom: 12px;*/
-		
+		-webkit-transition: opacity 0.4s ease-in;
 		background: #fff;
-		border: 1px solid #ccc;
 		
 		border-radius: 5px;
-		
 	}
+		.tweet:hover {
+			opacity: 1 !important;	
+		}
 		.tweet:nth-child(5n) {
 			margin-right: 0;
 		}

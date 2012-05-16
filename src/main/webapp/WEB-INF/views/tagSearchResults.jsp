@@ -7,7 +7,7 @@
 <jsp:include page="header.jsp"></jsp:include>
 	<c:if test="${not empty error}">
 		<div class="error">
-			<c:out value="${error }" />
+			<c:out value="${error}" />
 		</div>
 	</c:if>
 
@@ -28,6 +28,16 @@
 		
 		<script type="text/javascript">
 			$(document).ready(function() {
+				var active=false;
+				/*$(document).click(function() {
+					console.log('document click');
+					if(active) {
+						
+						active = false;
+						$('.active').removeClass('active').parent().find('.user_info').hide().parent().parent().removeClass("full_opacity");
+					}
+					
+				});*/
 				
 				// toggle user info
 				var usrClickVar = $('.user');
@@ -35,10 +45,13 @@
 					usrClickVar.unbind();
 					usrClickVar = $('.user');
 					usrClickVar.click(function () {
+						active = true;
 						console.log("click");
-						$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().parent().toggleClass("full_opacity");
+						$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().toggleClass("full_opacity");
 					});
 				}
+				
+
 				
 				usrClick();
 				

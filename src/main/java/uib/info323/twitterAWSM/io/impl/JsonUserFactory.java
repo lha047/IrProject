@@ -4,8 +4,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import uib.info323.twitterAWSM.exceptions.BadRequestException;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.model.impl.FollowersFollowingResultPageImpl;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
@@ -43,10 +45,15 @@ public class JsonUserFactory implements UserSearchFactory {
 		return user;
 	}
 
-	private TwitterUserInfo323 jsonToUser(String request, String twitterUser) {
-		String searchResult = restTemplate.getForObject(request, String.class,
-				twitterUser);
-
+	private TwitterUserInfo323 jsonToUser(String request, String twitterUser)
+			throws BadRequestException {
+		String searchResult = "";
+		try {
+			searchResult = restTemplate.getForObject(request, String.class,
+					twitterUser);
+		} catch (HttpClientErrorException hcee) {
+			throw new BadRequestException();
+		}
 		JsonElement element = parser.parse(searchResult);
 
 		JsonObject obj = element.getAsJsonObject();
@@ -110,7 +117,8 @@ public class JsonUserFactory implements UserSearchFactory {
 	}
 
 	@Override
-	public TwitterUserInfo323 searchUserByNameId(long nameId) {
+	public TwitterUserInfo323 searchUserByNameId(long nameId)
+			throws BadRequestException {
 		String request = apiUri
 				+ "1/users/show.json?user_id={nameId}&include_entities=true";
 		// https://api.twitter.com/

@@ -14,3 +14,6 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script type="text/javascript" src="resources/js/jquery.masonry.min.js"></script>
 	<script type="text/javascript" src="resources/js/jquery.revolver.js"></script>
+	<!--[if lt IE 9]>
+	<script src="text/javascript" src="resources/js/html5shiv.js"></script>
+	<![endif]-->
