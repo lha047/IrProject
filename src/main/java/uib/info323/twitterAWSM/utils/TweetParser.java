@@ -39,5 +39,10 @@ public class TweetParser {
 		}
 		return list;
 	}
+	
+	public static String toHtmlEntities(String string) {
+		
+		return string.replaceAll("#", "%23");
+	}
 
 }
