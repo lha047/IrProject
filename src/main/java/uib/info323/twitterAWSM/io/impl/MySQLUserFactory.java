@@ -119,22 +119,22 @@ public class MySQLUserFactory implements UserDAO {
 		// }
 
 		// To run insert follower following
-		// int TO_NUMBER = users.size();
-		// FollowersFollowingResultPage[] l = new
-		// FollowersFollowingResultPage[TO_NUMBER];
-		// FollowersFollowingResultPage[] l2 = new
-		// FollowersFollowingResultPage[TO_NUMBER];
-		//
-		// for (int i = 0; i < TO_NUMBER; i++) {
-		// System.out.println("Teller " + i);
-		// System.out.println("*******Twitter " + users.get(i) + "*********");
-		// FollowersFollowingResultPage f = uf
-		// .findUsersFollowers(users.get(i));
-		// FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
-		// System.out.println("*******DB " + users.get(i) + "*********");
-		// userFactory.addFollowers(f);
-		// userFactory.addFollowing(f2);
-		// }
+		int TO_NUMBER = 5;
+		FollowersFollowingResultPage[] l = new FollowersFollowingResultPage[TO_NUMBER];
+		FollowersFollowingResultPage[] l2 = new FollowersFollowingResultPage[TO_NUMBER];
+
+		for (int i = 0; i < TO_NUMBER; i++) {
+			System.out.println("Teller " + i);
+			System.out.println("*******Twitter " + users.get(i) + "*********");
+			FollowersFollowingResultPage f = uf
+					.findUsersFollowers(users.get(i));
+			FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
+
+			System.out.println("*******DB " + f.getUserId() + " "
+					+ f2.getUserId() + "*********");
+			userFactory.addFollowers(f);
+			userFactory.addFollowing(f2);
+		}
 
 	}
 

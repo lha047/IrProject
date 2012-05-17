@@ -65,7 +65,7 @@ public class SearchController {
 			for (TweetInfo323 tweet : tweetResults.getTweets()) {
 				long userId = tweet.getFromUserId();
 				TwitterUserInfo323 user = null;
-				System.out.println("User id: " + userId);
+				System.out.println("TweetText:::::::" + tweet.getText());
 
 				try {
 

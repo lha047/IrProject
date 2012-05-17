@@ -171,6 +171,7 @@ public class JsonUserFactory implements UserSearchFactory {
 		resPage.setFollowersIds(userIds);
 		resPage.setNextCursor(next);
 		resPage.setPreviousCursor(previous);
+		resPage.setUserId(userId);
 		return resPage;
 	}
 
