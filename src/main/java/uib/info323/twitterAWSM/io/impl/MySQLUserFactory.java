@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -40,14 +43,16 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_SELECT_USERS_ID = "SELECT ID FROM users";
 
-	private static final String SQL_INSERT_FOLLOWING = "INSERT INTO following (userId, following) values (:userId, :following)";
+	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (userId, following) values (:userId, :following)";
 
-	private static final String SQL_INSERT_FOLLOWERS = "INSERT INTO followers (userId, followerId) values (:userId, :followerId)";
+	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (userId, followerId) values (:userId, :followerId)";
 
 	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
 
 	private static final String SELECT_FOLLOWING_BY_ID = "SELECT following FROM following WHERE userId = :userId";
 
+	// Correct logger...
+	private static Logger logger = LoggerFactory.getLogger(MySQLUserFactory.class);
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
 	private Date date;
@@ -134,6 +139,12 @@ public class MySQLUserFactory implements UserDAO {
 					+ f2.getUserId() + "*********");
 			userFactory.addFollowers(f);
 			userFactory.addFollowing(f2);
+			try {
+				Thread.sleep(1000*20);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
