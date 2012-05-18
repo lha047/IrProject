@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.spi.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -48,6 +50,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SELECT_FOLLOWING_BY_ID = "SELECT following FROM following WHERE userId = :userId";
 
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(MySQLUserFactory.class);
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
 	private Date date;
@@ -134,6 +137,12 @@ public class MySQLUserFactory implements UserDAO {
 					+ f2.getUserId() + "*********");
 			userFactory.addFollowers(f);
 			userFactory.addFollowing(f2);
+			try {
+				Thread.sleep(1000*20);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}

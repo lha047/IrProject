@@ -9,6 +9,13 @@
 			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
 		</layout>
 	</appender>
+	<appender name="errorlog" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="logs/feedjam-error.log"/>
+		<param name="Append" value="True"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-23d{ISO08601} %-5p: %c - %m%n" />
+		</layout>
+	</appender>
 	
 	<!-- Application Loggers -->
 	<logger name="edu.uib.info323">
@@ -30,6 +37,11 @@
 
 	<logger name="org.springframework.web">
 		<level value="info" />
+	</logger>
+	
+	<logger name="uib.info323" additivity="true">
+		<level value="error" />
+		<appender-ref ref="errorlog"/>
 	</logger>
 
 	<!-- Root Logger -->
