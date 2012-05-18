@@ -43,9 +43,9 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_SELECT_USERS_ID = "SELECT ID FROM users";
 
-	private static final String SQL_INSERT_FOLLOWING = "INSERT INTO following (userId, following) values (:userId, :following)";
+	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (userId, following) values (:userId, :following)";
 
-	private static final String SQL_INSERT_FOLLOWERS = "INSERT INTO followers (userId, followerId) values (:userId, :followerId)";
+	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (userId, followerId) values (:userId, :followerId)";
 
 	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
 
