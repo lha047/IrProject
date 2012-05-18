@@ -51,6 +51,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SELECT_FOLLOWING_BY_ID = "SELECT following FROM following WHERE userId = :userId";
 
+	// Correct logger...
 	private static Logger logger = LoggerFactory.getLogger(MySQLUserFactory.class);
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
