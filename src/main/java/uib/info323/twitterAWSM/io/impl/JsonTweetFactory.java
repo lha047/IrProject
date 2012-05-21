@@ -40,12 +40,6 @@ public class JsonTweetFactory implements TweetSearchFactory {
 	}
 
 	@Override
-	public TweetSearchResults searchTweetsByDate(String searchTerm, Date date) {
-		// TODO Auto-generated method stub
-		return null;
-	};
-
-	@Override
 	public TweetSearchResults searchTweets(String searchTerm, int resultsPerPage) {
 
 		// Construct the REST request
