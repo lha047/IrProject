@@ -4,29 +4,29 @@ import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 
 public class FollowersFollowingResultPageImpl implements FollowersFollowingResultPage {
 
-	private long[] followersIds;
+	private String[] followersScreenNames;
 	private int previousCursor;
 	private int nextCursor;
-	private long userId;
+	private String screenName;
 
-	public long getUserId() {
-		return userId;
+	public String getScreenName() {
+		return screenName;
 	}
 
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
-
-	@Override
-	public long[] getFollowersIds() {
-
-		return followersIds;
+	public void setScreenName(String userId) {
+		this.screenName = userId;
 	}
 
 	@Override
-	public void setFollowersIds(long[] followersIds) {
+	public String[] getFollowersScreenNames() {
 
-		this.followersIds = followersIds;
+		return followersScreenNames;
+	}
+
+	@Override
+	public void setFollowersScreenNames(String[] followersScreenNames) {
+
+		this.followersScreenNames = followersScreenNames;
 	}
 
 	@Override

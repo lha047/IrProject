@@ -43,13 +43,13 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_SELECT_USERS_ID = "SELECT ID FROM users";
 
-	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (userId, following) values (:userId, :following)";
+	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (SCREEN_NAME, FOLLOWING_SCREEN_NAME) values (:screenName, :followingScreenName)";
 
-	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (userId, followerId) values (:userId, :followerId)";
+	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (SCREEN_NAME, FOLLOWER_SCREEN_NAME) values (:screenName, :followerScreenName)";
 
-	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
+	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT FOLLOWER_SCREEN_NAME FROM followers WHERE SCREEN_NAME = :screenName";
 
-	private static final String SELECT_FOLLOWING_BY_ID = "SELECT following FROM following WHERE userId = :userId";
+	private static final String SELECT_FOLLOWING_BY_ID = "SELECT FOLLOWING_SCREEN_NAME FROM following WHERE SCREEN_NAME = :screenName";
 
 	// Correct logger...
 	private static Logger logger = LoggerFactory.getLogger(MySQLUserFactory.class);
@@ -110,11 +110,10 @@ public class MySQLUserFactory implements UserDAO {
 		// .selectUserByScreenName("lisaHalvors");
 		// System.out.println(s.getId() + " " + s.getScreenName());
 
-		List<Long> users = userFactory.findUsersFromDB();
+		List<String> users = userFactory.findUsersFromDB();
 		System.out.println(users.size());
 
-		UserSearchFactory uf = new JsonUserFactory("https://api.twitter.com/",
-				new RestTemplate());
+		UserSearchFactory uf = new HttpUserFactory(new RestTemplate());
 
 		// To test selectFollowersByUserId(id);
 		// long id = 1;
@@ -135,8 +134,8 @@ public class MySQLUserFactory implements UserDAO {
 					.findUsersFollowers(users.get(i));
 			FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
 
-			System.out.println("*******DB " + f.getUserId() + " "
-					+ f2.getUserId() + "*********");
+			System.out.println("*******DB " + f.getScreenName() + " "
+					+ f2.getScreenName() + "*********");
 			userFactory.addFollowers(f);
 			userFactory.addFollowing(f2);
 			try {
@@ -149,26 +148,26 @@ public class MySQLUserFactory implements UserDAO {
 
 	}
 
-	private List<Long> findUsersFromDB() {
+	private List<String> findUsersFromDB() {
 		Map<String, Long> map = new HashMap<String, Long>();
-		List<Long> list = namedParameterJdbcTemplate.queryForList(
-				SQL_SELECT_USERS_ID, map, Long.class);
+		List<String> list = namedParameterJdbcTemplate.queryForList(
+				SQL_SELECT_USERS_ID, map, String.class);
 		return list;
 	}
 
-	public List<Long> selectFollowersByUserId(long userId) {
+	public List<String> selectFollowersByUserId(String screenName) {
 
 		SqlParameterSource parameter = new MapSqlParameterSource("userId",
-				userId);
-		List<Long> list = namedParameterJdbcTemplate.queryForList(
-				SELECT_FOLLOWERS_BY_ID, parameter, Long.class);
+				screenName);
+		List<String> list = namedParameterJdbcTemplate.queryForList(
+				SELECT_FOLLOWERS_BY_ID, parameter, String.class);
 		return list;
 	}
 
-	public List<Long> selectFollowingByUserId(long userId) {
+	public List<Long> selectFollowingByUserId(String screenName) {
 
-		SqlParameterSource parameter = new MapSqlParameterSource("userId",
-				userId);
+		SqlParameterSource parameter = new MapSqlParameterSource("SCREEN_NAME",
+				screenName);
 		List<Long> list = namedParameterJdbcTemplate.queryForList(
 				SELECT_FOLLOWING_BY_ID, parameter, Long.class);
 		return list;
@@ -176,35 +175,35 @@ public class MySQLUserFactory implements UserDAO {
 
 	public void addFollowers(FollowersFollowingResultPage f) {
 
-		long[] followers = f.getFollowersIds();
-		for (long follower : followers) {
-			Map<String, Object> paramMap = followersToMap(f.getUserId(),
+		String[] followers = f.getFollowersScreenNames();
+		for (String follower : followers) {
+			Map<String, Object> paramMap = followersToMap(f.getScreenName(),
 					follower);
 			namedParameterJdbcTemplate.update(SQL_INSERT_FOLLOWERS, paramMap);
 		}
 
 	}
 
-	private Map<String, Object> followersToMap(long userId, long follower) {
+	private Map<String, Object> followersToMap(String screenName, String followerScreenName) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("userId", userId);
-		params.put("followerId", follower);
+		params.put("SCREEN_NAME", screenName);
+		params.put("FOLLOWER_SCREEN_NAME", followerScreenName);
 		return params;
 	}
 
 	public void addFollowing(FollowersFollowingResultPage f) {
-		long[] following = f.getFollowersIds();
-		for (long follow : following) {
-			Map<String, Object> paramMap = followingToMap(f.getUserId(), follow);
+		String[] following = f.getFollowersScreenNames();
+		for (String follow : following) {
+			Map<String, Object> paramMap = followingToMap(f.getScreenName(), follow);
 			namedParameterJdbcTemplate.update(SQL_INSERT_FOLLOWING, paramMap);
 		}
 	}
 
-	private Map<String, Object> followingToMap(long userId, long following) {
+	private Map<String, Object> followingToMap(String screenName, String followingScreenName) {
 		Map<String, Object> params = new HashMap<String, Object>();
 
-		params.put("userId", userId);
-		params.put("following", following);
+		params.put("SCREEN_NAME", screenName);
+		params.put("FOLLOWING_SCREEN_NAME", followingScreenName);
 
 		return params;
 	}
