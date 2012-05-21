@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +42,8 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_SELECT_USERS_ID = "SELECT ID FROM users";
 
+	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT followerId FROM followers";
+
 	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (userId, following) values (:userId, :following)";
 
 	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (userId, followerId) values (:userId, :followerId)";
@@ -52,7 +53,8 @@ public class MySQLUserFactory implements UserDAO {
 	private static final String SELECT_FOLLOWING_BY_ID = "SELECT following FROM following WHERE userId = :userId";
 
 	// Correct logger...
-	private static Logger logger = LoggerFactory.getLogger(MySQLUserFactory.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(MySQLUserFactory.class);
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
 	private Date date;
@@ -110,11 +112,45 @@ public class MySQLUserFactory implements UserDAO {
 		// .selectUserByScreenName("lisaHalvors");
 		// System.out.println(s.getId() + " " + s.getScreenName());
 
-		List<Long> users = userFactory.findUsersFromDB();
-		System.out.println(users.size());
+		// List<Long> users =
+		// userFactory.selectAllIdsFromDB(SQL_SELECT_USERS_ID);
+		// System.out.println(users.size());
 
 		UserSearchFactory uf = new JsonUserFactory("https://api.twitter.com/",
 				new RestTemplate());
+		List<Long> followers = userFactory
+				.selectAllIdsFromDB(SQL_SELECT_ALL_FOLLOWERS);
+		System.out.println(followers.size());
+		int START = 329;
+		int STOP = followers.size();
+		long millis = 30 * 1000;
+		for (int i = START; i < STOP; i++) {
+
+			TwitterUserInfo323 tu = uf.searchUserByNameId(followers.get(i));
+			System.out.println(i + " user " + tu.getId());
+			userFactory.addUser(tu);
+
+			try {
+				Thread.sleep(millis);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		// UserRank userRank = new UserRank("https://api.twitter.com/",
+		// new RestTemplate());
+
+		int STOPP = 1;
+		// for (int i = 0; i < STOPP; i++) {
+		// System.out.println("Rank Users " + users.get(i));
+		// double d = userRank.userRank(userFactory.selectUserByScreenName(
+		// "lisaHalvors").getId());
+		// System.out.println("Rank " + d);
+		// TwitterUserInfo323 user = userFactory.selectUserById(users.get(i));
+		// user.setFitnessScore((float) d);
+		// userFactory.updateUser(user);
+		// }
 
 		// To test selectFollowersByUserId(id);
 		// long id = 1;
@@ -124,35 +160,37 @@ public class MySQLUserFactory implements UserDAO {
 		// }
 
 		// To run insert follower following
-		int TO_NUMBER = 5;
-		FollowersFollowingResultPage[] l = new FollowersFollowingResultPage[TO_NUMBER];
-		FollowersFollowingResultPage[] l2 = new FollowersFollowingResultPage[TO_NUMBER];
-
-		for (int i = 0; i < TO_NUMBER; i++) {
-			System.out.println("Teller " + i);
-			System.out.println("*******Twitter " + users.get(i) + "*********");
-			FollowersFollowingResultPage f = uf
-					.findUsersFollowers(users.get(i));
-			FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
-
-			System.out.println("*******DB " + f.getUserId() + " "
-					+ f2.getUserId() + "*********");
-			userFactory.addFollowers(f);
-			userFactory.addFollowing(f2);
-			try {
-				Thread.sleep(1000*20);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		// int TO_NUMBER = users.size();
+		// FollowersFollowingResultPage[] l = new
+		// FollowersFollowingResultPage[TO_NUMBER];
+		// FollowersFollowingResultPage[] l2 = new
+		// FollowersFollowingResultPage[TO_NUMBER];
+		//
+		// for (int i = 0; i < TO_NUMBER; i++) {
+		// System.out.println("Teller " + i);
+		// System.out.println("*******Twitter " + users.get(i) + "*********");
+		// FollowersFollowingResultPage f = uf
+		// .findUsersFollowers(users.get(i));
+		// FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
+		//
+		// System.out.println("*******DB " + f.getUserId() + " "
+		// + f2.getUserId() + "*********");
+		// userFactory.addFollowers(f);
+		// userFactory.addFollowing(f2);
+		// try {
+		// Thread.sleep(1000 * 20);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
 
 	}
 
-	private List<Long> findUsersFromDB() {
+	private List<Long> selectAllIdsFromDB(String SQL) {
 		Map<String, Long> map = new HashMap<String, Long>();
-		List<Long> list = namedParameterJdbcTemplate.queryForList(
-				SQL_SELECT_USERS_ID, map, Long.class);
+		List<Long> list = namedParameterJdbcTemplate.queryForList(SQL, map,
+				Long.class);
 		return list;
 	}
 

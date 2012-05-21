@@ -6,28 +6,36 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.client.RestTemplate;
+
 import uib.info323.twitterAWSM.io.UserSearchFactory;
+import uib.info323.twitterAWSM.io.impl.JsonUserFactory;
 import Jama.Matrix;
 
+/**
+ * @author Lisa
+ * 
+ *         Based on PageRank implementation from:
+ *         http://www.javadev.org/files/Ranking.pdf
+ * 
+ */
 public class UserRank {
 
 	private static final double DAMPING_FACTOR = 0.85;
 	private List<Long> params;
 	private UserSearchFactory userFactory;
 
-	public UserRank() {
+	public UserRank(String apiUrl, RestTemplate restTemplate) {
 		params = new ArrayList<Long>();
+		userFactory = new JsonUserFactory(apiUrl, restTemplate);
 	}
 
 	public static void main(String[] args) {
-		UserRank userRank = new UserRank();
-		double en = userRank.userRank(1);
-		double to = userRank.userRank(2);
-		double tre = userRank.userRank(3);
-		System.out.println(en);
-		System.out.println(to);
-		System.out.println(tre);
-		System.out.println(en + to + tre);
+		UserRank userRank = new UserRank("https://api.twitter.com/",
+				new RestTemplate());
+
+		double rank = userRank.userRank(3);
+		System.out.println(rank);
 
 	}
 
@@ -73,6 +81,7 @@ public class UserRank {
 
 		for (int i = 0; i < followers.length; i++) {
 			if (!params.contains(followers[i])) {
+				System.out.println(followers[i]);
 				generateParamsList(followers[i]);
 			}
 		}
@@ -85,7 +94,10 @@ public class UserRank {
 			long[] followers = getFollowers(sourceId);
 			for (long l : followers) {
 				if (l == linkId) {
-					return -1 * (DAMPING_FACTOR / getFollwing(linkId).length);
+					double factor = -1
+							* (DAMPING_FACTOR / getFollwing(linkId).length);
+					System.out.println("Factor " + factor);
+					return factor;
 				}
 			}
 		}
@@ -96,32 +108,51 @@ public class UserRank {
 		double[][] matrix = new double[params.size()][params.size()];
 		for (int i = 0; i < params.size(); i++) {
 			for (int j = 0; j < params.size(); j++) {
-				matrix[i][j] = getMultiFactor(params.get(i), params.get(j));
+				double multiFactor = getMultiFactor(params.get(i),
+						params.get(j));
+				System.out.println("multifactor " + multiFactor);
+				matrix[i][j] = multiFactor;
 			}
 		}
 		return matrix;
 	}
 
 	private long[] getFollowers(long userId) {
-
-		// return userFactory.findUsersFollowers(userId).getFollowersIds();
+		// FollowersFollowingResultPage resPage = userFactory
+		// .findUsersFollowers(userId);
+		// System.out.println("******" + resPage.getUserId() + " *** "
+		// + resPage.getFollowersIds().length);
+		// long[] followers = resPage.getFollowersIds();
+		//
+		// return followers;
 		Map<Long, long[]> map = new HashMap<Long, long[]>();
 		map.put((long) 1, new long[] { 3, 2 });
 		map.put((long) 2, new long[] { 3, 1 });
 		map.put((long) 3, new long[] { 1 });
-
+		// map.put((long) 4, new long[] { 3, 1, 2 });
+		// map.put((long) 5, new long[] { 1, 7, 8, 9 });
+		// map.put((long) 6, new long[] { 3, 4 });
+		// map.put((long) 7, new long[] { 1, 2, 4, 5, 8, 9 });
+		// map.put((long) 8, new long[] { 3, 2 });
+		// map.put((long) 9, new long[] { 1 });
 		return map.get(userId);
 
 	}
 
 	private long[] getFollwing(long userId) {
 
-		// return userFactory.findUsersFriends(linkId).getFollowersIds();
+		// return userFactory.findUsersFriends(userId).getFollowersIds();
 
 		Map<Long, long[]> map = new HashMap<Long, long[]>();
-		map.put((long) 1, new long[] { 2, 3 });
-		map.put((long) 2, new long[] { 3 });
-		map.put((long) 3, new long[] { 1, 4, 5, 6 });
+		map.put((long) 1, new long[] { 2, 3, 6, 7, 8, 9, 10 });
+		map.put((long) 2, new long[] { 3, 4, 7 });
+		map.put((long) 3, new long[] { 1, 2, 7, 4 });
+		// map.put((long) 4, new long[] { 1, 2, 5, 8, 54, 73, 23, 213 });
+		// map.put((long) 5, new long[] { 1, 3, 6, 9, 3 });
+		// map.put((long) 6, new long[] { 1, 2 });
+		// map.put((long) 7, new long[] { 1, 5, 8, 78 });
+		// map.put((long) 8, new long[] { 1 });
+		// map.put((long) 9, new long[] { 1, 5, 8, 78 });
 
 		return map.get(userId);
 	}

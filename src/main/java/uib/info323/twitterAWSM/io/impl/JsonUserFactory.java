@@ -36,6 +36,18 @@ public class JsonUserFactory implements UserSearchFactory {
 	}
 
 	@Override
+	public TwitterUserInfo323 searchUserByNameId(long nameId)
+			throws BadRequestException {
+		String request = apiUri
+				+ "1/users/show.json?user_id={nameId}&include_entities=true";
+		// https://api.twitter.com/
+		Long l = new Long(nameId);
+		jsonToUser(request, l.toString());
+
+		return user;
+	}
+
+	@Override
 	public TwitterUserInfo323 searchUserByScreenName(String screenName) {
 		String request = apiUri
 				+ "1/users/show.json?screen_name={screenName}&include_entities=true";
@@ -114,18 +126,6 @@ public class JsonUserFactory implements UserSearchFactory {
 
 		FollowersFollowingResultPage f2 = uf.findUsersFriends(t.getId());
 
-	}
-
-	@Override
-	public TwitterUserInfo323 searchUserByNameId(long nameId)
-			throws BadRequestException {
-		String request = apiUri
-				+ "1/users/show.json?user_id={nameId}&include_entities=true";
-		// https://api.twitter.com/
-		Long l = new Long(nameId);
-		jsonToUser(request, l.toString());
-
-		return user;
 	}
 
 	public FollowersFollowingResultPage findUsersFriends(long userId) {
