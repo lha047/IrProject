@@ -2,9 +2,7 @@ package uib.info323.twitterAWSM.io.impl;
 
 import java.io.File;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +22,7 @@ import uib.info323.twitterAWSM.exceptions.TweetNotFoundException;
 import uib.info323.twitterAWSM.io.TweetDAO;
 import uib.info323.twitterAWSM.io.rowmapper.TweetRowMapper;
 import uib.info323.twitterAWSM.model.impl.TweetInfo323Impl;
-import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
-import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class MySQLTweetFactory implements TweetDAO {
 
@@ -44,6 +40,8 @@ public class MySQLTweetFactory implements TweetDAO {
 	private static final String SQL_SELECT_TWEET_BY_ID = "SELECT * FROM tweets WHERE ID = :ID";
 
 	private static final long MILLSECS_PER_DAY = (24 * 60 * 60 * 1000);
+
+	private static final String SQL_SECLECT_TWEETS_WITH_RETWEETS = "SELECT ID FROM tweets WHERE RETWEET_COUNT > 0";
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -156,26 +154,27 @@ public class MySQLTweetFactory implements TweetDAO {
 
 		MySQLTweetFactory tweetFactory = (MySQLTweetFactory) context
 				.getBean("mySqlTweetFactory");
+		List<Long> tweetsWithReTweets = tweetFactory.findTweetsWithReTweets();
 
-		List<Long> related = new ArrayList<Long>();
-		List<String> mentions = new ArrayList<String>();
-		List<String> tags = new ArrayList<String>();
-		TwitterUserInfo323 user = new TwitterUserInfo323Impl();
-		user.setId(36341207);
-
-		SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
-		try {
-			Date d = s.parse("2012-05-01");
-			System.out.println(tweetFactory.tooOldTweet(d));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		TweetInfo323Impl t2 = new TweetInfo323Impl(related, 12345, "TEST",
-				new Date(), "from user", "http://profile.image.com", 1234,
-				4321, "No", "source", 5.0, (long) 123, 4, mentions, tags, user);
-
+		// List<Long> related = new ArrayList<Long>();
+		// List<String> mentions = new ArrayList<String>();
+		// List<String> tags = new ArrayList<String>();
+		// TwitterUserInfo323 user = new TwitterUserInfo323Impl();
+		// user.setId(36341207);
+		//
+		// SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+		// try {
+		// Date d = s.parse("2012-05-01");
+		// System.out.println(tweetFactory.tooOldTweet(d));
+		// } catch (ParseException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		//
+		// TweetInfo323Impl t2 = new TweetInfo323Impl(related, 12345, "TEST",
+		// new Date(), "from user", "http://profile.image.com", 1234,
+		// 4321, "No", "source", 5.0, (long) 123, 4, mentions, tags, user);
+		//
 		// new ArrayList<Long>, 1111111, "AWSM Tweet for FEEDJAM", new Date(),
 		// "Torstein", "http://bilde.tull.com", 12234, 3212, "en", "SORUCE",
 		// 100, 12321321, 23, new ArrayList<String>(), new ArrrayList<String>(),
@@ -193,6 +192,15 @@ public class MySQLTweetFactory implements TweetDAO {
 		// } catch (UserNotFoundException e) {
 		//
 		// }
+	}
+
+	private List<Long> findTweetsWithReTweets() {
+
+		SqlParameterSource parameter = new MapSqlParameterSource(
+				"RETWEET_COUNT", 0);
+		List<Long> list = namedParameterJdbcTemplate.queryForList(
+				SQL_SECLECT_TWEETS_WITH_RETWEETS, parameter, Long.class);
+		return list;
 	}
 
 }

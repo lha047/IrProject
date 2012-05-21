@@ -1,5 +1,7 @@
 package uib.info323.twitterAWSM.io;
 
+import java.util.List;
+
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
@@ -15,5 +17,7 @@ public interface UserSearchFactory {
 	public FollowersFollowingResultPage findUsersFollowers(long userId);
 
 	public FollowersFollowingResultPage findUsersFriends(long userId);
+
+	public List<TwitterUserInfo323> getRetweetedBy(long tweetId);
 
 }

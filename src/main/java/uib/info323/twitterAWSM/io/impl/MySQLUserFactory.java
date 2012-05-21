@@ -121,7 +121,7 @@ public class MySQLUserFactory implements UserDAO {
 		List<Long> followers = userFactory
 				.selectAllIdsFromDB(SQL_SELECT_ALL_FOLLOWERS);
 		System.out.println(followers.size());
-		int START = 329;
+		int START = 393;
 		int STOP = followers.size();
 		long millis = 30 * 1000;
 		for (int i = START; i < STOP; i++) {

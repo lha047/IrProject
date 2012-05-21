@@ -15,13 +15,13 @@ public class TweetFactoryImpl implements TweetFactory {
 			Date createdAt, String fromUser, String profileImageUrl,
 			long toUserId, long fromUserId, String languageCode, String source,
 			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
-			List<String> mentions, List<String> tags,
+			List<Long> reTweeters, List<String> mentions, List<String> tags,
 			TwitterUserInfo323 userInfo) {
 
 		return new TweetInfo323Impl(related, id, text, createdAt, fromUser,
 				profileImageUrl, toUserId, fromUserId, languageCode, source,
-				tweetRank, inReplyToStatusId, retweetCount, mentions, tags,
-				userInfo);
+				tweetRank, inReplyToStatusId, retweetCount, reTweeters,
+				mentions, tags, userInfo);
 	}
 
 }

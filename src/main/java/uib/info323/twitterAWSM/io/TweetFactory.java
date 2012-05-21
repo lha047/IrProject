@@ -33,7 +33,7 @@ public interface TweetFactory {
 			Date createdAt, String fromUser, String profileImageUrl,
 			long toUserId, long fromUserId, String languageCode, String source,
 			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
-			List<String> mentions, List<String> tags,
+			List<Long> reTweeters, List<String> mentions, List<String> tags,
 			TwitterUserInfo323 userInfo);
 	//
 	// ID, FROM_USER, FROM_USER_ID, TO_USER_ID, CREATED_AT,

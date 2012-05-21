@@ -34,7 +34,7 @@ public class UserRank {
 		UserRank userRank = new UserRank("https://api.twitter.com/",
 				new RestTemplate());
 
-		double rank = userRank.userRank(3);
+		double rank = userRank.userRank(333);
 		System.out.println(rank);
 
 	}
@@ -126,9 +126,9 @@ public class UserRank {
 		//
 		// return followers;
 		Map<Long, long[]> map = new HashMap<Long, long[]>();
-		map.put((long) 1, new long[] { 3, 2 });
-		map.put((long) 2, new long[] { 3, 1 });
-		map.put((long) 3, new long[] { 1 });
+		map.put((long) 123, new long[] { 333, 213 });
+		map.put((long) 213, new long[] { 333, 123 });
+		map.put((long) 333, new long[] { 123 });
 		// map.put((long) 4, new long[] { 3, 1, 2 });
 		// map.put((long) 5, new long[] { 1, 7, 8, 9 });
 		// map.put((long) 6, new long[] { 3, 4 });
@@ -144,9 +144,9 @@ public class UserRank {
 		// return userFactory.findUsersFriends(userId).getFollowersIds();
 
 		Map<Long, long[]> map = new HashMap<Long, long[]>();
-		map.put((long) 1, new long[] { 2, 3, 6, 7, 8, 9, 10 });
-		map.put((long) 2, new long[] { 3, 4, 7 });
-		map.put((long) 3, new long[] { 1, 2, 7, 4 });
+		map.put((long) 123, new long[] { 2, 3, 6, 7, 8, 9, 10 });
+		map.put((long) 213, new long[] { 3, 4, 7 });
+		map.put((long) 333, new long[] { 1, 2, 7, 4 });
 		// map.put((long) 4, new long[] { 1, 2, 5, 8, 54, 73, 23, 213 });
 		// map.put((long) 5, new long[] { 1, 3, 6, 9, 3 });
 		// map.put((long) 6, new long[] { 1, 2 });

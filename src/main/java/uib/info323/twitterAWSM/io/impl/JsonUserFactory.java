@@ -3,6 +3,7 @@ package uib.info323.twitterAWSM.io.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -57,10 +58,19 @@ public class JsonUserFactory implements UserSearchFactory {
 		return user;
 	}
 
+	public List<TwitterUserInfo323> getRetweetedBy(long tweetId) {
+		String searchURL = "https://api.twitter.com/1/statuses/{tweetId}/retweeted_by.json";
+		String res = restTemplate
+				.getForObject(searchURL, String.class, tweetId);
+		System.out.println(res);
+		return jsonReTweetedBy(res);
+	}
+
 	private TwitterUserInfo323 jsonToUser(String request, String twitterUser)
 			throws BadRequestException {
 		String searchResult = "";
 		try {
+
 			searchResult = restTemplate.getForObject(request, String.class,
 					twitterUser);
 		} catch (HttpClientErrorException hcee) {
@@ -119,12 +129,15 @@ public class JsonUserFactory implements UserSearchFactory {
 	public static void main(String[] args) {
 		UserSearchFactory uf = new JsonUserFactory("https://api.twitter.com/",
 				new RestTemplate());
-		TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
-				.searchUserByScreenName("HalvorsenMari");
-		System.out.println(t.getId());
-		FollowersFollowingResultPage f = uf.findUsersFollowers(t.getId());
 
-		FollowersFollowingResultPage f2 = uf.findUsersFriends(t.getId());
+		long tweetId = 0;
+		uf.getRetweetedBy(tweetId);
+		// TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
+		// .searchUserByScreenName("HalvorsenMari");
+		// System.out.println(t.getId());
+		// FollowersFollowingResultPage f = uf.findUsersFollowers(t.getId());
+		//
+		// FollowersFollowingResultPage f2 = uf.findUsersFriends(t.getId());
 
 	}
 
@@ -141,6 +154,14 @@ public class JsonUserFactory implements UserSearchFactory {
 		FollowersFollowingResultPage resPage = findFollowersFriends(userId,
 				request);
 		return resPage;
+	}
+
+	private List<TwitterUserInfo323> jsonReTweetedBy(String res) {
+		JsonElement element = parser.parse(res);
+		JsonObject object = element.getAsJsonObject();
+		JsonArray array = object.getAsJsonArray();
+
+		return null;
 	}
 
 	private FollowersFollowingResultPage findFollowersFriends(long userId,

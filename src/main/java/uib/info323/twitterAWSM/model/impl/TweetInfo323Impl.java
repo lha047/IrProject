@@ -3,8 +3,6 @@ package uib.info323.twitterAWSM.model.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.social.twitter.api.TwitterProfile;
-
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
@@ -27,6 +25,7 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	private List<String> tags;
 	private TwitterUserInfo323 userInfo;
 	private Date lastUpdated;
+	private List<Long> reTweeters;
 
 	public TweetInfo323Impl() {
 	}
@@ -35,7 +34,7 @@ public class TweetInfo323Impl implements TweetInfo323 {
 			Date createdAt, String fromUser, String profileImageUrl,
 			long toUserId, long fromUserId, String languageCode, String source,
 			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
-			List<String> mentions, List<String> tags,
+			List<Long> reTweeters, List<String> mentions, List<String> tags,
 			TwitterUserInfo323 userInfo) {
 		this.related = related;
 		this.id = id;
@@ -50,6 +49,7 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		this.tweetRank = tweetRank;
 		this.inReplyToStatusId = inReplyToStatusId;
 		this.retweetCount = retweetCount;
+		this.reTweeters = reTweeters;
 		this.mentions = mentions;
 		this.tags = tags;
 		this.userInfo = userInfo;
@@ -321,14 +321,14 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	}
 
 	@Override
-	public List<TwitterProfile> getRetweeters() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Long> getRetweeters() {
+
+		return reTweeters;
 	}
 
 	@Override
-	public void setRetweeters(List<TwitterProfile> retweeters) {
-		// TODO Auto-generated method stub
+	public void setRetweeters(List<Long> retweeters) {
+		this.reTweeters = retweeters;
 
 	}
 
