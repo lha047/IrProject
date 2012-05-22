@@ -175,10 +175,11 @@ public class MySQLUserFactory implements UserDAO {
 			System.out.println("Teller " + i);
 			System.out.println("*******Twitter " + users.get(i) + "*********");
 			
-			FollowersFollowingResultPage f = uf
+			FollowersFollowingResultPage f = (FollowersFollowingResultPage) uf
 					.findUsersFollowers(users.get(i));
 
-			FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
+			FollowersFollowingResultPage f2 = (FollowersFollowingResultPage) uf
+					.findUsersFriends(users.get(i));
 
 			System.out.println("*******DB " + f.getScreenName() + " "
 					+ f2.getScreenName() + "*********");

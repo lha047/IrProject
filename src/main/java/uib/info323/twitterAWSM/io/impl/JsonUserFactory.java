@@ -133,9 +133,9 @@ public class JsonUserFactory implements UserSearchFactory {
 		TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
 				.searchUserByScreenName("HalvorsenMari");
 		System.out.println(t.getId());
-		FollowersFollowingResultPage f = uf.findUsersFollowers(t.getScreenName());
+		FollowersFollowingResultPage f = (FollowersFollowingResultPage) uf.findUsersFollowers(t.getScreenName());
 
-		FollowersFollowingResultPage f2 = uf.findUsersFriends(t.getScreenName());
+		FollowersFollowingResultPage f2 = (FollowersFollowingResultPage) uf.findUsersFriends(t.getScreenName());
 		long tweetId = 0;
 		uf.getRetweetedBy(tweetId);
 		// TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf

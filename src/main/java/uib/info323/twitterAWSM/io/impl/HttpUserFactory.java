@@ -14,9 +14,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
+import uib.info323.twitterAWSM.model.impl.FollowersFollowingResultPageImpl;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
@@ -24,6 +29,7 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 @Component
 public class HttpUserFactory implements UserSearchFactory, UserDAO {
 
+	@Autowired
 	private RestTemplate restTemplate;
 	private MySQLUserFactory  mySQLUserFactory;
 	private final String twitterUrl = "http://mobile.twitter.com/";
@@ -85,7 +91,7 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		return user;
 	}
 
-	public List<String> selectFollowersByScreenName(String screenNameInput) {
+	public List<String> findUsersFollowers(String screenNameInput) {
 
 		try {
 			Thread.sleep(1000 * 1);
@@ -109,7 +115,7 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		return screenNames;
 	}
 
-	public List<String> selectFollowingByScreenName(String screenNameInput) {
+	public List<String> findUsersFriends(String screenNameInput) {
 
 		try {
 			Thread.sleep(1000 * 1);
@@ -139,19 +145,6 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public FollowersFollowingResultPage findUsersFollowers(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public FollowersFollowingResultPage findUsersFriends(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	@Override
 	public boolean addUser(TwitterUserInfo323 user) {

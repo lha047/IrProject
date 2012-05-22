@@ -14,9 +14,9 @@ public interface UserSearchFactory {
 	public TwitterUserInfo323 searchUserByNameId(long nameId)
 			throws UserNotFoundException;
 
-	public FollowersFollowingResultPage findUsersFollowers(String string);
+	public Object findUsersFollowers(String string);
 
-	public FollowersFollowingResultPage findUsersFriends(String string);
+	public Object findUsersFriends(String string);
 
 	public List<TwitterUserInfo323> getRetweetedBy(long tweetId);
 
