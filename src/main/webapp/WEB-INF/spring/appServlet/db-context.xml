@@ -7,9 +7,11 @@
 
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
-		<property name="url" value="jdbc:mysql://hoguslg.uib.no:3306/sda087"></property>
-		<property name="username" value="sda087"></property>
-		<property name="password"  value="b2Ata56klS"></property>
+
+		<property name="url" value="jdbc:mysql://localhost/feedjam"></property>
+		<property name="username" value="root"></property>
+		<property name="password"  value="info323"></property>
+
 	</bean>
 
 <!-- 	<jdbc:embedded-database id="dataSource" -->

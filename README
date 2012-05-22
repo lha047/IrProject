@@ -18,32 +18,20 @@ User info:
  
  Harmonic mean med normalisering.
 
- Cache brukere i database.
- 
- Link til databasen min på UiB-server:
- 
- jdbc:mysql://hoguslg.uib.no:3306/sda087
- 
- Brukernavn og passord sender jeg på epost...
- 
- Dere kan opprette lokal database med følgende SQL-kode:
- 
- CREATE TABLE `sda087`.`users` (
-`id` BIGINT NOT NULL ,
-`screen_name` VARCHAR( 15 ) NOT NULL ,
-`name` VARCHAR( 20 ) NOT NULL ,
-`url` VARCHAR( 300 ) NOT NULL ,
-`profile_image_url` VARCHAR( 300 ) NOT NULL ,
-`description` VARCHAR( 160 ) NOT NULL ,
-`location` VARCHAR( 100 ) NOT NULL ,
-`date` DATE NOT NULL ,
-`favorites_count` INT NOT NULL ,
-`followers_count` INT NOT NULL ,
-`friends_count` INT NOT NULL ,
-`language` VARCHAR( 100 ) NOT NULL ,
-`profile_url` VARCHAR( 300 ) NOT NULL ,
-`statuses_count` INT NOT NULL ,
-`fitness_score` FLOAT NOT NULL ,
-`last_updated` DATE NOT NULL ,
-PRIMARY KEY ( `id` )
-) ENGINE = MYISAM 
+
+TODO-List:
+
+Lage en todo-list X
+
+Bruker-evaluering av usability
+
+Front-end precision-evaluering
+Back-end precision-evaluering
+
+User info-"crawling"
+
+Craching av search requests...
+
+User-rank med depthlimit + noe mer p� ranking
+
+

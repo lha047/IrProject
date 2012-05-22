@@ -130,6 +130,12 @@ public class JsonUserFactory implements UserSearchFactory {
 		UserSearchFactory uf = new JsonUserFactory("https://api.twitter.com/",
 				new RestTemplate());
 
+		TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
+				.searchUserByScreenName("HalvorsenMari");
+		System.out.println(t.getId());
+		FollowersFollowingResultPage f = (FollowersFollowingResultPage) uf.findUsersFollowers(t.getScreenName());
+
+		FollowersFollowingResultPage f2 = (FollowersFollowingResultPage) uf.findUsersFriends(t.getScreenName());
 		long tweetId = 0;
 		uf.getRetweetedBy(tweetId);
 		// TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
@@ -139,19 +145,20 @@ public class JsonUserFactory implements UserSearchFactory {
 		//
 		// FollowersFollowingResultPage f2 = uf.findUsersFriends(t.getId());
 
+
 	}
 
-	public FollowersFollowingResultPage findUsersFriends(long userId) {
+	public FollowersFollowingResultPage findUsersFriends(String screenName) {
 		String request = "https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id={userId}";
-		FollowersFollowingResultPage resPage = findFollowersFriends(userId,
+		FollowersFollowingResultPage resPage = findFollowersFriends(screenName,
 				request);
 		return resPage;
 	}
 
 	@Override
-	public FollowersFollowingResultPage findUsersFollowers(long userId) {
+	public FollowersFollowingResultPage findUsersFollowers(String screenName) {
 		String request = "https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id={userId}";
-		FollowersFollowingResultPage resPage = findFollowersFriends(userId,
+		FollowersFollowingResultPage resPage = findFollowersFriends(screenName,
 				request);
 		return resPage;
 	}
@@ -164,23 +171,22 @@ public class JsonUserFactory implements UserSearchFactory {
 		return null;
 	}
 
-	private FollowersFollowingResultPage findFollowersFriends(long userId,
-			String request) {
+	private FollowersFollowingResultPage findFollowersFriends(String screenName, String request) {
 		try {
 			Thread.sleep(24 * 1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String s = restTemplate.getForObject(request, String.class, userId);
+		String s = restTemplate.getForObject(request, String.class, screenName);
 		JsonElement element = parser.parse(s);
 		JsonObject object = element.getAsJsonObject();
-		JsonArray array = object.get("ids").getAsJsonArray();
-		long[] userIds = new long[array.size()];
+		JsonArray array = object.get("").getAsJsonArray();
+		String[] screenNames = new String[array.size()];
 		System.out.println("number of followers" + array.size());
 		for (int i = 0; i < array.size(); i++) {
-			userIds[i] = array.get(i).getAsJsonPrimitive().getAsLong();
-			System.out.println("followersId :" + i + " " + userIds[i]);
+			screenNames[i] = array.get(i).getAsJsonPrimitive().getAsString();
+			System.out.println("ScreenName :" + i + " " + screenNames[i]);
 		}
 
 		int previous = object.get("previous_cursor").getAsInt();
@@ -189,10 +195,10 @@ public class JsonUserFactory implements UserSearchFactory {
 			next = object.get("next_cursor").getAsInt();
 		}
 		FollowersFollowingResultPage resPage = new FollowersFollowingResultPageImpl();
-		resPage.setFollowersIds(userIds);
+		resPage.setFollowersScreenNames(screenNames);
 		resPage.setNextCursor(next);
 		resPage.setPreviousCursor(previous);
-		resPage.setUserId(userId);
+		resPage.setScreenName(screenName);
 		return resPage;
 	}
 

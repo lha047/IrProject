@@ -1,0 +1,11 @@
+----------------------------------------------------------------
+Thu May 10 16:04:17 CEST 2012:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-0137-3710-8017-0000047e7ca0 
+on database directory memory:/Users/snorre/git/IrProject/dataSource  with class loader sun.misc.Launcher$AppClassLoader@37b90b39 
+Loaded from file:/Users/snorre/.m2/repository/org/apache/derby/derby/10.8.2.2/derby-10.8.2.2.jar
+java.vendor=Apple Inc.
+java.runtime.version=1.6.0_31-b04-415-11M3646
+user.dir=/Users/snorre/git/IrProject
+derby.system.home=null
+derby.stream.error.method=org.springframework.jdbc.datasource.embedded.OutputStreamFactory.getNoopOutputStream
+Database Class Loader started - derby.database.classpath=''
