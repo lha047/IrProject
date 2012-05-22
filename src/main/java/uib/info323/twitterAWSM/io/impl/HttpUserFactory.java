@@ -22,16 +22,13 @@ import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 @Component
-public class HttpUserFactory implements UserSearchFactory {
+public class HttpUserFactory implements UserSearchFactory, UserDAO {
 
-	@Autowired
 	private RestTemplate restTemplate;
-	@Autowired
 	private MySQLUserFactory  mySQLUserFactory;
 	private final String twitterUrl = "http://mobile.twitter.com/";
 
-	public HttpUserFactory(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
+	public HttpUserFactory() {
 	}
 
 	
@@ -151,6 +148,48 @@ public class HttpUserFactory implements UserSearchFactory {
 
 	@Override
 	public FollowersFollowingResultPage findUsersFriends(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public boolean addUser(TwitterUserInfo323 user) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public boolean updateUser(TwitterUserInfo323 user) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public TwitterUserInfo323 selectUserById(long userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public TwitterUserInfo323 selectUserByScreenName(String screenName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public boolean addListUsers(List<TwitterUserInfo323> users) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public List<TwitterUserInfo323> getRetweetedBy(long tweetId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

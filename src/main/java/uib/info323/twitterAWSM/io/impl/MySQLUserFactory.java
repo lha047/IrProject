@@ -121,7 +121,7 @@ public class MySQLUserFactory implements UserDAO {
 			System.out.println(name);
 		}
 
-		UserSearchFactory uf = new HttpUserFactory(new RestTemplate());
+		UserSearchFactory uf = new HttpUserFactory();
 		
 		List<String> followers = userFactory
 				.selectAllScreenNamesFromDB(SQL_SELECT_SCREEN_NAME);
