@@ -1,7 +1,11 @@
 package uib.info323.twitterAWSM.io.impl;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -9,6 +13,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
@@ -29,12 +35,11 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 @Component
 public class HttpUserFactory implements UserSearchFactory, UserDAO {
 
-	@Autowired
 	private RestTemplate restTemplate;
-	private MySQLUserFactory  mySQLUserFactory;
 	private final String twitterUrl = "http://mobile.twitter.com/";
 
 	public HttpUserFactory() {
+		restTemplate = new RestTemplate();
 	}
 
 	
@@ -42,12 +47,11 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 	public TwitterUserInfo323 searchUserByScreenName(String screenNameInput) {
 
 		try {
-			Thread.sleep(1000 * 1);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 
 		String query = twitterUrl + "{screenNameInput}";
 		String html = restTemplate.getForObject(query, String.class, screenNameInput);
@@ -64,11 +68,11 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		String location = doc.select(".location").eq(0).text();
 		Date createdDate = new Date();
 		int favoritesCount = 0;
-		int followersCount = Integer.parseInt(doc.select(".statnum").eq(2).text());
-		int friendsCount = Integer.parseInt(doc.select(".statnum").eq(1).text());
+		int followersCount = Integer.parseInt(doc.select(".statnum").eq(2).text().replaceAll("[^0-9-]", ""));
+		int friendsCount = Integer.parseInt(doc.select(".statnum").eq(1).text().replaceAll("[^0-9-]", ""));
 		String language = "en";
 		String profileUrl = "http://www.twitter.com/#!/" + screenName;
-		int statusesCount = Integer.parseInt(doc.select(".statnum").eq(0).text());
+		int statusesCount = Integer.parseInt(doc.select(".statnum").eq(0).text().replaceAll("[^0-9-]", ""));
 		Date lastUpdated = createdDate;
 
 		TwitterUserInfo323 user = new TwitterUserInfo323Impl(
@@ -91,10 +95,10 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		return user;
 	}
 
-	public List<String> findUsersFollowers(String screenNameInput) {
+	public FollowersFollowingResultPage findUsersFollowers(String screenNameInput) {
 
 		try {
-			Thread.sleep(1000 * 1);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,21 +108,28 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		String html = restTemplate.getForObject(query, String.class, screenNameInput);
 
 		Document doc = Jsoup.parse(html);
-
-		List<String> screenNames = new ArrayList<String>();
-
-		Elements usernameElements = doc.select(".username:gt(0)");
+		FollowersFollowingResultPage followers = new FollowersFollowingResultPageImpl();
+		followers.setScreenName(screenNameInput);
+		//System.out.println(doc);
+		Elements usernameElements = doc.select(".username");
+		System.out.println(usernameElements.first().text());
+		System.out.println("Size of elements: " + usernameElements.size());
+		String[] followersArray = new String[usernameElements.size()];
+		int i = 0;
 		for(Element element : usernameElements) {
-			screenNames.add(element.text().substring(1));
+			System.out.println(element.text());
+			followersArray[i] = element.text().substring(1);
+			i++;
 		}
-
-		return screenNames;
+		
+		followers.setFollowersScreenNames(followersArray);
+		return followers;
 	}
 
-	public List<String> findUsersFriends(String screenNameInput) {
+	public FollowersFollowingResultPage findUsersFriends(String screenNameInput) {
 
 		try {
-			Thread.sleep(1000 * 1);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,14 +140,18 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 
 		Document doc = Jsoup.parse(html);
 
-		List<String> screenNames = new ArrayList<String>();
-
+		FollowersFollowingResultPage followings = new FollowersFollowingResultPageImpl();
+		followings.setScreenName(screenNameInput);
+		
 		Elements usernameElements = doc.select(".username:gt(0)");
+		String[] followingsArray = new String[usernameElements.size()];
+		int i = 0;
 		for(Element element : usernameElements) {
-			screenNames.add(element.text().substring(1));
+			followingsArray[i++] = element.text().substring(1);
 		}
 		
-		return screenNames;
+		followings.setFollowersScreenNames(followingsArray);
+		return followings;
 	}
 
 	@Override
@@ -186,5 +201,4 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

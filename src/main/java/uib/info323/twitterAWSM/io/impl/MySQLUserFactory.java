@@ -29,28 +29,28 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class MySQLUserFactory implements UserDAO {
 
-	private static final String SQL_INSERT_USER = "insert into users(ID, SCREEN_NAME, NAME, URL, PROFILE_IMAGE_URL, DESCRIPTION, LOCATION, CREATED_DATE, FAVORITES_COUNT, FOLLOWERS_COUNT, FRIENDS_COUNT, LANGUAGE, PROFILE_URL, STATUSES_COUNT, FITNESS_SCORE, LAST_UPDATED) "
-			+ "values(:ID, :SCREEN_NAME, :NAME, :URL, :PROFILE_IMAGE_URL, :DESCRIPTION, :LOCATION, :CREATED_DATE, :FAVORITES_COUNT, :FOLLOWERS_COUNT, :FRIENDS_COUNT, :LANGUAGE, :PROFILE_URL, :STATUSES_COUNT, :FITNESS_SCORE, :LAST_UPDATED)";
+	private static final String SQL_INSERT_USER = "insert into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
+			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
 
-	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE SCREEN_NAME = :SCREEN_NAME";
+	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE screen_name = :screen_name";
 
-	private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE ID = :ID";
+	private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE id = :id";
 
-	private static final String SQL_UPDATE_USER = "UPDATE users	SET SCREEN_NAME=:SCREEN_NAME, NAME=:NAME, URL=:URL, PROFILE_IMAGE_URL=:PROFILE_IMAGE_URL, DESCRIPTION=:DESCRIPTION, LOCATION=:LOCATION, CREATED_DATE=:CREATED_DATE, FAVORITES_COUNT=:FAVORITES_COUNT,"
-			+ " FOLLOWERS_COUNT=:FAVORITES_COUNT, FRIENDS_COUNT=:FRIENDS_COUNT, LANGUAGE=:LANGUAGE, PROFILE_URL=:PROFILE_URL, STATUSES_COUNT=:STATUSES_COUNT, FITNESS_SCORE=:FITNESS_SCORE, LAST_UPDATED=:LAST_UPDATED "
+	private static final String SQL_UPDATE_USER = "UPDATE users	SET screen_name=:screen_name, name=:name, url=:url, profile_image_url=:profile_image_url, description=:description, location=:location, created_date=:created_date, favorites_count=:favorites_count,"
+			+ " followers_count=:favorites_count, friends_count=:friends_count, language=:language, profile_url=:profile_url, statuses_count=:statuses_count, fitness_score=:fitness_score, last_updated=:last_updated "
 			+ "WHERE ID=:ID";
 
-	private static final String SQL_SELECT_SCREEN_NAME = "SELECT SCREEN_NAME FROM users";
+	private static final String SQL_SELECT_SCREEN_NAME = "SELECT screen_name FROM users";
 
-	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (SCREEN_NAME, FOLLOWING_SCREEN_NAME) values (:screenName, :followingScreenName)";
+	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (screen_name, following_screen_name) values (:screen_name, :following_screen_name)";
 
-	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT followerId FROM followers";
+	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT follower_screen_name FROM followers";
 
-	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (SCREEN_NAME, FOLLOWER_SCREEN_NAME) values (:screenName, :followerScreenName)";
+	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (screen_name, follower_screen_name) values (:screen_name, :follower_screen_name)";
 
-	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT FOLLOWER_SCREEN_NAME FROM followers WHERE SCREEN_NAME = :screenName";
+	private static final String SELECT_FOLLOWERS_BY_SCREEN_NAME = "SELECT follower_screen_name FROM followers WHERE screen_name = :screen_name";
 
-	private static final String SELECT_FOLLOWING_BY_ID = "SELECT FOLLOWING_SCREEN_NAME FROM following WHERE SCREEN_NAME = :screenName";
+	private static final String SELECT_FOLLOWING_BY_SCREEN_NAME = "SELECT following_screen_name FROM following WHERE SCREEN_NAME = :screen_name";
 
 	// Correct logger...
 	private static Logger logger = LoggerFactory
@@ -85,7 +85,7 @@ public class MySQLUserFactory implements UserDAO {
 	public TwitterUserInfo323 selectUserByScreenName(String screenName)
 			throws UserNotFoundException {
 		SqlParameterSource namedParameter = new MapSqlParameterSource(
-				"SCREEN_NAME", screenName);
+				"screen_name", screenName);
 		TwitterUserInfo323Impl user = null;
 		try {
 			user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
@@ -114,34 +114,20 @@ public class MySQLUserFactory implements UserDAO {
 
 
 		List<String> users = userFactory.selectAllScreenNamesFromDB(SQL_SELECT_SCREEN_NAME);
-
-
-
-		for(String name : users) {
-			System.out.println(name);
-		}
-
 		UserSearchFactory uf = new HttpUserFactory();
-		
+
 		List<String> followers = userFactory
 				.selectAllScreenNamesFromDB(SQL_SELECT_SCREEN_NAME);
-		System.out.println(followers.size());
-		int START = 393;
-		int STOP = followers.size();
-		long millis = 30 * 1000;
-		for (int i = START; i < STOP; i++) {
 
-			TwitterUserInfo323 tu = uf.searchUserByScreenName(followers.get(i));
-			System.out.println(i + " user " + tu.getId());
-			userFactory.addUser(tu);
-
-			try {
-				Thread.sleep(millis);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		int START = 393;
+//		int STOP = followers.size();
+//		for (int i = START; i < STOP; i++) {
+//
+//			TwitterUserInfo323 tu = uf.searchUserByScreenName(followers.get(i));
+//			System.out.println(i + " user " + tu.getId());
+//			userFactory.addUser(tu);
+//
+//		}
 
 		// UserRank userRank = new UserRank("https://api.twitter.com/",
 		// new RestTemplate());
@@ -174,7 +160,7 @@ public class MySQLUserFactory implements UserDAO {
 		for (int i = 0; i < TO_NUMBER; i++) {
 			System.out.println("Teller " + i);
 			System.out.println("*******Twitter " + users.get(i) + "*********");
-			
+
 			FollowersFollowingResultPage f = (FollowersFollowingResultPage) uf
 					.findUsersFollowers(users.get(i));
 
@@ -183,14 +169,15 @@ public class MySQLUserFactory implements UserDAO {
 
 			System.out.println("*******DB " + f.getScreenName() + " "
 					+ f2.getScreenName() + "*********");
+			System.out.println("Insert followers and followings into database");
 			userFactory.addFollowers(f);
 			userFactory.addFollowing(f2);
-			try {
-				Thread.sleep(1000*20);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 
 		// int TO_NUMBER = users.size();
@@ -230,21 +217,21 @@ public class MySQLUserFactory implements UserDAO {
 		return list;
 	}
 
-	public List<String> selectFollowersByUserId(String screenName) {
+	public List<String> selectFollowersByScreenName(String screenName) {
 
-		SqlParameterSource parameter = new MapSqlParameterSource("userId",
+		SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
 				screenName);
 		List<String> list = namedParameterJdbcTemplate.queryForList(
-				SELECT_FOLLOWERS_BY_ID, parameter, String.class);
+				SELECT_FOLLOWERS_BY_SCREEN_NAME, parameter, String.class);
 		return list;
 	}
 
-	public List<Long> selectFollowingByUserId(String screenName) {
+	public List<Long> selectFollowingByScreenName(String screenName) {
 
-		SqlParameterSource parameter = new MapSqlParameterSource("SCREEN_NAME",
+		SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
 				screenName);
 		List<Long> list = namedParameterJdbcTemplate.queryForList(
-				SELECT_FOLLOWING_BY_ID, parameter, Long.class);
+				SELECT_FOLLOWING_BY_SCREEN_NAME, parameter, Long.class);
 		return list;
 	}
 
@@ -261,8 +248,8 @@ public class MySQLUserFactory implements UserDAO {
 
 	private Map<String, Object> followersToMap(String screenName, String followerScreenName) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("SCREEN_NAME", screenName);
-		params.put("FOLLOWER_SCREEN_NAME", followerScreenName);
+		params.put("screen_name", screenName);
+		params.put("follower_screen_name", followerScreenName);
 		return params;
 	}
 
@@ -277,8 +264,8 @@ public class MySQLUserFactory implements UserDAO {
 	private Map<String, Object> followingToMap(String screenName, String followingScreenName) {
 		Map<String, Object> params = new HashMap<String, Object>();
 
-		params.put("SCREEN_NAME", screenName);
-		params.put("FOLLOWING_SCREEN_NAME", followingScreenName);
+		params.put("screen_name", screenName);
+		params.put("following_screen_name", followingScreenName);
 
 		return params;
 	}
@@ -287,7 +274,7 @@ public class MySQLUserFactory implements UserDAO {
 	public TwitterUserInfo323 selectUserById(long id)
 			throws UserNotFoundException {
 
-		SqlParameterSource namedParameter = new MapSqlParameterSource("ID", id);
+		SqlParameterSource namedParameter = new MapSqlParameterSource("id", id);
 		TwitterUserInfo323Impl user = null;
 		try {
 			user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
@@ -322,23 +309,23 @@ public class MySQLUserFactory implements UserDAO {
 
 	private Map<String, Object> userToMap(TwitterUserInfo323 user) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("ID", user.getId());
-		params.put("SCREEN_NAME", user.getScreenName());
-		params.put("NAME", user.getName());
-		params.put("URL", user.getUrl());
-		params.put("PROFILE_IMAGE_URL", user.getProfileImageUrl());
-		params.put("DESCRIPTION", user.getDescription());
-		params.put("LOCATION", user.getLocation());
-		params.put("CREATED_DATE", user.getCreatedDate());
-		params.put("FAVORITES_COUNT", user.getFavoritesCount());
-		params.put("FOLLOWERS_COUNT", user.getFollowersCount());
-		params.put("FRIENDS_COUNT", user.getFriendsCount());
-		params.put("LANGUAGE", user.getLanguage());
-		params.put("PROFILE_URL", user.getProfileUrl());
-		params.put("STATUSES_COUNT", user.getStatusesCount());
-		params.put("FITNESS_SCORE", user.getFitnessScore());
+		params.put("id", user.getId());
+		params.put("screen_name", user.getScreenName());
+		params.put("name", user.getName());
+		params.put("url", user.getUrl());
+		params.put("profile_image_url", user.getProfileImageUrl());
+		params.put("description", user.getDescription());
+		params.put("location", user.getLocation());
+		params.put("created_date", user.getCreatedDate());
+		params.put("favorites_count", user.getFavoritesCount());
+		params.put("followers_count", user.getFollowersCount());
+		params.put("friends_count", user.getFriendsCount());
+		params.put("language", user.getLanguage());
+		params.put("profile_url", user.getProfileUrl());
+		params.put("statuses_count", user.getStatusesCount());
+		params.put("fitness_score", user.getFitnessScore());
 		date = new Date();
-		params.put("LAST_UPDATED", dateFormat.format(date));
+		params.put("last_updated", dateFormat.format(date));
 		return params;
 	}
 
