@@ -40,7 +40,11 @@ public class UserRank {
 				new RestTemplate());
 
 		double rank = userRank.userRank(333);
+		double rank2 = userRank.userRank(123);
+		double rank3 = userRank.userRank(213);
 		System.out.println(rank);
+		System.out.println(rank2);
+		System.out.println(rank3);
 
 	}
 
@@ -160,8 +164,10 @@ public class UserRank {
 			long[] followers = getFollowers(sourceId);
 			for (long l : followers) {
 				if (l == linkId) {
+					// double factor = -1
+					// * (DAMPING_FACTOR / getFollwing(linkId).length);
 					double factor = -1
-							* (DAMPING_FACTOR / getFollwing(linkId).length);
+							* (DAMPING_FACTOR / getNumberOfFollwing(linkId));
 					System.out.println("Factor " + factor);
 					return factor;
 				}
@@ -203,6 +209,15 @@ public class UserRank {
 		// map.put((long) 9, new long[] { 1 });
 		return map.get(userId);
 
+	}
+
+	private double getNumberOfFollwing(long linkId) {
+		TwitterUserInfo323 user = userDao.selectUserById(linkId);
+		if (user == null) {
+			user = userFactory.searchUserByNameId(linkId);
+		}
+		// return user.getFriendsCount();
+		return 2;
 	}
 
 	private long[] getFollwing(long userId) {
