@@ -132,7 +132,7 @@ public class MySQLUserFactory implements UserDAO {
 		// UserRank userRank = new UserRank("https://api.twitter.com/",
 		// new RestTemplate());
 
-		int STOPP = 1;
+		// int STOPP = 1;
 		// for (int i = 0; i < STOPP; i++) {
 		// System.out.println("Rank Users " + users.get(i));
 		// double d = userRank.userRank(userFactory.selectUserByScreenName(
@@ -153,7 +153,7 @@ public class MySQLUserFactory implements UserDAO {
 
 		// To run insert follower following
 
-		int TO_NUMBER = 10;
+		int TO_NUMBER = users.size();
 		FollowersFollowingResultPage[] l = new FollowersFollowingResultPage[TO_NUMBER];
 		FollowersFollowingResultPage[] l2 = new FollowersFollowingResultPage[TO_NUMBER];
 
