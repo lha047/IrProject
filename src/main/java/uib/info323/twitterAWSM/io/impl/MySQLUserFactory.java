@@ -41,7 +41,7 @@ public class MySQLUserFactory implements UserDAO {
 			+ " FOLLOWERS_COUNT=:FAVORITES_COUNT, FRIENDS_COUNT=:FRIENDS_COUNT, LANGUAGE=:LANGUAGE, PROFILE_URL=:PROFILE_URL, STATUSES_COUNT=:STATUSES_COUNT, FITNESS_SCORE=:FITNESS_SCORE, LAST_UPDATED=:LAST_UPDATED "
 			+ "WHERE ID=:ID";
 
-	private static final String SQL_SELECT_USERS_ID = "SELECT ID FROM users";
+	private static final String SQL_SELECT_SCREEN_NAME = "SELECT SCREEN_NAME FROM users";
 
 	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (SCREEN_NAME, FOLLOWING_SCREEN_NAME) values (:screenName, :followingScreenName)";
 
@@ -111,7 +111,10 @@ public class MySQLUserFactory implements UserDAO {
 		// System.out.println(s.getId() + " " + s.getScreenName());
 
 		List<String> users = userFactory.findUsersFromDB();
-		System.out.println(users.size());
+
+		for(String name : users) {
+			System.out.println(name);
+		}
 
 		UserSearchFactory uf = new HttpUserFactory(new RestTemplate());
 
@@ -123,15 +126,17 @@ public class MySQLUserFactory implements UserDAO {
 		// }
 
 		// To run insert follower following
-		int TO_NUMBER = 5;
+		int TO_NUMBER = 10;
 		FollowersFollowingResultPage[] l = new FollowersFollowingResultPage[TO_NUMBER];
 		FollowersFollowingResultPage[] l2 = new FollowersFollowingResultPage[TO_NUMBER];
 
 		for (int i = 0; i < TO_NUMBER; i++) {
 			System.out.println("Teller " + i);
 			System.out.println("*******Twitter " + users.get(i) + "*********");
+			
 			FollowersFollowingResultPage f = uf
 					.findUsersFollowers(users.get(i));
+
 			FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
 
 			System.out.println("*******DB " + f.getScreenName() + " "
@@ -149,9 +154,9 @@ public class MySQLUserFactory implements UserDAO {
 	}
 
 	private List<String> findUsersFromDB() {
-		Map<String, Long> map = new HashMap<String, Long>();
+		Map<String, String> map = new HashMap<String, String>();
 		List<String> list = namedParameterJdbcTemplate.queryForList(
-				SQL_SELECT_USERS_ID, map, String.class);
+				SQL_SELECT_SCREEN_NAME, map, String.class);
 		return list;
 	}
 
