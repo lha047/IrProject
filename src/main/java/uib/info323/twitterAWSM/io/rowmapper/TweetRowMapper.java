@@ -48,6 +48,7 @@ public class TweetRowMapper implements RowMapper<TweetInfo323> {
 		List<Long> related = new ArrayList<Long>();
 		List<String> mentions = new ArrayList<String>();
 		List<String> tags = new ArrayList<String>();
+		List<Long> reTweeters = new ArrayList<Long>();
 
 		TwitterUserInfo323 userInfo = new TwitterUserInfo323Impl();
 
@@ -58,7 +59,8 @@ public class TweetRowMapper implements RowMapper<TweetInfo323> {
 				rs.getString("LANGUAGE_CODE"), rs.getString("SOURCE"),
 				rs.getDouble("TWEET_RANK"),
 				rs.getLong("IN_REPLY_TO_STATUS_ID"),
-				rs.getInt("RETWEET_COUNT"), mentions, tags, userInfo);
+				rs.getInt("RETWEET_COUNT"), reTweeters, mentions, tags,
+				userInfo);
 
 		return tweet;
 	}

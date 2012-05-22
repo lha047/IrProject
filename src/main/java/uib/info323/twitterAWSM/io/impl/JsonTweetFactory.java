@@ -40,6 +40,12 @@ public class JsonTweetFactory implements TweetSearchFactory {
 	}
 
 	@Override
+	public TweetSearchResults searchTweetsByDate(String searchTerm, Date date) {
+		// TODO Auto-generated method stub
+		return null;
+	};
+
+	@Override
 	public TweetSearchResults searchTweets(String searchTerm, int resultsPerPage) {
 
 		// Construct the REST request
@@ -58,12 +64,6 @@ public class JsonTweetFactory implements TweetSearchFactory {
 		}
 
 	}
-
-	@Override
-	public TweetSearchResults searchTweetsByDate(String searchTerm, Date date) {
-		// TODO Auto-generated method stub
-		return null;
-	};
 
 	public static void main(String[] args) {
 		TweetSearchFactory tweetFactory = new JsonTweetFactory(
@@ -124,10 +124,11 @@ public class JsonTweetFactory implements TweetSearchFactory {
 
 			TwitterUserInfo323Impl userInfo = null;
 
+			List<Long> reTweeters = new ArrayList<Long>();
 			tweets.add(new TweetInfo323Impl(related, id, text, createdAt,
 					fromUser, profileImageUrl, toUserId, fromUserId,
 					languageCode, source, tweetRank, inReplyToStatusId,
-					retweetCount, mentions, tags, userInfo));
+					retweetCount, reTweeters, mentions, tags, userInfo));
 		}
 
 		return tweets;

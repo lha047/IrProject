@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,8 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (SCREEN_NAME, FOLLOWING_SCREEN_NAME) values (:screenName, :followingScreenName)";
 
+	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT followerId FROM followers";
+
 	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (SCREEN_NAME, FOLLOWER_SCREEN_NAME) values (:screenName, :followerScreenName)";
 
 	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT FOLLOWER_SCREEN_NAME FROM followers WHERE SCREEN_NAME = :screenName";
@@ -52,7 +53,8 @@ public class MySQLUserFactory implements UserDAO {
 	private static final String SELECT_FOLLOWING_BY_ID = "SELECT FOLLOWING_SCREEN_NAME FROM following WHERE SCREEN_NAME = :screenName";
 
 	// Correct logger...
-	private static Logger logger = LoggerFactory.getLogger(MySQLUserFactory.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(MySQLUserFactory.class);
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private DateFormat dateFormat;
 	private Date date;
@@ -110,13 +112,51 @@ public class MySQLUserFactory implements UserDAO {
 		// .selectUserByScreenName("lisaHalvors");
 		// System.out.println(s.getId() + " " + s.getScreenName());
 
-		List<String> users = userFactory.findUsersFromDB();
+
+		List<String> users = userFactory.selectAllScreenNamesFromDB(SQL_SELECT_SCREEN_NAME);
+
+
 
 		for(String name : users) {
 			System.out.println(name);
 		}
 
 		UserSearchFactory uf = new HttpUserFactory(new RestTemplate());
+		
+		List<String> followers = userFactory
+				.selectAllScreenNamesFromDB(SQL_SELECT_SCREEN_NAME);
+		System.out.println(followers.size());
+		int START = 393;
+		int STOP = followers.size();
+		long millis = 30 * 1000;
+		for (int i = START; i < STOP; i++) {
+
+			TwitterUserInfo323 tu = uf.searchUserByScreenName(followers.get(i));
+			System.out.println(i + " user " + tu.getId());
+			userFactory.addUser(tu);
+
+			try {
+				Thread.sleep(millis);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		// UserRank userRank = new UserRank("https://api.twitter.com/",
+		// new RestTemplate());
+
+		int STOPP = 1;
+		// for (int i = 0; i < STOPP; i++) {
+		// System.out.println("Rank Users " + users.get(i));
+		// double d = userRank.userRank(userFactory.selectUserByScreenName(
+		// "lisaHalvors").getId());
+		// System.out.println("Rank " + d);
+		// TwitterUserInfo323 user = userFactory.selectUserById(users.get(i));
+		// user.setFitnessScore((float) d);
+		// userFactory.updateUser(user);
+		// }
+
 
 		// To test selectFollowersByUserId(id);
 		// long id = 1;
@@ -126,6 +166,7 @@ public class MySQLUserFactory implements UserDAO {
 		// }
 
 		// To run insert follower following
+
 		int TO_NUMBER = 10;
 		FollowersFollowingResultPage[] l = new FollowersFollowingResultPage[TO_NUMBER];
 		FollowersFollowingResultPage[] l2 = new FollowersFollowingResultPage[TO_NUMBER];
@@ -151,12 +192,40 @@ public class MySQLUserFactory implements UserDAO {
 			}
 		}
 
+		// int TO_NUMBER = users.size();
+		// FollowersFollowingResultPage[] l = new
+		// FollowersFollowingResultPage[TO_NUMBER];
+		// FollowersFollowingResultPage[] l2 = new
+		// FollowersFollowingResultPage[TO_NUMBER];
+		//
+		// for (int i = 0; i < TO_NUMBER; i++) {
+		// System.out.println("Teller " + i);
+		// System.out.println("*******Twitter " + users.get(i) + "*********");
+		// FollowersFollowingResultPage f = uf
+		// .findUsersFollowers(users.get(i));
+		// FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
+		//
+		// System.out.println("*******DB " + f.getUserId() + " "
+		// + f2.getUserId() + "*********");
+		// userFactory.addFollowers(f);
+		// userFactory.addFollowing(f2);
+		// try {
+		// Thread.sleep(1000 * 20);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+
 	}
 
-	private List<String> findUsersFromDB() {
+
+
+	private List<String> selectAllScreenNamesFromDB(String SQL) {
 		Map<String, String> map = new HashMap<String, String>();
-		List<String> list = namedParameterJdbcTemplate.queryForList(
-				SQL_SELECT_SCREEN_NAME, map, String.class);
+		List<String> list = namedParameterJdbcTemplate.queryForList(SQL, map,
+				String.class);
+
 		return list;
 	}
 

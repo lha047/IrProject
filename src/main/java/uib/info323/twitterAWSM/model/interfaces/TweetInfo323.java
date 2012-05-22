@@ -3,7 +3,6 @@ package uib.info323.twitterAWSM.model.interfaces;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.social.twitter.api.TwitterProfile;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,12 +21,12 @@ public interface TweetInfo323 extends Comparable<TweetInfo323> {
 	/**
 	 * @return
 	 */
-	public List<TwitterProfile> getRetweeters();
+	public List<Long> getRetweeters();
 
 	/**
 	 * @param retweeters
 	 */
-	public void setRetweeters(List<TwitterProfile> retweeters);
+	public void setRetweeters(List<Long> retweeters);
 
 	/**
 	 * @return
