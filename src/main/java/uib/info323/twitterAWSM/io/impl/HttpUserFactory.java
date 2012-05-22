@@ -110,16 +110,13 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		Document doc = Jsoup.parse(html);
 		FollowersFollowingResultPage followers = new FollowersFollowingResultPageImpl();
 		followers.setScreenName(screenNameInput);
-		//System.out.println(doc);
 		Elements usernameElements = doc.select(".username");
 		System.out.println(usernameElements.first().text());
 		System.out.println("Size of elements: " + usernameElements.size());
-		String[] followersArray = new String[usernameElements.size()];
-		int i = 0;
-		for(Element element : usernameElements) {
-			System.out.println(element.text());
+		String[] followersArray = new String[usernameElements.size()-1];
+		for(int i = 1; i < usernameElements.size(); i++) {
+			Element element = usernameElements.get(i);
 			followersArray[i] = element.text().substring(1);
-			i++;
 		}
 		
 		followers.setFollowersScreenNames(followersArray);
@@ -144,9 +141,10 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		followings.setScreenName(screenNameInput);
 		
 		Elements usernameElements = doc.select(".username:gt(0)");
-		String[] followingsArray = new String[usernameElements.size()];
-		int i = 0;
-		for(Element element : usernameElements) {
+		String[] followingsArray = new String[usernameElements.size()-1];
+
+		for(int i = 1; i < usernameElements.size(); i++) {
+			Element element = usernameElements.get(i);
 			followingsArray[i++] = element.text().substring(1);
 		}
 		
