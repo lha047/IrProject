@@ -17,8 +17,10 @@ import uib.info323.twitterAWSM.model.impl.TweetSearchResultsImpl;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
+import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 import uib.info323.twitterAWSM.utils.TweetParser;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -29,12 +31,14 @@ public class JsonTweetFactory implements TweetSearchFactory {
 	private final String apiUrl;
 	private final RestTemplate restTemplate;
 	private final SimpleDateFormat dateFormatter;
+	private JsonParser parser;
 
 	public JsonTweetFactory(String searchApiUrl, String apiUrl,
 			RestTemplate restTemplate) {
 		this.apiUrl = apiUrl;
 		this.searchApiUrl = searchApiUrl;
 		this.restTemplate = restTemplate;
+		parser = new JsonParser();
 		dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
 
 	}
@@ -63,7 +67,7 @@ public class JsonTweetFactory implements TweetSearchFactory {
 		TweetSearchFactory tweetFactory = new JsonTweetFactory(
 				"https://search.twitter.com/search.json?",
 				"https://api.twitter.com/", new RestTemplate());
-		tweetFactory.searchTweets("bergen", 19);
+		tweetFactory.searchTweets("Bergen", 19);
 
 	}
 
@@ -104,7 +108,9 @@ public class JsonTweetFactory implements TweetSearchFactory {
 			JsonElement retweetElement = tweetObject.get("metadata")
 					.getAsJsonObject().get("recent_retweets");
 			if (retweetElement != null) {
+
 				retweetCount = retweetElement.getAsInt();
+				System.out.println("retweet count: " + retweetCount);
 			}
 
 			ArrayList<String> tags = (ArrayList<String>) TweetParser.getTerms(
@@ -118,7 +124,7 @@ public class JsonTweetFactory implements TweetSearchFactory {
 
 			TwitterUserInfo323Impl userInfo = null;
 
-			List<Long> reTweeters = new ArrayList<Long>();
+			List<Long> reTweeters = getReTweeters(id);
 			tweets.add(new TweetInfo323Impl(related, id, text, createdAt,
 					fromUser, profileImageUrl, toUserId, fromUserId,
 					languageCode, source, tweetRank, inReplyToStatusId,
@@ -126,6 +132,33 @@ public class JsonTweetFactory implements TweetSearchFactory {
 		}
 
 		return tweets;
+	}
+
+	private List<Long> getReTweeters(long id) {
+		String query = "https://api.twitter.com/1/statuses/{id}/retweeted_by.json";
+		String res = restTemplate.getForObject(query, String.class, id);
+
+		List<TwitterUserInfo323> list = new ArrayList<TwitterUserInfo323>();
+
+		System.out.println("retweet " + res);
+		JsonElement element = parser.parse(res);
+		JsonArray array = element.getAsJsonArray();
+		for (JsonElement e : array) {
+			System.out.println(e.getAsJsonObject().get("screen_name")
+					.getAsString());
+			System.out.println(e.getAsJsonObject().get("followers_count")
+					.getAsInt());
+			TwitterUserInfo323Impl user = new TwitterUserInfo323Impl();
+			user.setId(e.getAsJsonObject().get("id").getAsInt());
+			user.setId(e.getAsJsonObject().get("id").getAsInt());
+			user.setId(e.getAsJsonObject().get("id").getAsInt());
+
+			user.setId(e.getAsJsonObject().get("id").getAsInt());
+			list.add(user);
+
+		}
+
+		return null;
 	}
 
 	@Override
@@ -150,7 +183,6 @@ public class JsonTweetFactory implements TweetSearchFactory {
 	private TweetSearchResults jsonToSearchResults(String searchResults) {
 
 		// Parse the JSON result
-		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(searchResults);
 		JsonObject object = element.getAsJsonObject();
 

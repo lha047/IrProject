@@ -16,4 +16,6 @@ public interface UserDAO {
 
 	public boolean addListUsers(List<TwitterUserInfo323> users);
 
+	public List<Long> selectFollowersByUserId(long userId);
+
 }

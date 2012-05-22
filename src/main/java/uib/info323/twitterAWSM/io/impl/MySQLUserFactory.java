@@ -200,6 +200,7 @@ public class MySQLUserFactory implements UserDAO {
 				userId);
 		List<Long> list = namedParameterJdbcTemplate.queryForList(
 				SELECT_FOLLOWERS_BY_ID, parameter, Long.class);
+
 		return list;
 	}
 

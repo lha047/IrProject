@@ -8,8 +8,11 @@ import java.util.Map;
 
 import org.springframework.web.client.RestTemplate;
 
+import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.impl.JsonUserFactory;
+import uib.info323.twitterAWSM.io.impl.MySQLUserFactory;
+import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 import Jama.Matrix;
 
 /**
@@ -24,10 +27,12 @@ public class UserRank {
 	private static final double DAMPING_FACTOR = 0.85;
 	private List<Long> params;
 	private UserSearchFactory userFactory;
+	private UserDAO userDao;
 
 	public UserRank(String apiUrl, RestTemplate restTemplate) {
 		params = new ArrayList<Long>();
 		userFactory = new JsonUserFactory(apiUrl, restTemplate);
+		userDao = new MySQLUserFactory();
 	}
 
 	public static void main(String[] args) {
@@ -37,6 +42,67 @@ public class UserRank {
 		double rank = userRank.userRank(333);
 		System.out.println(rank);
 
+	}
+
+	/**
+	 * Retrieves the users followers, for each of the followers retrieve their
+	 * followers
+	 * 
+	 * @param screen_name
+	 * @return
+	 */
+	public double simplifiedUserRank(long userId) {
+		double userRank = 0;
+		List<Long> followers = userDao.selectFollowersByUserId(userId);
+		int totalNumberOfFollowers = 0;
+		for (int i = 0; i < followers.size(); i++) {
+			TwitterUserInfo323 follower = userDao.selectUserById(followers
+					.get(i));
+			if (follower == null) {
+				// TODO do something if the user is not in the database.
+				// Retrieve from Twitter API.
+				// Find the followers count
+				int numberOfFollowers = follower.getFollowersCount();
+				totalNumberOfFollowers += numberOfFollowers;
+			} else {
+				// find the list of the followers followers
+				List<Long> followersFollowers = userDao
+						.selectFollowersByUserId(follower.getId());
+				if (followersFollowers.size() == 0) {
+					int numberOfFollowers = follower.getFollowersCount();
+					totalNumberOfFollowers += numberOfFollowers;
+				} else {
+
+				}
+
+			}
+
+		}
+		userRank = totalNumberOfFollowers / followers.size();
+		return 0;
+	}
+
+	public double verySimplifiedUserRank(long userId) {
+		double userRank = 0;
+		List<Long> followers = userDao.selectFollowersByUserId(userId);
+		int totalNumberOfFollowers = 0;
+		for (int i = 0; i < followers.size(); i++) {
+			TwitterUserInfo323 follower = userDao.selectUserById(followers
+					.get(i));
+			if (follower == null) {
+				TwitterUserInfo323 tempUser = userFactory
+						.searchUserByScreenName(follower.getScreenName());
+				int numberOfFollowers = tempUser.getFollowersCount();
+				totalNumberOfFollowers += numberOfFollowers;
+			} else {
+				int numberOfFollowers = follower.getFollowersCount();
+				totalNumberOfFollowers += numberOfFollowers;
+			}
+
+		}
+		userRank = (1 - DAMPING_FACTOR) * totalNumberOfFollowers
+				/ followers.size();
+		return 0;
 	}
 
 	public double userRank(long userId) {

@@ -8,6 +8,12 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class TweetInfo323Impl implements TweetInfo323 {
 
+	private static final double ZERO_TO_ONE_TAGS = 1;
+	private static final double TWO_OR_TREE_TAGS = 0;
+	private static final double MENTIONS_ZERO = 1;
+	private static final double MENTIONS_ONE = 2;
+	private static final double MENTIONS_TWO_AND_TREE = 3;
+	private static final double MENTIONS__MORE_THAN_TREE = 0;
 	private List<Long> related;
 	private long id;
 	private String text;
@@ -285,7 +291,36 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	}
 
 	public void setTweetRank(double tweetRank) {
+		tweetRank += tagPoints();
+		tweetRank += mentionPoints();
+
 		this.tweetRank = tweetRank;
+	}
+
+	private double mentionPoints() {
+		double mentionsPoints = 0;
+		if (getMentions().size() == 0) {
+			mentionsPoints = MENTIONS_ZERO;
+		} else if (getMentions().size() == 1) {
+			mentionsPoints = MENTIONS_ONE;
+		} else if (getMentions().size() == 2 || getMentions().size() == 3) {
+			mentionsPoints = MENTIONS_TWO_AND_TREE;
+		} else
+			mentionsPoints = MENTIONS__MORE_THAN_TREE;
+
+		return mentionsPoints;
+	}
+
+	private double tagPoints() {
+		double tagPoints = 0;
+		int tags = getTags().size();
+		if (tags <= 1) {
+			tagPoints = ZERO_TO_ONE_TAGS;
+		} else if (tags > 1 && tags <= 3) {
+			tagPoints = TWO_OR_TREE_TAGS;
+		} else
+			tagPoints = 0;
+		return tagPoints;
 	}
 
 	public Long getInReplyToStatusId() {
