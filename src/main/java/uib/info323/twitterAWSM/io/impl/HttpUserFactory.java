@@ -42,7 +42,7 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		restTemplate = new RestTemplate();
 	}
 
-	
+
 	@Override
 	public TwitterUserInfo323 searchUserByScreenName(String screenNameInput) {
 
@@ -111,15 +111,19 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 		FollowersFollowingResultPage followers = new FollowersFollowingResultPageImpl();
 		followers.setScreenName(screenNameInput);
 		Elements usernameElements = doc.select(".username");
-		System.out.println(usernameElements.first().text());
-		System.out.println("Size of elements: " + usernameElements.size());
-		String[] followersArray = new String[usernameElements.size()-1];
-		for(int i = 1; i < usernameElements.size(); i++) {
-			Element element = usernameElements.get(i);
-			followersArray[i] = element.text().substring(1);
+
+		int size = usernameElements.size();
+		if(size > 1) {
+			String[] followersArray = new String[size-1];
+			for(int i = 1; i < size; i++) {
+				Element element = usernameElements.get(i);
+				followersArray[i-1] = element.text().substring(1);
+			}
+
+			followers.setFollowersScreenNames(followersArray);
+		} else {
+			followers.setFollowersScreenNames(new String[0]);
 		}
-		
-		followers.setFollowersScreenNames(followersArray);
 		return followers;
 	}
 
@@ -139,16 +143,21 @@ public class HttpUserFactory implements UserSearchFactory, UserDAO {
 
 		FollowersFollowingResultPage followings = new FollowersFollowingResultPageImpl();
 		followings.setScreenName(screenNameInput);
-		
-		Elements usernameElements = doc.select(".username:gt(0)");
-		String[] followingsArray = new String[usernameElements.size()-1];
 
-		for(int i = 1; i < usernameElements.size(); i++) {
-			Element element = usernameElements.get(i);
-			followingsArray[i++] = element.text().substring(1);
+		Elements usernameElements = doc.select(".username");
+		int size = usernameElements.size();
+		if(size > 1) {
+			String[] followingsArray = new String[size-1];
+
+			for(int i = 1; i < size; i++) {
+				Element element = usernameElements.get(i);
+				followingsArray[i-1] = element.text().substring(1);
+			}
+
+			followings.setFollowersScreenNames(followingsArray);
+		} else {
+			followings.setFollowersScreenNames(new String[0]);
 		}
-		
-		followings.setFollowersScreenNames(followingsArray);
 		return followings;
 	}
 
