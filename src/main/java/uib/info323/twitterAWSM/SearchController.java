@@ -43,7 +43,7 @@ public class SearchController {
 	// Dog
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView search(@RequestParam String q, int resultsPerPage) {
-
+		
 		ModelAndView mav = new ModelAndView("tagSearchResults");
 
 		if (q.isEmpty()) {
