@@ -3,6 +3,7 @@ package uib.info323.twitterAWSM.io.impl;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,14 +18,18 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.stereotype.Component;
 
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
+import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
+import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
+@Component
 public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_INSERT_USER = "insert into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
@@ -59,7 +64,9 @@ public class MySQLUserFactory implements UserDAO {
 	// Correct logger...
 	private static Logger logger = LoggerFactory
 			.getLogger(MySQLUserFactory.class);
+	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
 	private DateFormat dateFormat;
 	private Date date;
 
@@ -69,13 +76,13 @@ public class MySQLUserFactory implements UserDAO {
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	}
 
-	@Autowired
-	public MySQLUserFactory(
-			NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
-		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-	}
+	//
+	// public MySQLUserFactory(
+	// NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+	// this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+	// dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	//
+	// }
 
 	/**
 	 * @param jdbcTemplate
@@ -377,4 +384,24 @@ public class MySQLUserFactory implements UserDAO {
 		return list;
 	}
 
+	/**
+	 * Checks if the tweeters of the tweets in the searchResult exists in DB.
+	 * 
+	 * @param searchResult
+	 * @return list of users not in DB.
+	 */
+	public List<Long> checkIfUsersExistsInDB(TweetSearchResults searchResult) {
+		List<TweetInfo323> tweets = searchResult.getTweets();
+		List<Long> usersNotInDB = new ArrayList<Long>();
+		for (TweetInfo323 t : tweets) {
+			try {
+				TwitterUserInfo323 user = selectUserById(t.getFromUserId());
+
+			} catch (UserNotFoundException unfe) {
+
+				usersNotInDB.add(t.getFromUserId());
+			}
+		}
+		return usersNotInDB;
+	}
 }

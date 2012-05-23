@@ -9,6 +9,10 @@
 		class="org.springframework.social.twitter.api.impl.TwitterTemplate"></bean>
 	
 	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate"></bean>
+	
+	<bean id="mySqlUserFactory" class="uib.info323.twitterAWSM.io.impl.MySQLUserFactory"></bean>
+	
+
 
 	<!-- RowMapper -->
 <!-- 	<bean id="userRowMapper" class="uib.info323.twitterAWSM.io.rowmapper.UserRowMapper" /> -->

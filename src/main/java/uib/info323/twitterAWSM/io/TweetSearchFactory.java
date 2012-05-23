@@ -8,4 +8,6 @@ public interface TweetSearchFactory {
 
 	public TweetSearchResults getNextPage(String query, int rpp, int page,
 			long maxId);
+
+	public TweetSearchResults jsonToSearchResults(String users);
 }

@@ -124,7 +124,8 @@ public class JsonTweetFactory implements TweetSearchFactory {
 
 			TwitterUserInfo323Impl userInfo = null;
 
-			List<Long> reTweeters = getReTweeters(id);
+			// List<Long> reTweeters = getReTweeters(id);
+			List<Long> reTweeters = new ArrayList<Long>();
 			tweets.add(new TweetInfo323Impl(related, id, text, createdAt,
 					fromUser, profileImageUrl, toUserId, fromUserId,
 					languageCode, source, tweetRank, inReplyToStatusId,
@@ -180,7 +181,7 @@ public class JsonTweetFactory implements TweetSearchFactory {
 
 	}
 
-	private TweetSearchResults jsonToSearchResults(String searchResults) {
+	public TweetSearchResults jsonToSearchResults(String searchResults) {
 
 		// Parse the JSON result
 		JsonElement element = parser.parse(searchResults);
