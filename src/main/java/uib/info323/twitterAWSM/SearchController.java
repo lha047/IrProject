@@ -44,6 +44,9 @@ public class SearchController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView search(@RequestParam String q, int resultsPerPage) {
 
+		
+		GoogleJsonResponse response = new GoogleJsonResponse();
+		
 		ModelAndView mav = new ModelAndView("tagSearchResults");
 
 		if (q.isEmpty()) {
