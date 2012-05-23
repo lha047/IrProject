@@ -46,24 +46,30 @@ public class AjajController {
 
 	@RequestMapping(value = "/processSeach", method = RequestMethod.POST)
 	public @ResponseBody
-	String processSearch(@RequestParam String users) {
+	String processSearch(@RequestParam String searchResultJson) {
 		TweetSearchResults searchResult = tweetSearchFactory
-				.jsonToSearchResults(users);
+				.jsonToSearchResults(searchResultJson);
 		List<Long> usersWhoDontExisitInDB = userFactory
 				.checkIfUsersExistsInDB(searchResult);
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, List<Long>> userMap = new HashMap<String, List<Long>>();
-
-		String jsonString = "";
-		try {
-			jsonString = mapper.writeValueAsString(userMap);
-		} catch (JsonGenerationException e) {
-			return "{ error: { \"JsonGenerationException\" }}";
-		} catch (JsonMappingException e) {
-			return "{ error: { \"JsonMappintException\" }}";
-		} catch (IOException e) {
-			return "{ error: { \"IOException\" }}";
+		
+		StringBuilder jsonString = new StringBuilder("{ ");
+		for(Long user : usersWhoDontExisitInDB) {
+			jsonString.append(user);
+			jsonString.append(",");
 		}
-		return jsonString;
+		jsonString.append(" }");
+		return jsonString.toString();
+	}
+	
+	@RequestMapping(value = "/processUsers", method = RequestMethod.POST)
+	public @ResponseBody
+	String processUsers(@RequestParam String users) {
+		
+		
+		
+		return users;
+		
+		
+		
 	}
 };

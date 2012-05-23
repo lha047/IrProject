@@ -47,7 +47,7 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 	@Override
 	public UserDAO getUserDAO() {
 
-		return new MySQLUserFactory(null);
+		return new MySQLUserFactory();
 	}
 
 	@Override
