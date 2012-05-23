@@ -11,7 +11,7 @@
 	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate"></bean>
 
 	<!-- RowMapper -->
-	<bean id="userRowMapper" class="uib.info323.twitterAWSM.io.rowmapper.UserRowMapper" />
+<!-- 	<bean id="userRowMapper" class="uib.info323.twitterAWSM.io.rowmapper.UserRowMapper" /> -->
 	
 	
 </beans>

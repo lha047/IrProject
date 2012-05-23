@@ -40,6 +40,8 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_UPDATE_FOLLOWERS_WITH_USER_ID = "UPDATE followers SET user_id=:user_id WHERE screen_name=:screen_name";
 
+	private static final String SQL_UPDATE_FOLLOWING_WITH_USER_ID = "UPDATE following SET user_id=:user_id WHERE screen_name=:screen_name";
+
 	private static final String SQL_SELECT_SCREEN_NAME = "SELECT screen_name FROM users";
 
 	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (screen_name, user_id, following_screen_name) values (:screen_name, :user_id, :following_screen_name)";
@@ -121,8 +123,9 @@ public class MySQLUserFactory implements UserDAO {
 		// List<String> followers = userFactory
 		// .selectAllScreenNamesFromDB(SQL_SELECT_SCREEN_NAME);
 		//
-		userFactory
-				.insertUserIdsToFollowersFollowing("SELECT DISTINCT  screen_name FROM followers");
+		userFactory.insertUserIdsToFollowersFollowing(
+				"SELECT DISTINCT  screen_name FROM following",
+				SQL_UPDATE_FOLLOWING_WITH_USER_ID);
 
 		// int START = 393;
 		// int STOP = followers.size();
@@ -240,15 +243,15 @@ public class MySQLUserFactory implements UserDAO {
 		return list;
 	}
 
-	public void insertUserIdsToFollowersFollowing(String sql) {
+	public void insertUserIdsToFollowersFollowing(String sql,
+			String sqlFollowing) {
 		List<String> followers = selectAllScreenNamesFromDB(sql);
 		for (String f : followers) {
 			TwitterUserInfo323 user = selectUserByScreenName(f);
 			System.out.println("user " + user.getScreenName());
 			Map<String, Object> paramMap = followersWithIdToMap(
 					user.getScreenName(), user.getId());
-			int n = namedParameterJdbcTemplate.update(
-					SQL_UPDATE_FOLLOWERS_WITH_USER_ID, paramMap);
+			int n = namedParameterJdbcTemplate.update(sqlFollowing, paramMap);
 			System.out
 					.println("user " + user.getScreenName() + " updated " + n);
 		}
