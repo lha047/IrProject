@@ -1,5 +1,6 @@
 package uib.info323.twitterAWSM;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -86,10 +87,15 @@ public class AjajController {
 				.jsonToSearchResults(searchRequest);
 
 		// adds new users to db
-		List<TwitterUserInfo323> twitterUsers = jsonUserFactory
-				.parseJsonToUsers(users);
-		for (TwitterUserInfo323 user : twitterUsers) {
-			mySqlUserFactory.addUser(user);
+		List<TwitterUserInfo323> twitterUsers = null;
+
+		if(!users.isEmpty()) {
+			twitterUsers = jsonUserFactory.parseJsonToUsers(users);
+		}
+		if(twitterUsers != null) {		
+			for (TwitterUserInfo323 user : twitterUsers) {
+				mySqlUserFactory.addUser(user);
+			}
 		}
 
 		// retrieves user info for tweets from db
@@ -120,8 +126,8 @@ public class AjajController {
 
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
 	public ResponseEntity<String> processFollowers(@RequestParam String userId, String followers) {
-		
-		
+
+
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
