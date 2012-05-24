@@ -1,8 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!doctype html />
-<!-- 
+<!--
 	Project: Info323/Feedjam
 	Frontend: Torstein Thune
-	Backend: Snorre Davøen, Lisa Halvorsen
+	Backend: Snorre DavÃ¸en, Lisa Halvorsen
 	-->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>

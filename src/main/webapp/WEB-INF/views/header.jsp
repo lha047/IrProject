@@ -12,7 +12,8 @@
 			<input type="hidden" id="resultsPerPage" name="resultsPerPage" value="20" />
 			<button>Search</button>
 		</form>
-		<div id="info">
+		<div id="information_toggle" class="btn togglebutton">i</div>
+		<div id="info" class="infobox information hidden">
 			<strong>Feedjam</strong> is an experiment which tries to implement a PageRank-esque algorithm to rate and sort Tweets. Developed by Snorre Davøen, Lisa Halvorsen and Torstein Thune @ UiB
 			Read more in the report or check out the source.
 		</div>
