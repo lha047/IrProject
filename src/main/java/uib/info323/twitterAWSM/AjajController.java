@@ -72,8 +72,8 @@ public class AjajController {
 
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
 	public @ResponseBody
-	String processFollowers(@RequestParam String followers) {
-
+	String processFollowers(@RequestParam Long userId, String followers) {
+		System.out.println(userId);
 		// Error if something went wrong
 		return followers;
 
@@ -81,7 +81,7 @@ public class AjajController {
 
 	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
 	public @ResponseBody
-	String processFollowing(@RequestParam String following) {
+	String processFollowing(@RequestParam Long userId, String following) {
 
 		// Error if something went wrong
 		return following;
