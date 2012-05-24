@@ -27,7 +27,7 @@ function usrRequests(searchRequest, rpp, searchQuery, usrs) {
 	} else {
 		// get the view
 		console.log("No users to fetch, getting view");
-		usersToServer("", searchQuery, searchRequest, rpp);
+		usersToServer('', searchQuery, searchRequest, rpp);
 	}
 }
 
@@ -49,7 +49,7 @@ function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 	$.post("../ajaj/processUsers", { 
 		users: JSON.stringify(usrJSONData), 
 		searchQuery: searchQuery, 
-		searchRequest: JSON.stringify(searchRequest), 
+		searchRequest: '{"user":' + JSON.stringify(searchRequest) + '}', 
 		rpp: rpp
 	},
    function(view) {
