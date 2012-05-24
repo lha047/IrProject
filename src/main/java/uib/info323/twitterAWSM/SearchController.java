@@ -34,7 +34,7 @@ public class SearchController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SearchController.class);
 	@Autowired
-	private MySQLUserFactory mySQLUserFactory;
+	private MySQLUserFactory mySqlUserFactory;
 
 	@Autowired
 	private MySQLTweetFactory mySqlTweetFactory;
@@ -69,7 +69,7 @@ public class SearchController {
 
 				try {
 
-					user = mySQLUserFactory.selectUserById(userId);
+					user = mySqlUserFactory.selectUserById(userId);
 					System.out.println("Find in database");
 
 				} catch (UserNotFoundException e) {
@@ -77,7 +77,7 @@ public class SearchController {
 					user = factory.getUserSearchFactory().searchUserByNameId(
 							userId);
 					logger.info("Insert user into DB!");
-					mySQLUserFactory.addUser(user);
+					mySqlUserFactory.addUser(user);
 				} catch (BadRequestException bre) {
 					mav.addObject("error", "Ran out of requests.");
 				}
@@ -137,7 +137,7 @@ public class SearchController {
 
 				try {
 
-					user = mySQLUserFactory.selectUserById(userId);
+					user = mySqlUserFactory.selectUserById(userId);
 					System.out.println("Find in database");
 
 				} catch (UserNotFoundException e) {
@@ -145,7 +145,7 @@ public class SearchController {
 					user = factory.getUserSearchFactory().searchUserByNameId(
 							userId);
 					logger.info("Insert user into DB!");
-					mySQLUserFactory.addUser(user);
+					mySqlUserFactory.addUser(user);
 				}
 				tweet.setTwitterUserInfo323(user);
 

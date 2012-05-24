@@ -37,7 +37,7 @@ public class AjajController {
 	private String searchApiUrl = "https://search.twitter.com/search.json?";
 
 	@Autowired
-	private MySQLUserFactory userFactory;
+	private MySQLUserFactory mySqlUserFactory;
 
 	public AjajController() {
 		tweetSearchFactory = new JsonTweetFactory(searchApiUrl, apiUrl,
@@ -49,7 +49,7 @@ public class AjajController {
 	String processSearch(@RequestParam String searchResultJson) {
 		TweetSearchResults searchResult = tweetSearchFactory
 				.jsonToSearchResults(searchResultJson);
-		List<Long> usersWhoDontExisitInDB = userFactory
+		List<Long> usersWhoDontExisitInDB = mySqlUserFactory
 				.checkIfUsersExistsInDB(searchResult);
 		
 		StringBuilder jsonString = new StringBuilder("{ ");

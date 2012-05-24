@@ -11,7 +11,7 @@ import uib.info323.twitterAWSM.io.impl.MySQLUserFactory;
 public class Blackhatter {
 	
 	@Autowired
-	private MySQLUserFactory userFactory;
+	private MySQLUserFactory mySqlUserFactory;
 	@Autowired
 	private RestTemplate restTemplate;
 	

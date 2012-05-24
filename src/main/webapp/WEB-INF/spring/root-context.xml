@@ -10,7 +10,7 @@
 	
 	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate"></bean>
 	
-	<bean id="mySqlUserFactory" class="uib.info323.twitterAWSM.io.impl.MySQLUserFactory"></bean>
+<!-- 	<bean id="mySqlUserFactory" class="uib.info323.twitterAWSM.io.impl.MySQLUserFactory"></bean> -->
 	
 
 
