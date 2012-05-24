@@ -60,6 +60,8 @@ public class MySQLUserFactory implements UserDAO {
 	private static final String SELECT_FOLLOWING_BY_SCREEN_NAME = "SELECT following_screen_name FROM following WHERE SCREEN_NAME = :screen_name";
 
 	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
+	
+	private static final String SELECT_FOLLOWING_BY_ID = "SELECT followingId FROM following WHERE userId = :userId";
 
 	// Correct logger...
 	private static Logger logger = LoggerFactory
@@ -384,6 +386,15 @@ public class MySQLUserFactory implements UserDAO {
 		return list;
 	}
 
+	@Override
+	public List<Long> selectFollowingByUserId(long userId) {
+		SqlParameterSource parameter = new MapSqlParameterSource("userId",
+				userId);
+		List<Long> list = namedParameterJdbcTemplate.queryForList(
+				SELECT_FOLLOWING_BY_ID, parameter, Long.class);
+		return list;
+	}
+	
 	/**
 	 * Checks if the tweeters of the tweets in the searchResult exists in DB.
 	 * 
