@@ -31,7 +31,7 @@ public class UserRank {
 
 	public UserRank(String apiUrl, RestTemplate restTemplate) {
 		params = new ArrayList<Long>();
-		userFactory = new JsonUserFactory(apiUrl, restTemplate);
+		userFactory = new JsonUserFactory();
 		userDao = new MySQLUserFactory();
 	}
 
