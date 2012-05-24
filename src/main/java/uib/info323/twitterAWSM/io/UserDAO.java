@@ -18,4 +18,6 @@ public interface UserDAO {
 
 	public List<Long> selectFollowersByUserId(long userId);
 
+	public List<Long> selectFollowingByUserId(long userId);
+
 }
