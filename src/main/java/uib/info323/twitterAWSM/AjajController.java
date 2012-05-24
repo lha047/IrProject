@@ -1,13 +1,7 @@
 package uib.info323.twitterAWSM;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 
 import uib.info323.twitterAWSM.io.TweetSearchFactory;
 import uib.info323.twitterAWSM.io.impl.JsonTweetFactory;
@@ -46,30 +41,50 @@ public class AjajController {
 
 	@RequestMapping(value = "/processSeach", method = RequestMethod.POST)
 	public @ResponseBody
-	String processSearch(@RequestParam String searchResultJson) {
+	String processSearch(@RequestParam String searchResponse) {
 		TweetSearchResults searchResult = tweetSearchFactory
-				.jsonToSearchResults(searchResultJson);
+				.jsonToSearchResults(searchResponse);
 		List<Long> usersWhoDontExisitInDB = mySqlUserFactory
 				.checkIfUsersExistsInDB(searchResult);
-		
+
 		StringBuilder jsonString = new StringBuilder("{ ");
-		for(Long user : usersWhoDontExisitInDB) {
+		for (Long user : usersWhoDontExisitInDB) {
 			jsonString.append(user);
 			jsonString.append(",");
 		}
 		jsonString.append(" }");
 		return jsonString.toString();
 	}
-	
+
+	/**
+	 * @param users
+	 *            . user info from twitter which doesnt exist in db
+	 * @return full view
+	 */
 	@RequestMapping(value = "/processUsers", method = RequestMethod.POST)
-	public @ResponseBody
-	String processUsers(@RequestParam String users) {
-		
-		
-		
-		return users;
-		
-		
-		
+	public ModelAndView processUsers(@RequestParam String users,
+			String searchQuery, String searchRequest, int rpp) {
+		ModelAndView mav = new ModelAndView("tweetList");
+
+		return mav;
+
 	}
-};
+
+	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
+	public @ResponseBody
+	String processFollowers(@RequestParam String followers) {
+
+		// Error if something went wrong
+		return followers;
+
+	}
+
+	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
+	public @ResponseBody
+	String processFollowing(@RequestParam String following) {
+
+		// Error if something went wrong
+		return following;
+
+	}
+}
