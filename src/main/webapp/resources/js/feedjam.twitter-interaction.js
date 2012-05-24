@@ -43,11 +43,16 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 // sends returned user data to controller (../ajaj/processUsers)
 function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 	console.log('SERVER POST: sending users to server');
+	console.log(searchRequest + ' \n ################# \n' + usrJSONData);
+	if(usrJSONData != '') {
+		usrJSONData = '{"users":' + JSON.stringify(usrJSONData) + '}'
+	}
+		
 	if(!rpp) {
 		rpp = 20
 	}
 	$.post("../ajaj/processUsers", { 
-		users: '{"users":' + JSON.stringify(usrJSONData) + '}', 
+		users: usrJSONData, 
 		searchQuery: searchQuery, 
 		searchRequest: JSON.stringify(searchRequest), 
 		rpp: rpp
