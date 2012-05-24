@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,21 +25,20 @@ import com.google.gson.JsonParser;
 
 public class JsonTrendFactory implements TrendFactory {
 
-	private final String apiUrl;
-	private final RestTemplate restTemplate;
+	private final String apiUrl = "https://api.twitter.com/";
+	@Autowired
+	private RestTemplate restTemplate;
 	private final SimpleDateFormat requestDateFormatter;
 	private final SimpleDateFormat responseDateFormatter;
 
-	public JsonTrendFactory(String apiUrl, RestTemplate restTemplate) {
-		this.apiUrl = apiUrl;
-		this.restTemplate = restTemplate;
+	public JsonTrendFactory() {
+		restTemplate = new RestTemplate();
 		requestDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 		responseDateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	}
 
 	public static void main(String[] args) {
-		JsonTrendFactory factory = new JsonTrendFactory(
-				"https://api.twitter.com/", new RestTemplate());
+		JsonTrendFactory factory = new JsonTrendFactory();
 		Trends trends = factory.getDailyTrendsForDate(new Date());
 		System.out.println(trends.getTrends().keySet().size());
 	}

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,6 +30,7 @@ public class JsonTweetFactory implements TweetSearchFactory {
 
 	private final String searchApiUrl;
 	private final String apiUrl;
+	@Autowired
 	private final RestTemplate restTemplate;
 	private final SimpleDateFormat dateFormatter;
 	private JsonParser parser;
@@ -37,7 +39,7 @@ public class JsonTweetFactory implements TweetSearchFactory {
 			RestTemplate restTemplate) {
 		this.apiUrl = apiUrl;
 		this.searchApiUrl = searchApiUrl;
-		this.restTemplate = restTemplate;
+		this.restTemplate = new RestTemplate();
 		parser = new JsonParser();
 		dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
 

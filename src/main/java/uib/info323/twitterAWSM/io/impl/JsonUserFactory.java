@@ -38,6 +38,8 @@ public class JsonUserFactory implements UserSearchFactory {
 	public JsonUserFactory() {
 		apiUri = "https://api.twitter.com/";
 		dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
+		restTemplate = new RestTemplate();
+		parser = new JsonParser();
 	}
 
 	// public JsonUserFactory(String apiUrl, RestTemplate restTemplate) {

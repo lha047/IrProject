@@ -36,7 +36,7 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 
 	@Override
 	public TrendFactory getTrendFactory() {
-		return new JsonTrendFactory(apiUrl, restTemplate);
+		return new JsonTrendFactory();
 	}
 
 	@Override
