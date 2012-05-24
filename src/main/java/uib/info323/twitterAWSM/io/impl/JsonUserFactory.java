@@ -2,9 +2,11 @@ package uib.info323.twitterAWSM.io.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,18 +25,29 @@ import com.google.gson.JsonParser;
 public class JsonUserFactory implements UserSearchFactory {
 
 	private final String apiUri;
-	private final RestTemplate restTemplate;
+
+	@Autowired
+	private RestTemplate restTemplate;
 
 	private TwitterUserInfo323 user;
 	private SimpleDateFormat dateFormatter;
+
+	@Autowired
 	private JsonParser parser;
 
-	public JsonUserFactory(String apiUrl, RestTemplate restTemplate) {
-		this.apiUri = apiUrl;
-		this.restTemplate = restTemplate;
+	public JsonUserFactory() {
+		apiUri = "https://api.twitter.com/";
 		dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
+		restTemplate = new RestTemplate();
 		parser = new JsonParser();
 	}
+
+	// public JsonUserFactory(String apiUrl, RestTemplate restTemplate) {
+	// this.apiUri = apiUrl;
+	// this.restTemplate = restTemplate;
+	// dateFormatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss");
+	// parser = new JsonParser();
+	// }
 
 	@Override
 	public TwitterUserInfo323 searchUserByNameId(long nameId)
@@ -78,7 +91,23 @@ public class JsonUserFactory implements UserSearchFactory {
 		}
 		JsonElement element = parser.parse(searchResult);
 
-		JsonObject obj = element.getAsJsonObject();
+		return jsonElementToUser(element);
+
+	}
+
+	public List<TwitterUserInfo323> parseJsonToUsers(String searchResult) {
+		JsonElement element = parser.parse(searchResult);
+		List<TwitterUserInfo323> users = new ArrayList<TwitterUserInfo323>();
+		for (JsonElement userElement : element.getAsJsonArray()) {
+			users.add(jsonElementToUser(userElement));
+
+		}
+
+		return users;
+	}
+
+	private TwitterUserInfo323 jsonElementToUser(JsonElement userElement) {
+		JsonObject obj = userElement.getAsJsonObject();
 
 		long id = obj.get("id").getAsLong();
 		String screenName = obj.get("screen_name").getAsString();
@@ -89,14 +118,12 @@ public class JsonUserFactory implements UserSearchFactory {
 			url = obj.get("url").getAsString();
 		}
 
-		String profileImageUrl = element.getAsJsonObject()
-				.get("profile_image_url").getAsString();
+		String profileImageUrl = obj.get("profile_image_url").getAsString();
 
 		String description = obj.get("description").getAsString();
 		String location = obj.get("location").getAsString();
 		;
-		Date createdDate = parseDate(element.getAsJsonObject()
-				.get("created_at").getAsString());
+		Date createdDate = parseDate(obj.get("created_at").getAsString());
 		int favoritesCount = obj.get("favourites_count").getAsInt();
 		int followersCount = obj.get("followers_count").getAsInt();
 		int friendsCount = obj.get("friends_count").getAsInt();
@@ -112,7 +139,6 @@ public class JsonUserFactory implements UserSearchFactory {
 				favoritesCount, followersCount, friendsCount, language,
 				profileUrl, statusesCount, new Date());
 		return user;
-
 	}
 
 	private Date parseDate(String dateString) {
@@ -127,15 +153,19 @@ public class JsonUserFactory implements UserSearchFactory {
 	}
 
 	public static void main(String[] args) {
-		UserSearchFactory uf = new JsonUserFactory("https://api.twitter.com/",
-				new RestTemplate());
+		// UserSearchFactory uf = new
+		// JsonUserFactory("https://api.twitter.com/",
+		// new RestTemplate());
+		UserSearchFactory uf = new JsonUserFactory();
 
 		TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
 				.searchUserByScreenName("HalvorsenMari");
 		System.out.println(t.getId());
-		FollowersFollowingResultPage f = (FollowersFollowingResultPage) uf.findUsersFollowers(t.getScreenName());
+		FollowersFollowingResultPage f = (FollowersFollowingResultPage) uf
+				.findUsersFollowers(t.getScreenName());
 
-		FollowersFollowingResultPage f2 = (FollowersFollowingResultPage) uf.findUsersFriends(t.getScreenName());
+		FollowersFollowingResultPage f2 = (FollowersFollowingResultPage) uf
+				.findUsersFriends(t.getScreenName());
 		long tweetId = 0;
 		uf.getRetweetedBy(tweetId);
 		// TwitterUserInfo323Impl t = (TwitterUserInfo323Impl) uf
@@ -144,7 +174,6 @@ public class JsonUserFactory implements UserSearchFactory {
 		// FollowersFollowingResultPage f = uf.findUsersFollowers(t.getId());
 		//
 		// FollowersFollowingResultPage f2 = uf.findUsersFriends(t.getId());
-
 
 	}
 
@@ -171,7 +200,8 @@ public class JsonUserFactory implements UserSearchFactory {
 		return null;
 	}
 
-	private FollowersFollowingResultPage findFollowersFriends(String screenName, String request) {
+	private FollowersFollowingResultPage findFollowersFriends(
+			String screenName, String request) {
 		try {
 			Thread.sleep(24 * 1000);
 		} catch (InterruptedException e) {
