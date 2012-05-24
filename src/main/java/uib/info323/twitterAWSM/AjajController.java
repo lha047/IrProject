@@ -124,6 +124,12 @@ public class AjajController {
 				System.out.println("Error inserting tweet " + t.getId());
 			}
 		}
+		System.out
+				.println("SearchResult "
+						+ searchResult.getTweets().size()
+						+ " user in index 0:"
+						+ searchResult.getTweets().get(0).getUserInfo()
+								.getScreenName());
 		mav.addObject("query", searchQuery);
 		mav.addObject("results", searchResult);
 		return mav;
