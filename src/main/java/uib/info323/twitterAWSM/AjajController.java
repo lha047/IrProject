@@ -1,10 +1,13 @@
 package uib.info323.twitterAWSM;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -84,10 +87,15 @@ public class AjajController {
 				.jsonToSearchResults(searchRequest);
 
 		// adds new users to db
-		List<TwitterUserInfo323> twitterUsers = jsonUserFactory
-				.parseJsonToUsers(users);
-		for (TwitterUserInfo323 user : twitterUsers) {
-			mySqlUserFactory.addUser(user);
+		List<TwitterUserInfo323> twitterUsers = null;
+
+		if(!users.isEmpty()) {
+			twitterUsers = jsonUserFactory.parseJsonToUsers(users);
+		}
+		if(twitterUsers != null) {		
+			for (TwitterUserInfo323 user : twitterUsers) {
+				mySqlUserFactory.addUser(user);
+			}
 		}
 
 		// retrieves user info for tweets from db
@@ -117,20 +125,17 @@ public class AjajController {
 	}
 
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
-	public @ResponseBody
-	String processFollowers(@RequestParam Long userId, String followers) {
-		System.out.println(userId);
-		// Error if something went wrong
-		return followers;
+	public ResponseEntity<String> processFollowers(@RequestParam String userId, String followers) {
+
+
+		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
-	public @ResponseBody
-	String processFollowing(@RequestParam Long userId, String following) {
+	public ResponseEntity<String> processFollowing(@RequestParam String userId, String following) {
 
-		// Error if something went wrong
-		return following;
+		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
 }

@@ -10,36 +10,47 @@ var followers = "";
 var following = "";
 
 // control users
-function usrRequests(usrs, searchQuery) {
-	var usrLst = usrs.split(",");
+function usrRequests(searchRequest, rpp, searchQuery, usrs) {
 	
-	// get user data
-	getUsersFromTwitter(usrs);
+	if(usrs) {
+		var usrLst = usrs.split(",");
 	
-	// get followers and following for all users
-	for(var i=0;i<usrLst.length-1;i++) {
-		following += getFollowingFromTwitter(usrLst[i]);
-		followers += getFollowersFromTwitter(usrLst[i]);
+		// get user data
+		getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp);
+		
+		// get followers and following for all users
+		for(var i=0;i<usrLst.length-1;i++) {
+			following += getFollowingFromTwitter(usrLst[i]);
+			followers += getFollowersFromTwitter(usrLst[i]);
+		}
+		
+	} else {
+		// get the view
+		console.log("No users to fetch, getting view");
+		usersToServer("", searchQuery, searchRequest, rpp);
 	}
 }
 
 // get users from twitter
-function getUsersFromTwitter(usrs, searchQuery) {
+function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 	console.log('REQUEST: Twitter API: requesting user data for: ' + usrs);
 	$.getJSON('https://api.twitter.com/1/users/lookup.json?user_id=' + usrs + '&include_entities=false&callback=?', function(usrJSONData) {
 		console.log('RESPONSE: Twitter API: received user data for ' + usrs);
-		usersToServer(usrJSONData, searchQuery);
+		usersToServer(usrJSONData, searchQuery, searchRequest, rpp);
 	});
 }
 
 // sends returned user data to controller (../ajaj/processUsers)
-function usersToServer(usrJSONData, rpp, searchQuery, searchRequest) {
+function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 	console.log('SERVER POST: sending users to server');
+	if(!rpp) {
+		rpp = 20
+	}
 	$.post("../ajaj/processUsers", { 
 		users: JSON.stringify(usrJSONData), 
 		searchQuery: searchQuery, 
 		searchRequest: JSON.stringify(searchRequest), 
-		rpp: 20
+		rpp: rpp
 	},
    function(view) {
 		console.log('RETURNED VIEW');
@@ -53,7 +64,7 @@ function doTheFunkyBusiness(view) {
 		$('header').after(tweetContainer);
 	}
 	$("#trendingList").fadeOut("fast", "linear").delay(10).remove();
-	$('#tweets').append(data).masonry('reload');
+	$('#tweets').append(view).masonry('reload');
 }
 
 	// ajax logic
@@ -133,8 +144,8 @@ function tweetsToServer(searchResponse, rpp, searchQuery) {
 	$.post("../ajaj/processSearch", { 
 		searchResponse: JSON.stringify(searchResponse) 
 	},
-   function(data) {
-	 usrRequests(data);
+   function(usersToCheck) {
+	 usrRequests(searchResponse, rpp, searchQuery, usersToCheck);
    });
 }
 
