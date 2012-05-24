@@ -64,6 +64,7 @@ public class MySQLUserFactory implements UserDAO {
 	// Correct logger...
 	private static Logger logger = LoggerFactory
 			.getLogger(MySQLUserFactory.class);
+
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

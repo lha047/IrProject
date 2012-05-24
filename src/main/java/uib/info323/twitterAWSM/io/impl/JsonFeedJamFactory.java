@@ -17,7 +17,8 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 
 	private final String apiUrl = "https://api.twitter.com/";
 	private final String searchApiUrl = "https://search.twitter.com/search.json?";
-	private final RestTemplate restTemplate = new RestTemplate();
+	@Autowired
+	private RestTemplate restTemplate;
 
 	public JsonFeedJamFactory() {
 		super();
@@ -30,7 +31,7 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 
 	@Override
 	public UserSearchFactory getUserSearchFactory() {
-		return new JsonUserFactory(apiUrl, restTemplate);
+		return new JsonUserFactory();
 	}
 
 	@Override
