@@ -97,8 +97,10 @@ public class JsonUserFactory implements UserSearchFactory {
 
 	public List<TwitterUserInfo323> parseJsonToUsers(String searchResult) {
 		JsonElement element = parser.parse(searchResult);
+		System.out.println("Parsed element: " + element.toString());
 		List<TwitterUserInfo323> users = new ArrayList<TwitterUserInfo323>();
-		for (JsonElement userElement : element.getAsJsonArray()) {
+		JsonObject jsonUsers = element.getAsJsonObject().get("users").getAsJsonObject();
+		for (JsonElement userElement : jsonUsers.getAsJsonArray()) {
 			users.add(jsonElementToUser(userElement));
 
 		}
