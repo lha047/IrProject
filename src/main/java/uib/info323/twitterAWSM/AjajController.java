@@ -78,7 +78,7 @@ public class AjajController {
 	public ModelAndView processUsers(@RequestParam String users,
 			String searchQuery, String searchRequest, int rpp) {
 		ModelAndView mav = new ModelAndView("tweetList");
-
+		System.out.println("SearchRequest " + searchRequest);
 		// Creates search results page
 		TweetSearchResults searchResult = tweetSearchFactory
 				.jsonToSearchResults(searchRequest);
