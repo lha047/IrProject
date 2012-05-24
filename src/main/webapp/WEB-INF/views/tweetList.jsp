@@ -1,10 +1,12 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@page import="java.util.Random"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page session="false" %>
 
 			<c:forEach var="tweet" items="${results.tweets}">
-				<article class="left two_half_cols tweet_container five_stars"><!-- <c:out value="${tweet.tweetRank}" /> -->
+				<article id="<c:out value="${tweet.id}" />" class="left two_half_cols tweet_container five_stars"><!-- <c:out value="${tweet.tweetRank}" /> -->
 					<div class="tweet_border">
 						<section class="padding tweet" style="opacity: <c:out value="${tweet.userInfo.fitnessScore}" />;">
 							<section class="cf user">
@@ -36,7 +38,6 @@
 							<p class="clear tweet_content">
 								<c:out value="${tweet.text}" />
 							</p>
-							
 						</section>
 					</div>
 				</article>

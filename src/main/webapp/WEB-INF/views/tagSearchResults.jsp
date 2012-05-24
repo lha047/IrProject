@@ -28,6 +28,12 @@
 		
 		<script type="text/javascript">
 			$(document).ready(function() {
+				
+				// toggle feedjam info box
+				$("#information_toggle").click(function() {
+					$('.information').fadeToggle("fast", "linear");
+				});
+				
 				var active=false;
 				/*$(document).click(function() {
 					console.log('document click');
@@ -93,6 +99,7 @@
 				});
 			});
 		</script>
+		<script type="text/javascript" src="resources/js/clientTwitterInteraction.js"></</script>
 	</c:if>
 <jsp:include page="footer.jsp"></jsp:include>
 

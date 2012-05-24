@@ -1,0 +1,34 @@
+<html>
+<head>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+</head>
+<body>
+	<header>check the console :D<br />
+	
+	<button id="search">search</button>
+	
+	<button id="users">users</button>
+	
+	<button id="following">following</button>
+	
+	<button id="followers">followers</button></header>
+	
+	<div class="out">
+	</div>
+	<script type="text/javascript" src="js/feedjam.twitter-interaction.js"></script>
+	<script type="text/javascript">
+		$(document).ready( function() {
+			
+			$('#search').click(function() { searchTweets("some search query", 20); });
+			
+			$('#users').click(function() { usrRequests("490234923,119706594,22071501", "some search query"); });
+			
+			$('#following').click(function() { getFollowingFromTwitter("torsteinthune"); });
+			
+			$('#followers').click(function() { getFollowersFromTwitter("torsteinthune"); });
+		});
+	</script>
+	
+</body>
+</html>

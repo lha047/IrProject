@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import uib.info323.twitterAWSM.exceptions.TweetException;
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.TweetSearchFactory;
 import uib.info323.twitterAWSM.io.impl.JsonTweetFactory;
 import uib.info323.twitterAWSM.io.impl.JsonUserFactory;
+import uib.info323.twitterAWSM.io.impl.MySQLTweetFactory;
 import uib.info323.twitterAWSM.io.impl.MySQLUserFactory;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
@@ -42,6 +44,8 @@ public class AjajController {
 
 	@Autowired
 	private MySQLUserFactory mySqlUserFactory;
+	@Autowired
+	private MySQLTweetFactory mySqlTweetFactory;
 
 	public AjajController() {
 		tweetSearchFactory = new JsonTweetFactory(searchApiUrl, apiUrl,
@@ -54,15 +58,16 @@ public class AjajController {
 	String processSearch(@RequestParam String searchResponse) {
 		TweetSearchResults searchResult = tweetSearchFactory
 				.jsonToSearchResults(searchResponse);
+
 		List<Long> usersWhoDontExisitInDB = mySqlUserFactory
 				.checkIfUsersExistsInDB(searchResult);
 
-		StringBuilder jsonString = new StringBuilder("{ ");
+		StringBuilder jsonString = new StringBuilder("");
 		for (Long user : usersWhoDontExisitInDB) {
 			jsonString.append(user);
 			jsonString.append(",");
 		}
-		jsonString.append(" }");
+		jsonString.append("");
 		return jsonString.toString();
 	}
 
@@ -99,6 +104,14 @@ public class AjajController {
 			tweet.setTwitterUserInfo323(user);
 		}
 
+		List<TweetInfo323> tweets = searchResult.getTweets();
+		for (TweetInfo323 t : tweets) {
+			try {
+				mySqlTweetFactory.insertTweet(t);
+			} catch (TweetException e) {
+				System.out.println("Error inserting tweet " + t.getId());
+			}
+		}
 		mav.addObject("query", searchQuery);
 		mav.addObject("results", searchResult);
 		return mav;
