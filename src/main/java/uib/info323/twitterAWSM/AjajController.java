@@ -104,20 +104,16 @@ public class AjajController {
 	}
 
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
-	public @ResponseBody
-	String processFollowers(@RequestParam Long userId, String followers) {
+	public void processFollowers(@RequestParam String userId, String followers) {
 		System.out.println(userId);
 		// Error if something went wrong
-		return followers;
 
 	}
 
 	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
-	public @ResponseBody
-	String processFollowing(@RequestParam Long userId, String following) {
+	public void processFollowing(@RequestParam String userId, String following) {
 
 		// Error if something went wrong
-		return following;
 
 	}
 }
