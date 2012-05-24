@@ -68,6 +68,7 @@ public class AjajController {
 			jsonString.append(",");
 		}
 		jsonString.append("");
+		System.out.println("usersWhoDontExistInDB " + jsonString.toString());
 		return jsonString.toString();
 	}
 
@@ -90,13 +91,15 @@ public class AjajController {
 
 		System.out.println();
 
-		if(users.length() > 0) {
+		if (users.length() > 0) {
 
 			twitterUsers = jsonUserFactory.parseJsonToUsers(users);
 		}
 		if (twitterUsers != null) {
 			for (TwitterUserInfo323 user : twitterUsers) {
-				mySqlUserFactory.addUser(user);
+				boolean inserted = mySqlUserFactory.addUser(user);
+				System.out.println("inserted " + user.getScreenName()
+						+ inserted);
 			}
 		}
 
@@ -117,6 +120,7 @@ public class AjajController {
 			try {
 				mySqlTweetFactory.insertTweet(t);
 			} catch (TweetException e) {
+
 				System.out.println("Error inserting tweet " + t.getId());
 			}
 		}
