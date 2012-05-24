@@ -39,7 +39,7 @@ public class AjajController {
 				new RestTemplate());
 	}
 
-	@RequestMapping(value = "/processSeach", method = RequestMethod.POST)
+	@RequestMapping(value = "/processSearch", method = RequestMethod.POST)
 	public @ResponseBody
 	String processSearch(@RequestParam String searchResponse) {
 		TweetSearchResults searchResult = tweetSearchFactory
@@ -47,12 +47,12 @@ public class AjajController {
 		List<Long> usersWhoDontExisitInDB = mySqlUserFactory
 				.checkIfUsersExistsInDB(searchResult);
 
-		StringBuilder jsonString = new StringBuilder("{ ");
+		StringBuilder jsonString = new StringBuilder("");
 		for (Long user : usersWhoDontExisitInDB) {
 			jsonString.append(user);
 			jsonString.append(",");
 		}
-		jsonString.append(" }");
+		jsonString.append("");
 		return jsonString.toString();
 	}
 
