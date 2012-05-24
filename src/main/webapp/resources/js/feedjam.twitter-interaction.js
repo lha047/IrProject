@@ -47,9 +47,9 @@ function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 		rpp = 20
 	}
 	$.post("../ajaj/processUsers", { 
-		users: JSON.stringify(usrJSONData), 
+		users: '{"users":' + JSON.stringify(usrJSONData) + '}', 
 		searchQuery: searchQuery, 
-		searchRequest: '{"user":' + JSON.stringify(searchRequest) + '}', 
+		searchRequest: JSON.stringify(searchRequest), 
 		rpp: rpp
 	},
    function(view) {
