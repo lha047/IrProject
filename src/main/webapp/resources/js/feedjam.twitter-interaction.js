@@ -6,9 +6,21 @@ var max_id = 0;
 var query = "";
 var rpp = 20;
 
-/*jQuery(document).ajaxError(function(event, request, settings){
+// catches all AJAX errors not caused by jsnonp-requests (namely interaction with the feedjam server)
+jQuery(document).ajaxError(function(event, request, settings){
    console.log("**********ERROR:***********\nevent: " + event + "\nrequest: " + request + "nsettings: " + settings);
-});*/
+});
+
+// pushes loadingdata to the loading scroller
+function updateScrollMessage(message) {
+	// todo : sette inn meldinger om hva som skjer i loading knappen (hvis den fortsatt er loading)
+}
+
+// pushes error messages to the frontend
+function displayError(message) {
+	// todo: sett inn errorboks på siden hvis noen requests feiler
+	$('header').after('<div class="error">' + message + '</div>');
+}
 
 /*
 	User functions
@@ -51,11 +63,10 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 			usersToServer(usrJSONData, searchQuery, searchRequest, rpp);
 		},
 		error:function(){
-			console.log('****** ERROR: getUsersFromTwitter() failed *******');                    
+			console.log('****** ERROR: getUsersFromTwitter() failed *******'); 
+			displayError('Could not get userdata: out of Twitter API requests');
 		},
-		complete:function(){
-			console.log('getUsersFromTwitter completed');                    
-		}
+		complete:function(){}
 	});
 	
 	/*$.getJSON('https://api.twitter.com/1/users/lookup.json?user_id=' + usrs + '&include_entities=false&callback=?', function(usrJSONData) {
@@ -140,10 +151,26 @@ function getFollowingFromTwitter(usr) {
 // sends requests for followers for users to twitter
 function getFollowersFromTwitter(usr) {
 	console.log('REQUEST: Twitter API: requesting followers for ' + usr);
-	$.getJSON('https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + usr + '&callback=?', function(usrFollowersJSON) {
+	
+	$.ajax({
+		url:'https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + usr + '&callback=?',
+		dataType:'jsonp',
+		timeout: 5000,
+		success:function(usrFollowersJSON){
+			console.log('RESPONSE: Twitter API: received response for followers for user: ' + usr);
+			followersToServer(usr, usrFollowersJSON);
+		},
+		error:function(){
+			console.log('****** ERROR: getFollowersFromTwitter() failed *******');
+		},
+		complete:function(){                    
+		}
+	});
+	
+	/*$.getJSON('https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + usr + '&callback=?', function(usrFollowersJSON) {
 		console.log('RESPONSE: Twitter API: received response for followers for user: ' + usr);
 		followersToServer(usr, usrFollowersJSON);
-	});
+	});*/
 }
 
 /*
@@ -171,7 +198,32 @@ function searchTweets(searchQuery, rpp) {
 		query_id = "&max_id=" + max_id;
 	}
 	console.log('Running query: http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?');
-	$.getJSON('http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?', function(searchResponse) {
+	
+	$.ajax({
+		url:'http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?',
+		dataType:'jsonp',
+		timeout: 5000,
+		success:function(searchResponse){
+			console.log('received response for search: ' + searchResponse);
+	  
+			page = searchResponse.page + 1;
+			max_id = searchResponse.max_id;
+			query = searchResponse.query;
+			rpp = rpp;
+			
+			console.log("page: " + page + "\nmax_id: " + max_id + "\nquery: " + query + "\nrpp: " + rpp);
+			
+			tweetsToServer(searchResponse, rpp, searchQuery);
+		},
+		error:function(){
+			console.log('****** ERROR: getFollowersFromTwitter() failed *******');
+			displayError('Could not search for tweets. Probably out of Twitter API requests.');
+		},
+		complete:function(){                    
+		}
+	});
+	
+	/*$.getJSON('http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?', function(searchResponse) {
 		console.log('received response for search: ' + searchResponse);
 	  
 		page = searchResponse.page + 1;
@@ -182,7 +234,7 @@ function searchTweets(searchQuery, rpp) {
 		console.log("page: " + page + "\nmax_id: " + max_id + "\nquery: " + query + "\nrpp: " + rpp);
 		
 		tweetsToServer(searchResponse, rpp, searchQuery);
-	});
+	});*/
 }
 
 /*
@@ -255,9 +307,7 @@ $('#search_form').submit( function(e) {
 	
 });
 
-function updateScrollMessage(message) {
-	// todo : sette inn meldinger om hva som skjer i loading knappen (hvis den fortsatt er loading)
-}
+
 
 
 // displays returned view, rebinds events, reloads masonry
