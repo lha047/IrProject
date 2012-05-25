@@ -67,21 +67,21 @@ public class MySQLTweetFactory implements TweetDAO {
 		int inserted = -1;
 		try {
 			inserted = jdbcTemplate.update(SQL_INSERT_TWEET, params);
+			if(inserted == 0) {
+				TweetInfo323Impl t = (TweetInfo323Impl) selectTweetById(tweet
+						.getId());
+
+				if (tooOldTweet(t.getLastUpdated()) || t.getLastUpdated() == null) {
+					System.out.println("update " + updateTweet(tweet));
+				}
+			}
+			return true;
 
 		} catch (DataAccessException dae) {
-			// System.out.println("*DAE*" + dae.getMessage());
-
-			TweetInfo323Impl t = (TweetInfo323Impl) selectTweetById(tweet
-					.getId());
-
-			if (tooOldTweet(t.getLastUpdated()) || t.getLastUpdated() == null) {
-				System.out.println("update " + updateTweet(tweet));
-			}
-			throw new TweetException();
-
+			return false;
 		}
-
-		return inserted == 1;
+		
+		
 	}
 
 	public boolean tooOldTweet(Date lastUpdated) {

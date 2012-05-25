@@ -27,7 +27,7 @@ public class JsonUserParser {
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(jsonUsers);
 		JsonElement jsonUsersElement = element.getAsJsonObject().get("users");
-		
+
 		List<TwitterUserInfo323> users = new ArrayList<TwitterUserInfo323>();
 		for(JsonElement userElement : jsonUsersElement.getAsJsonArray()) {
 
@@ -55,8 +55,10 @@ public class JsonUserParser {
 
 		String profileImageUrl = element.getAsJsonObject()
 				.get("profile_image_url").getAsString();
-
-		String description = obj.get("description").getAsString();
+		String description = "";
+		if(!obj.get("description").isJsonNull()) {
+			description = obj.get("description").getAsString();
+		}
 		String location = obj.get("location").getAsString();
 		;
 		Date createdDate;
