@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
+import uib.info323.twitterAWSM.io.TrendDAO;
 import uib.info323.twitterAWSM.io.TrendFactory;
 import uib.info323.twitterAWSM.io.TweetDAO;
 import uib.info323.twitterAWSM.io.TweetSearchFactory;
@@ -53,8 +54,12 @@ public class JsonFeedJamFactory extends AbstractFeedJamFactory {
 
 	@Override
 	public TweetDAO getTweetDAO() {
-		// TODO Auto-generated method stub
 		return new MySQLTweetFactory();
+	}
+
+	@Override
+	public TrendDAO getTrendDAO() {
+		return new MySQLTrendingFactory();
 	}
 
 }

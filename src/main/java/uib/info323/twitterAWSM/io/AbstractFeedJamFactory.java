@@ -19,6 +19,8 @@ public abstract class AbstractFeedJamFactory {
 
 	public abstract UserDAO getUserDAO();
 
+	public abstract TrendDAO getTrendDAO();
+
 	public abstract UserSearchFactory getUserSearchFactory();
 
 	public abstract TweetDAO getTweetDAO();

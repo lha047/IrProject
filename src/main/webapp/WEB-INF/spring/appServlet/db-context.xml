@@ -31,4 +31,9 @@
 	<bean id="mySqlTweetFactory" class="uib.info323.twitterAWSM.io.impl.MySQLTweetFactory" autowire="byName">
 		<property name="namedParameterJdbcTemplate" ref="jdbcTemplate"/>
 	</bean>
+	
+	
+	<bean id="mySqlTrendingFactory" class="uib.info323.twitterAWSM.io.impl.MySQLTrendingFactory" autowire="byName">
+		<property name="namedParameterJdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
 </beans>
