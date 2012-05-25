@@ -6,13 +6,11 @@
 	--------------
 */
 
-var followers = "";
-var following = "";
-
-// control users
+// control user ajax requests
 function usrRequests(searchRequest, rpp, searchQuery, usrs) {
 	
 	if(usrs) {
+		// we have users to find
 		var usrLst = usrs.split(",");
 	
 		// get user data
@@ -20,8 +18,8 @@ function usrRequests(searchRequest, rpp, searchQuery, usrs) {
 		
 		// get followers and following for all users
 		for(var i=0;i<usrLst.length-1;i++) {
-			following += getFollowingFromTwitter(usrLst[i]);
-			followers += getFollowersFromTwitter(usrLst[i]);
+			getFollowingFromTwitter(usrLst[i]);
+			getFollowersFromTwitter(usrLst[i]);
 		}
 		
 	} else {
@@ -44,15 +42,18 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 	console.log('SERVER POST: sending users to server');
 	console.log(searchRequest + ' \n ################# \n' + usrJSONData);
-	if(usrJSONData != '') {
-		usrJSONData = '{"users":' + JSON.stringify(usrJSONData) + '}'
+	var out = "";
+	if(usrJSONData != "") {
+		out = '{"users":' + JSON.stringify(usrJSONData) + '}';
 	}
+	
+	console.log(out);
 		
 	if(!rpp) {
-		rpp = 20
+		rpp = 20;
 	}
-	$.post("../ajaj/processUsers", { 
-		users: usrJSONData, 
+	$.post("ajaj/processUsers", { 
+		users: out, 
 		searchQuery: searchQuery, 
 		searchRequest: JSON.stringify(searchRequest), 
 		rpp: rpp
@@ -63,43 +64,9 @@ function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
    });
 }
 
-function doTheFunkyBusiness(view) {
-	var tweetContainer = '<section class="ten_cols no_padding cf tweet_wrapper" id="tweets"></section><div id="more" class="ten_cols"><div class="two_cols block btn center">Load more</div></div>';
-	if(!$("#more")) {
-		$('header').after(tweetContainer);
-	}
-	$("#trendingList").fadeOut("fast", "linear").delay(10).remove();
-	$('#tweets').append(view).masonry('reload');
-}
-
-	// ajax logic
-	var pageIterator = 2;
-	var next_url = nextUrl.split("&amp;"); 
-	var max_id = next_url[1];
-	
-	console.log(next_url);
-	
-	$('#more').click(function() {
-		
-		$('#more').find('.btn').addClass('disabled no_text spinner');
-		
-		$.ajax({
-		  url: "search/ajax?q=test&page="+pageIterator+"&"+max_id+"&"+next_url[3],
-		  context: '#more'
-		}).done(function(data) {
-			
-			$('#more').find('.btn').removeClass('disabled no_text spinner');
-			pageIterator += 1;
-			$('#tweets').append(data).masonry('reload');
-			console.log("ajax returned");
-			usrClick();
-		});
-		
-	});
-
 // sends following to controller (ajaj/processFollowing)
 function followingToServer(followingData, userId) {
-	$.post("../ajaj/processFollowing", { 
+	$.post("ajaj/processFollowing", { 
 		userId: userId, 
 		following: followingData
 	},
@@ -110,7 +77,7 @@ function followingToServer(followingData, userId) {
 
 // sends followers to controller (ajaj/processFollowers)
 function followersToServer(followersData, userId) {
-	$.post("../ajaj/processFollowers", { 
+	$.post("ajaj/processFollowers", { 
 		userId: userId, 
 		followers: followersData
 	},
@@ -146,7 +113,7 @@ function getFollowersFromTwitter(usr) {
 function tweetsToServer(searchResponse, rpp, searchQuery) {
 
 	console.log("searchQuery: " + searchQuery + " and rpp: " + rpp + " returned: " + JSON.stringify(searchResponse));
-	$.post("../ajaj/processSearch", { 
+	$.post("ajaj/processSearch", { 
 		searchResponse: JSON.stringify(searchResponse) 
 	},
    function(usersToCheck) {
@@ -164,3 +131,86 @@ function searchTweets(searchQuery, rpp) {
 		tweetsToServer(searchResponse, rpp, searchQuery);
 	});
 }
+
+/*
+	Init stuff
+	---------- */
+
+// toggle user info
+var usrClickVar = $('.user');
+function usrClick() {
+	usrClickVar.unbind();
+	usrClickVar = $('.user');
+	usrClickVar.click(function () {
+		active = true;
+		console.log("click");
+		$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().toggleClass("full_opacity");
+	});
+}
+				
+usrClick();
+
+
+var searchQuery = "";
+var searchRpp = "";
+// AJAX request as result of search submit
+$('#search_form').submit( function() {
+	
+	// get query params from search form
+	searchQuery = $('#search_form').find('input').val();
+	searchRpp = $('#search_form').find('#resultsPerPage').val();
+	
+	// if an actual query is entered
+	if(searchQuery != '') {
+	
+		// start AJAX calls
+		searchTweets(searchQuery, searchRpp);
+	
+		// remove trendinglist and add container for tweets and more button
+		var tweetContainer = '<section class="ten_cols no_padding cf tweet_wrapper" id="tweets"></section><div id="more" class="ten_cols hidden"><div class="two_cols block btn center">Load more</div></div>';
+		
+		$("#trendingList").fadeOut("slow", "linear").delay(2000).after(tweetContainer).fadeIn("slow", "linear");
+		// toggle spinner on more button
+		$('#more').find('.btn').addClass('disabled no_text spinner');
+		
+		// init masonry
+		var $container = $('#tweets');
+		$container.imagesLoaded(function(){
+		  $container.masonry({
+			itemSelector : '.tweet_container',
+		  });
+		});	
+
+		// bind event to #more
+		// AJAX request as result of get more click
+		$('#more').click(function() {
+			console.log('click');
+			$(this).find('.btn').addClass('disabled no_text spinner');
+			
+			searchTweets(searchQuery, searchRpp);
+		});
+	}
+	
+});
+
+
+// displays returned view, rebinds events, reloads masonry
+function doTheFunkyBusiness(view) {
+	// add new tweets to #tweets and reload masonry
+	$('#tweets').append(view).masonry('reload');
+	
+	// stop more spinning
+	$('#more').find('.btn').removeClass('disabled no_text spinner');
+	
+	// rebind usrClick
+	usrClick();
+}
+
+	// ajax logic
+	var pageIterator = 2;
+	var next_url = nextUrl.split("&amp;"); 
+	var max_id = next_url[1];
+	
+	console.log(next_url);
+	
+	
