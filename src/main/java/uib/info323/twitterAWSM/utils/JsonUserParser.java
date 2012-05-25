@@ -60,7 +60,6 @@ public class JsonUserParser {
 			description = obj.get("description").getAsString();
 		}
 		String location = obj.get("location").getAsString();
-		;
 		Date createdDate;
 		try {
 			createdDate = DateParser.parseResponseDate(element.getAsJsonObject()
