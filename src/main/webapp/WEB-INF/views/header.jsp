@@ -10,7 +10,7 @@
 		<form action="#" type="GET" class="search" id="search_form">
 			<input type="text" id="q" name="q" placeholder="search terms" <c:if test="${not empty query}">value="<c:out value="${query}" />"</c:if> />
 			<input type="hidden" id="resultsPerPage" name="resultsPerPage" value="20" />
-			<button>Search</button>
+			<button type="submit">Search</button>
 		</form>
 		<div id="information_toggle" class="btn togglebutton">i</div>
 		<div id="info" class="infobox information hidden">
