@@ -172,7 +172,7 @@ $('#search_form').submit( function() {
 		
 		$trendingList.fadeOut("slow", "linear");
 		
-		if(!$('#more')) {
+		if(!$('#more').length) {
 			$trendingList.after(tweetContainer).parent().find('#more').fadeIn("fast", "linear");
 		}
 		
