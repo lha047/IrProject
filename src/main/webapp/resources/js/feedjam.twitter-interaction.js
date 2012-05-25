@@ -168,8 +168,14 @@ $('#search_form').submit( function() {
 	
 		// remove trendinglist and add container for tweets and more button
 		var tweetContainer = '<section class="ten_cols no_padding cf tweet_wrapper" id="tweets"></section><div id="more" class="ten_cols hidden"><div class="two_cols block btn center">Load more</div></div>';
+		$trendingList = $("#trendingList");
 		
-		$("#trendingList").fadeOut("slow", "linear").delay(2000).after(tweetContainer).fadeIn("slow", "linear");
+		$trendingList.fadeOut("slow", "linear");
+		
+		if(!$('#more')) {
+			$trendingList.after(tweetContainer).parent().find('#more').fadeIn("fast", "linear");
+		}
+		
 		// toggle spinner on more button
 		$('#more').find('.btn').addClass('disabled no_text spinner');
 		
