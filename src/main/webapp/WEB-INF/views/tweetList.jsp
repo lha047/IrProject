@@ -8,7 +8,7 @@
 			<c:forEach var="tweet" items="${results.tweets}">
 				<article id="<c:out value="${tweet.id}" />" class="left two_half_cols tweet_container five_stars"><!-- <c:out value="${tweet.tweetRank}" /> -->
 					<div class="tweet_border">
-						<section class="padding tweet" style="opacity: <c:out value="${tweet.userInfo.fitnessScore}" />;">
+						<section class="padding tweet" style="opacity: <c:out value="${tweet.tweetRank}" />;">
 							<section class="cf user">
 								<div class="avatar" style="background:url('${tweet.profileImageUrl}') no-repeat; width: 48px;height: 48px;border-radius:5px;">&nbsp;</div><!-- <img class="avatar" src="${tweet.profileImageUrl}">-->
 								<strong class="username">
