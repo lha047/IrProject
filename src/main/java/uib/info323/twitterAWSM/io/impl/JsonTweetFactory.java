@@ -138,33 +138,6 @@ public class JsonTweetFactory implements TweetSearchFactory {
 		return tweets;
 	}
 
-	private List<Long> getReTweeters(long id) {
-		String query = "https://api.twitter.com/1/statuses/{id}/retweeted_by.json";
-		String res = restTemplate.getForObject(query, String.class, id);
-
-		List<TwitterUserInfo323> list = new ArrayList<TwitterUserInfo323>();
-
-		System.out.println("retweet " + res);
-		JsonElement element = parser.parse(res);
-		JsonArray array = element.getAsJsonArray();
-		for (JsonElement e : array) {
-			System.out.println(e.getAsJsonObject().get("screen_name")
-					.getAsString());
-			System.out.println(e.getAsJsonObject().get("followers_count")
-					.getAsInt());
-			TwitterUserInfo323Impl user = new TwitterUserInfo323Impl();
-			user.setId(e.getAsJsonObject().get("id").getAsInt());
-			user.setId(e.getAsJsonObject().get("id").getAsInt());
-			user.setId(e.getAsJsonObject().get("id").getAsInt());
-
-			user.setId(e.getAsJsonObject().get("id").getAsInt());
-			list.add(user);
-
-		}
-
-		return null;
-	}
-
 	@Override
 	public TweetSearchResults getNextPage(String query, int rpp, int page,
 			long maxId) {
