@@ -88,7 +88,6 @@ public class AjajController {
 
 		// adds new users to db
 		List<TwitterUserInfo323> twitterUsers = null;
-		System.out.println();
 
 		if(users.length() > 0) {
 			twitterUsers = jsonUserFactory.parseJsonToUsers(users);
