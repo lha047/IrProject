@@ -12,13 +12,19 @@ jQuery(document).ajaxError(function(event, request, settings){
 });
 
 // pushes loadingdata to the loading scroller
-function updateScrollMessage(message) {
+function loadingMessage(message) {
+	$loading = $('#loading');
+	if(!$('#loading').length) {
+		$('#more').append('<div id="loading" class="two_cols center">' + message + '</div>');
+	} else {
+		$('#loading').html(message);
+	}
 	// todo : sette inn meldinger om hva som skjer i loading knappen (hvis den fortsatt er loading)
+	
 }
 
 // pushes error messages to the frontend
 function displayError(message) {
-	// todo: sett inn errorboks på siden hvis noen requests feiler
 	$('header').after('<div class="error">' + message + '</div>');
 }
 
@@ -29,7 +35,7 @@ function displayError(message) {
 
 // control user ajax requests
 function usrRequests(searchRequest, rpp, searchQuery, usrs) {
-	
+	loadingMessage('Getting user data from Twitter');
 	if(usrs) {
 		// we have users to find
 		var usrLst = usrs.split(",");
@@ -78,6 +84,7 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 // sends returned user data to controller (../ajaj/processUsers)
 function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 	console.log('SERVER POST: sending users to server');
+	loadingMessage('Crunching data and generating View');
 	// console.log(searchRequest + ' \n ################# \n' + usrJSONData);
 	var out = "";
 	if(usrJSONData != "") {
@@ -180,7 +187,7 @@ function getFollowersFromTwitter(usr) {
 
 // sends the JSON response from twitter to controller (ajaj/processSearch)
 function tweetsToServer(searchResponse, rpp, searchQuery) {
-
+	loadingMessage('crunching tweets');
 	// console.log("searchQuery: " + searchQuery + " and rpp: " + rpp + " returned: " + JSON.stringify(searchResponse));
 	$.post("ajaj/processSearch", { 
 		searchResponse: JSON.stringify(searchResponse) 
@@ -193,6 +200,9 @@ function tweetsToServer(searchResponse, rpp, searchQuery) {
 // sends query to Twitter
 function searchTweets(searchQuery, rpp) {
 	console.log('searching: ' + searchQuery);
+	
+	loadingMessage('querying Twitter for tweets');
+	
 	var query_id = "";
 	if(max_id != 0) {
 		query_id = "&max_id=" + max_id;
@@ -317,6 +327,9 @@ function doTheFunkyBusiness(view) {
 	
 	// stop more spinning
 	$('#more').find('.btn').removeClass('disabled no_text spinner');
+	
+	// remove loading message
+	$('#loading').remove();
 	
 	// rebind usrClick
 	usrClick();
