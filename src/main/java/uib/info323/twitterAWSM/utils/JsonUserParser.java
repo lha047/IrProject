@@ -89,17 +89,17 @@ public class JsonUserParser {
 
 	}
 
-	public static FollowersFollowingResultPage jsonToFollowersFollowing(String screenName, String jsonFollowersFollowing) {
+	public static FollowersFollowingResultPage jsonToFollowersFollowing(long userId, String jsonFollowersFollowing) {
 
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(jsonFollowersFollowing);
 		JsonObject object = element.getAsJsonObject();
 		JsonArray array = object.get("").getAsJsonArray();
-		String[] screenNames = new String[array.size()];
+		long[] userIds = new long[array.size()];
 		System.out.println("number of followers" + array.size());
 		for (int i = 0; i < array.size(); i++) {
-			screenNames[i] = array.get(i).getAsJsonPrimitive().getAsString();
-			System.out.println("ScreenName :" + i + " " + screenNames[i]);
+			userIds[i] = array.get(i).getAsJsonPrimitive().getAsLong();
+			System.out.println("User id :" + i + " " + userIds[i]);
 		}
 
 		int previous = object.get("previous_cursor").getAsInt();
@@ -108,10 +108,10 @@ public class JsonUserParser {
 			next = object.get("next_cursor").getAsInt();
 		}
 		FollowersFollowingResultPage resPage = new FollowersFollowingResultPageImpl();
-		resPage.setFollowersScreenNames(screenNames);
+		resPage.setFollowersUserIds(userIds);
 		resPage.setNextCursor(next);
 		resPage.setPreviousCursor(previous);
-		resPage.setScreenName(screenName);
+		resPage.setUserId(userId);
 		return resPage;
 	}
 

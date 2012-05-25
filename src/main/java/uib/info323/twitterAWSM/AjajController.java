@@ -23,6 +23,7 @@ import uib.info323.twitterAWSM.io.impl.JsonUserFactory;
 import uib.info323.twitterAWSM.io.impl.MySQLTweetFactory;
 import uib.info323.twitterAWSM.io.impl.MySQLUserFactory;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
+import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
@@ -136,21 +137,27 @@ public class AjajController {
 	}
 
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
-	public ResponseEntity<String> processFollowers(@RequestParam String userId,
-			String followers) {
+	public ResponseEntity<String> processFollowers(
+			@RequestParam String userIdString, String followers) {
 
-		System.out.println("Follower id input from client: " + userId);
-		System.out.println("followers " + followers);
+		long userId = Long.parseLong(userIdString);
+		FollowersFollowingResultPage followersResultPage = JsonUserParser
+				.jsonToFollowersFollowing(userId, followers);
+		mySqlUserFactory.addFollowers(followersResultPage);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
-	public ResponseEntity<String> processFollowing(@RequestParam String userId,
-			String following) {
-		System.out.println("user " + userId);
-		System.out.println("following " + following);
+	public ResponseEntity<String> processFollowing(
+			@RequestParam String userIdString, String following) {
+
+		long userId = Long.parseLong(userIdString);
+		FollowersFollowingResultPage followingResultPage = JsonUserParser
+				.jsonToFollowersFollowing(userId, following);
+		mySqlUserFactory.addFollowers(followingResultPage);
+
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
