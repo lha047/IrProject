@@ -7,7 +7,7 @@
 	<header class="center cf">
 		<a href="/feedjam" class="logo"><img src="resources/images/feedjam.png" alt="feedjam" /></a>
 		<a href="/feedjam" class="logo-white"><img src="resources/images/feedjam-white.png" alt="feedjam" /></a>
-		<form action="#" type="GET" class="search" id="search_form">
+		<form action="" class="search" id="search_form">
 			<input type="text" id="q" name="q" placeholder="search terms" <c:if test="${not empty query}">value="<c:out value="${query}" />"</c:if> />
 			<input type="hidden" id="resultsPerPage" name="resultsPerPage" value="20" />
 			<button type="submit">Search</button>

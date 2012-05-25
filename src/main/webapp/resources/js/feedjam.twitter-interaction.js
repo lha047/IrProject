@@ -1,5 +1,14 @@
 // hvis returnerer error, skriv ut og terminer
 
+// field variables used to build search queries to twitter
+var page = 1;
+var max_id = 0;
+var query = "";
+var rpp = 20;
+
+jQuery(document).ajaxError(function(event, request, settings){
+   alert("Error");
+});
 
 /*
 	User functions
@@ -124,10 +133,20 @@ function tweetsToServer(searchResponse, rpp, searchQuery) {
 // sends query to Twitter
 function searchTweets(searchQuery, rpp) {
 	console.log('searching: ' + searchQuery);
-	
-	$.getJSON('http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&include_entities=true&result_type=mixed&callback=?', function(searchResponse) {
+	var query_id = "";
+	if(max_id != 0) {
+		query_id = "&max_id=" + max_id;
+	}
+	$.getJSON('http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?', function(searchResponse) {
 		console.log('received response for search: ' + searchResponse);
 	  
+		page = searchResponse.page + 1;
+		max_id = searchResponse.max_id;
+		query = searchResponse.query;
+		rpp = rpp;
+		
+		console.log("page: " + page + "\nmax_id: " + max_id + "\nquery: " + query + "\nrpp: " + rpp);
+		
 		tweetsToServer(searchResponse, rpp, searchQuery);
 	});
 }
@@ -143,7 +162,7 @@ function usrClick() {
 	usrClickVar = $('.user');
 	usrClickVar.click(function () {
 		active = true;
-		console.log("click");
+		console.log("clicked user");
 		$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().toggleClass("full_opacity");
 	});
 }
@@ -212,12 +231,5 @@ function doTheFunkyBusiness(view) {
 	usrClick();
 }
 
-// page (result.page+1), max_id (result.max_id), q (result.query), rpp
-	// ajax logic
-	var pageIterator = 2;
-	var next_url = nextUrl.split("&amp;"); 
-	var max_id = next_url[1];
-	
-	console.log(next_url);
 	
 	
