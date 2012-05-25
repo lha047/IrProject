@@ -140,6 +140,7 @@ public class AjajController {
 			String followers) {
 
 		System.out.println("Follower id input from client: " + userId);
+		System.out.println("followers " + followers);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 
@@ -153,4 +154,5 @@ public class AjajController {
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
+
 }

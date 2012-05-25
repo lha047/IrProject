@@ -60,7 +60,7 @@ public class MySQLUserFactory implements UserDAO {
 	private static final String SELECT_FOLLOWING_BY_SCREEN_NAME = "SELECT following_screen_name FROM following WHERE SCREEN_NAME = :screen_name";
 
 	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
-	
+
 	private static final String SELECT_FOLLOWING_BY_ID = "SELECT followingId FROM following WHERE userId = :userId";
 
 	// Correct logger...
@@ -68,7 +68,7 @@ public class MySQLUserFactory implements UserDAO {
 			.getLogger(MySQLUserFactory.class);
 
 	@Autowired
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private DateFormat dateFormat;
 	private Date date;
@@ -92,7 +92,23 @@ public class MySQLUserFactory implements UserDAO {
 	 */
 	public void setNamedParameterJdbcTemplate(
 			NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+		this.jdbcTemplate = namedParameterJdbcTemplate;
+	}
+
+	@Override
+	public TwitterUserInfo323 selectUserById(long id)
+			throws UserNotFoundException {
+
+		SqlParameterSource namedParameter = new MapSqlParameterSource("id", id);
+		TwitterUserInfo323Impl user = null;
+		try {
+			user = (TwitterUserInfo323Impl) jdbcTemplate.queryForObject(
+					SQL_SELECT_USER_BY_ID, namedParameter, new UserRowMapper());
+		} catch (EmptyResultDataAccessException e) {
+			throw new UserNotFoundException();
+		}
+
+		return user;
 	}
 
 	@Override
@@ -102,9 +118,9 @@ public class MySQLUserFactory implements UserDAO {
 				"screen_name", screenName);
 		TwitterUserInfo323Impl user = null;
 		try {
-			user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
-					.queryForObject(SQL_SELECT_USER_BY_SCREEN_NAME,
-							namedParameter, new UserRowMapper());
+			user = (TwitterUserInfo323Impl) jdbcTemplate.queryForObject(
+					SQL_SELECT_USER_BY_SCREEN_NAME, namedParameter,
+					new UserRowMapper());
 		} catch (EmptyResultDataAccessException e) {
 			throw new UserNotFoundException();
 		}
@@ -228,8 +244,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	private List<String> selectAllScreenNamesFromDB(String SQL) {
 		Map<String, String> map = new HashMap<String, String>();
-		List<String> list = namedParameterJdbcTemplate.queryForList(SQL, map,
-				String.class);
+		List<String> list = jdbcTemplate.queryForList(SQL, map, String.class);
 
 		return list;
 	}
@@ -238,7 +253,7 @@ public class MySQLUserFactory implements UserDAO {
 
 		SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
 				screenName);
-		List<String> list = namedParameterJdbcTemplate.queryForList(
+		List<String> list = jdbcTemplate.queryForList(
 				SELECT_FOLLOWERS_BY_SCREEN_NAME, parameter, String.class);
 
 		return list;
@@ -248,7 +263,7 @@ public class MySQLUserFactory implements UserDAO {
 
 		SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
 				screenName);
-		List<Long> list = namedParameterJdbcTemplate.queryForList(
+		List<Long> list = jdbcTemplate.queryForList(
 				SELECT_FOLLOWING_BY_SCREEN_NAME, parameter, Long.class);
 		return list;
 	}
@@ -261,7 +276,7 @@ public class MySQLUserFactory implements UserDAO {
 			System.out.println("user " + user.getScreenName());
 			Map<String, Object> paramMap = followersWithIdToMap(
 					user.getScreenName(), user.getId());
-			int n = namedParameterJdbcTemplate.update(sqlFollowing, paramMap);
+			int n = jdbcTemplate.update(sqlFollowing, paramMap);
 			System.out
 					.println("user " + user.getScreenName() + " updated " + n);
 		}
@@ -281,7 +296,7 @@ public class MySQLUserFactory implements UserDAO {
 		for (String follower : followers) {
 			Map<String, Object> paramMap = followersToMap(f.getScreenName(),
 					follower);
-			namedParameterJdbcTemplate.update(SQL_INSERT_FOLLOWERS, paramMap);
+			jdbcTemplate.update(SQL_INSERT_FOLLOWERS, paramMap);
 		}
 
 	}
@@ -291,7 +306,7 @@ public class MySQLUserFactory implements UserDAO {
 		for (String follow : following) {
 			Map<String, Object> paramMap = followingToMap(f.getScreenName(),
 					follow);
-			namedParameterJdbcTemplate.update(SQL_INSERT_FOLLOWING, paramMap);
+			jdbcTemplate.update(SQL_INSERT_FOLLOWING, paramMap);
 		}
 	}
 
@@ -314,26 +329,9 @@ public class MySQLUserFactory implements UserDAO {
 	}
 
 	@Override
-	public TwitterUserInfo323 selectUserById(long id)
-			throws UserNotFoundException {
-
-		SqlParameterSource namedParameter = new MapSqlParameterSource("id", id);
-		TwitterUserInfo323Impl user = null;
-		try {
-			user = (TwitterUserInfo323Impl) namedParameterJdbcTemplate
-					.queryForObject(SQL_SELECT_USER_BY_ID, namedParameter,
-							new UserRowMapper());
-		} catch (EmptyResultDataAccessException e) {
-			throw new UserNotFoundException();
-		}
-
-		return user;
-	}
-
-	@Override
 	public boolean updateUser(TwitterUserInfo323 user) {
 		Map<String, Object> params = userToMap(user);
-		namedParameterJdbcTemplate.update(SQL_UPDATE_USER, params);
+		jdbcTemplate.update(SQL_UPDATE_USER, params);
 		return false;
 	}
 
@@ -342,8 +340,7 @@ public class MySQLUserFactory implements UserDAO {
 		Map<String, Object> params = userToMap(user);
 		int inserted = -1;
 		try {
-			inserted = namedParameterJdbcTemplate.update(SQL_INSERT_USER,
-					params);
+			inserted = jdbcTemplate.update(SQL_INSERT_USER, params);
 		} catch (Exception e) {
 			// TODO existing entety
 		}
@@ -382,8 +379,8 @@ public class MySQLUserFactory implements UserDAO {
 	public List<Long> selectFollowersByUserId(long userId) {
 		SqlParameterSource parameter = new MapSqlParameterSource("userId",
 				userId);
-		List<Long> list = namedParameterJdbcTemplate.queryForList(
-				SELECT_FOLLOWERS_BY_ID, parameter, Long.class);
+		List<Long> list = jdbcTemplate.queryForList(SELECT_FOLLOWERS_BY_ID,
+				parameter, Long.class);
 		return list;
 	}
 
@@ -391,11 +388,11 @@ public class MySQLUserFactory implements UserDAO {
 	public List<Long> selectFollowingByUserId(long userId) {
 		SqlParameterSource parameter = new MapSqlParameterSource("userId",
 				userId);
-		List<Long> list = namedParameterJdbcTemplate.queryForList(
-				SELECT_FOLLOWING_BY_ID, parameter, Long.class);
+		List<Long> list = jdbcTemplate.queryForList(SELECT_FOLLOWING_BY_ID,
+				parameter, Long.class);
 		return list;
 	}
-	
+
 	/**
 	 * Checks if the tweeters of the tweets in the searchResult exists in DB.
 	 * 

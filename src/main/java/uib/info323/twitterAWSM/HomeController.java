@@ -2,7 +2,6 @@ package uib.info323.twitterAWSM;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -16,12 +15,10 @@ import org.springframework.web.servlet.ModelAndView;
 import uib.info323.twitterAWSM.exceptions.BadRequestException;
 import uib.info323.twitterAWSM.io.AbstractFeedJamFactory;
 import uib.info323.twitterAWSM.io.TrendFactory;
-
+import uib.info323.twitterAWSM.io.impl.MySQLTrendingFactory;
 import uib.info323.twitterAWSM.model.interfaces.Trends;
-
-import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
-import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
-import uib.info323.twitterAWSM.utils.JsonTweetParser;
+import uib.info323.twitterAWSM.utils.DateParser;
+import uib.info323.twitterAWSM.utils.JsonTrendParser;
 
 /**
  * Handles requests for the application home page.
@@ -40,24 +37,36 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView home(Locale locale, Model model) throws IOException {
 		logger.info("Printing homepage");
-
 		ModelAndView mav = new ModelAndView("home");
-
 		logger.info("Get todays trends with factory");
+		MySQLTrendingFactory mySqlTrendingFactory = new MySQLTrendingFactory();
+		Date currentDate = new Date();
 
-		TrendFactory factory = AbstractFeedJamFactory.getFactory(
-				AbstractFeedJamFactory.JSON).getTrendFactory();
-		Trends trends = null;
-		try {
-			trends = factory.getDailyTrendsForDate(new Date()); // Get todays
-																// trends
-		} catch (BadRequestException e) {
-			mav.addObject("error", "No more requests");
+		// searches in db for trends of the current time and date
+		Trends t = mySqlTrendingFactory.selectTrendsByDate(DateParser
+				.formatDate(currentDate));
+
+		if (t != null
+				&& t.getTrends()
+						.containsKey(DateParser.formatDate(currentDate))) {
+			mav.addObject("trends", t);
+		} else {
+			TrendFactory factory = AbstractFeedJamFactory.getFactory(
+					AbstractFeedJamFactory.JSON).getTrendFactory();
+			Trends trends = null;
+			try {
+				String response = factory.getDailyTrendsForDate(currentDate);
+				trends = JsonTrendParser.jsonToTrends(response);
+
+				mySqlTrendingFactory.insertTrends(response);
+				// trends
+			} catch (BadRequestException e) {
+				mav.addObject("error", "No more requests");
+			}
+			logger.info("Got todays trends...");
+
+			mav.addObject("trends", trends);
 		}
-		logger.info("Got todays trends...");
-
-		mav.addObject("trends", trends);
-
 		return mav;
 	}
 }
