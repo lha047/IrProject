@@ -59,7 +59,7 @@ public class JsonUserParser {
 		if(!obj.get("description").isJsonNull()) {
 			description = obj.get("description").getAsString();
 		}
-		String location = ""; 
+		String location = "";
 		if(!obj.get("location").isJsonNull()) {
 			location = obj.get("location").getAsString();
 		}

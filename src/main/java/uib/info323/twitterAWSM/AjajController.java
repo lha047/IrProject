@@ -138,8 +138,8 @@ public class AjajController {
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
 	public ResponseEntity<String> processFollowers(@RequestParam String userId,
 			String followers) {
-		System.out.println("user " + userId);
-		System.out.println("followers " + followers);
+
+		System.out.println("Follower id input from client: " + userId);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 

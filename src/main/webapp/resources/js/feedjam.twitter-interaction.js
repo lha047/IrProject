@@ -65,21 +65,21 @@ function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 }
 
 // sends following to controller (ajaj/processFollowing)
-function followingToServer(followingData, userId) {
+function followingToServer(userId, followingData) {
 	$.post("ajaj/processFollowing", { 
-		userId: userId, 
-		following: followingData
+		userId: userId.toString(), 
+		following: JSON.stringify(followingData)
 	},
    function(data) {
-     console.log("response");
+     console.log("SERVER RESPONSE: added following for " + userId);
    });
 }
 
 // sends followers to controller (ajaj/processFollowers)
-function followersToServer(followersData, userId) {
+function followersToServer(userId, followersData) {
 	$.post("ajaj/processFollowers", { 
-		userId: userId, 
-		followers: followersData
+		userId: userId.toString(), 
+		followers: JSON.stringify(followersData)
 	},
    function(data) {
      console.log("SERVER RESPONSE: added followers for " + userId);
@@ -212,6 +212,7 @@ function doTheFunkyBusiness(view) {
 	usrClick();
 }
 
+// page (result.page+1), max_id (result.max_id), q (result.query), rpp
 	// ajax logic
 	var pageIterator = 2;
 	var next_url = nextUrl.split("&amp;"); 
