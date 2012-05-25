@@ -2,13 +2,13 @@ package uib.info323.twitterAWSM.model.interfaces;
 
 public interface FollowersFollowingResultPage {
 
-	public String getScreenName();
+	public long getUserId();
 
-	public void setScreenName(String userId);
+	public void setUserId(long userId);
 
-	public String[] getFollowersScreenNames();
+	public long[] getFollowersUserIds();
 
-	public void setFollowersScreenNames(String[] followersIds);
+	public void setFollowersUserIds(long[] followersIds);
 
 	public int getPreviousCursor();
 

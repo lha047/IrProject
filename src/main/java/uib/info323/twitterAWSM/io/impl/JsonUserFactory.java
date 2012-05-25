@@ -61,17 +61,17 @@ public class JsonUserFactory implements UserSearchFactory {
 		return JsonUserParser.jsonToUser(searchResult);
 	}
 
-	public FollowersFollowingResultPage findUsersFriends(String screenName) {
+	public FollowersFollowingResultPage findUsersFriends(long userId) {
 		String request = "https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id={userId}";
-		FollowersFollowingResultPage resPage = findFollowersFriends(screenName,
+		FollowersFollowingResultPage resPage = findFollowersFriends(userId,
 				request);
 		return resPage;
 	}
 
 	@Override
-	public FollowersFollowingResultPage findUsersFollowers(String screenName) {
+	public FollowersFollowingResultPage findUsersFollowers(long userId) {
 		String request = "https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id={userId}";
-		FollowersFollowingResultPage resPage = findFollowersFriends(screenName,
+		FollowersFollowingResultPage resPage = findFollowersFriends(userId,
 				request);
 		return resPage;
 	}
@@ -85,15 +85,15 @@ public class JsonUserFactory implements UserSearchFactory {
 //	}
 
 	private FollowersFollowingResultPage findFollowersFriends(
-			String screenName, String request) {
+			long userId, String request) {
 		try {
 			Thread.sleep(24 * 1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String jsonFollowersFollowing = restTemplate.getForObject(request, String.class, screenName);
-		return JsonUserParser.jsonToFollowersFollowing(screenName, jsonFollowersFollowing);
+		String jsonFollowersFollowing = restTemplate.getForObject(request, String.class, userId);
+		return JsonUserParser.jsonToFollowersFollowing(userId, jsonFollowersFollowing);
 	
 	}
 
