@@ -131,7 +131,8 @@ public class JsonTweetFactory implements TweetSearchFactory {
 			tweets.add(new TweetInfo323Impl(related, id, text, createdAt,
 					fromUser, profileImageUrl, toUserId, fromUserId,
 					languageCode, source, tweetRank, inReplyToStatusId,
-					retweetCount, reTweeters, mentions, tags, userInfo));
+					retweetCount, reTweeters, mentions, tags, userInfo,
+					new Date()));
 		}
 
 		return tweets;

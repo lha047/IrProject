@@ -1,6 +1,5 @@
 package uib.info323.twitterAWSM;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -69,6 +68,7 @@ public class AjajController {
 			jsonString.append(",");
 		}
 		jsonString.append("");
+		System.out.println("usersWhoDontExistInDB " + jsonString.toString());
 		return jsonString.toString();
 	}
 
@@ -81,7 +81,7 @@ public class AjajController {
 	public ModelAndView processUsers(@RequestParam String users,
 			String searchQuery, String searchRequest, int rpp) {
 		ModelAndView mav = new ModelAndView("tweetList");
-
+		System.out.println("SearchRequest " + searchRequest);
 		// Creates search results page
 		TweetSearchResults searchResult = tweetSearchFactory
 				.jsonToSearchResults(searchRequest);
@@ -89,12 +89,15 @@ public class AjajController {
 		// adds new users to db
 		List<TwitterUserInfo323> twitterUsers = null;
 
-		if(users.length() > 0) {
+		if (users.length() > 0) {
+
 			twitterUsers = jsonUserFactory.parseJsonToUsers(users);
 		}
-		if(twitterUsers != null) {		
+		if (twitterUsers != null) {
 			for (TwitterUserInfo323 user : twitterUsers) {
-				mySqlUserFactory.addUser(user);
+				boolean inserted = mySqlUserFactory.addUser(user);
+				System.out.println("inserted " + user.getScreenName()
+						+ inserted);
 			}
 		}
 
@@ -115,9 +118,16 @@ public class AjajController {
 			try {
 				mySqlTweetFactory.insertTweet(t);
 			} catch (TweetException e) {
+
 				System.out.println("Error inserting tweet " + t.getId());
 			}
 		}
+		System.out
+				.println("SearchResult "
+						+ searchResult.getTweets().size()
+						+ " user in index 0:"
+						+ searchResult.getTweets().get(0).getUserInfo()
+								.getScreenName());
 		mav.addObject("query", searchQuery);
 		mav.addObject("results", searchResult);
 		return mav;
@@ -125,15 +135,16 @@ public class AjajController {
 	}
 
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
-	public ResponseEntity<String> processFollowers(@RequestParam String userId, String followers) {
-
+	public ResponseEntity<String> processFollowers(@RequestParam String userId,
+			String followers) {
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
-	public ResponseEntity<String> processFollowing(@RequestParam String userId, String following) {
+	public ResponseEntity<String> processFollowing(@RequestParam String userId,
+			String following) {
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 

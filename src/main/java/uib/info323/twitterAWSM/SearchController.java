@@ -43,7 +43,7 @@ public class SearchController {
 	// Dog
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView search(@RequestParam String q, int resultsPerPage) {
-		
+
 		ModelAndView mav = new ModelAndView("tagSearchResults");
 
 		if (q.isEmpty()) {
@@ -81,6 +81,9 @@ public class SearchController {
 				} catch (BadRequestException bre) {
 					mav.addObject("error", "Ran out of requests.");
 				}
+				// Random r = new Random();
+				// float i = r.nextFloat();
+				// user.setFitnessScore(i);
 				tweet.setTwitterUserInfo323(user);
 
 				try {

@@ -28,23 +28,23 @@ public class MySQLTweetFactory implements TweetDAO {
 
 	private static final int DAYS_TOO_OLD = 6;
 
-	private static final String SQL_INSERT_TWEET = "insert into tweets(ID, FROM_USER, FROM_USER_ID, TO_USER_ID, CREATED_AT, IN_REPLY_TO_STATUS_ID, "
-			+ "LANGUAGE_CODE, PROFILE_IMAGE_URL, RETWEET_COUNT, SOURCE, TEXT, TWEET_RANK, USER_INFO, LAST_UPDATED)"
-			+ "values(:ID, :FROM_USER, :FROM_USER_ID, :TO_USER_ID, :CREATED_AT, :IN_REPLY_TO_STATUS_ID, "
-			+ ":LANGUAGE_CODE, :PROFILE_IMAGE_URL, :RETWEET_COUNT, :SOURCE, :TEXT, :TWEET_RANK, :USER_INFO, :LAST_UPDATED)";
+	private static final String SQL_INSERT_TWEET = "insert into tweets(id, from_user, from_user_id, to_user_id, created_at, in_reply_to_status_id, "
+			+ "language_codeE, profile_image_url, retweet_count, source, text, tweet_rank, user_info, last_updated)"
+			+ "values(:id, :from_user, :from_user_id, :to_user_id, :created_at, :in_reply_to_status_id, "
+			+ ":language_code, :profile_image_url, :retweet_count, :source, :text, :tweet_rank, :user_info, :last_updated)";
 
-	private static final String SQL_UPDATE_TWEET = "UPDATE tweets SET ID=:ID, FROM_USER=:FROM_USER, FROM_USER_ID:FROM_USER_ID, TO_USER_ID=:TO_USER_ID, CREATED_AT=:CREATED_AT, IN_REPLY_TO_STATUS_ID=:IN_REPLY_TO_STATUS_ID, "
-			+ "LANGUAGE_CODE=:LANGUAGE_CODE, PROFILE_IMAGE_URL=:PROFILE_IMAGE_URL, RETWEET_COUNT=:RETWEET_COUNT, SOURCE=:SOURCE, TEXT=:TEXT, TWEET_RANK=:TWEET_RANK, USER_INFO=:USER_INFO, LAST_UPDATE=:LAST_UPDATED "
+	private static final String SQL_UPDATE_TWEET = "UPDATE tweets SET id=:id, from_user=:from_user, from_user_id:from_user_id, to_user_id=:to_user_id, created_atT=:created_at, in_reply_to_status_id=:in_reply_to_status_id, "
+			+ "language_code=:language_code, profile_image_url=:profile_image_url, retweet_count=:retweet_count, source=:source, text=:text, tweet_rank=:tweet_rank, user_info=:user_info, last_updated=:last_updated "
 			+ "WHERE ID=:ID";
 
-	private static final String SQL_SELECT_TWEET_BY_ID = "SELECT * FROM tweets WHERE ID = :ID";
+	private static final String SQL_SELECT_TWEET_BY_ID = "SELECT * FROM tweets WHERE id = :id";
 
 	private static final long MILLSECS_PER_DAY = (24 * 60 * 60 * 1000);
 
-	private static final String SQL_SECLECT_TWEETS_WITH_RETWEETS = "SELECT ID FROM tweets WHERE RETWEET_COUNT > 0";
+	private static final String SQL_SECLECT_TWEETS_WITH_RETWEETS = "SELECT id FROM tweets WHERE retweet_count > 0";
 
 	@Autowired
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private NamedParameterJdbcTemplate jdbcTemplate;
 	private Date date;
 	private DateFormat dateFormat;
 
@@ -57,7 +57,7 @@ public class MySQLTweetFactory implements TweetDAO {
 	 */
 	public void setNamedParameterJdbcTemplate(
 			NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+		this.jdbcTemplate = namedParameterJdbcTemplate;
 	}
 
 	@Override
@@ -66,18 +66,19 @@ public class MySQLTweetFactory implements TweetDAO {
 
 		int inserted = -1;
 		try {
-			inserted = namedParameterJdbcTemplate.update(SQL_INSERT_TWEET,
-					params);
+			inserted = jdbcTemplate.update(SQL_INSERT_TWEET, params);
 
 		} catch (DataAccessException dae) {
-			throw new TweetException();
-		}
-		if (inserted != 1) {
+			// System.out.println("*DAE*" + dae.getMessage());
+
 			TweetInfo323Impl t = (TweetInfo323Impl) selectTweetById(tweet
 					.getId());
-			if (tooOldTweet(t.getLastUpdated())) {
-				updateTweet(tweet);
+
+			if (tooOldTweet(t.getLastUpdated()) || t.getLastUpdated() == null) {
+				System.out.println("update " + updateTweet(tweet));
 			}
+			throw new TweetException();
+
 		}
 
 		return inserted == 1;
@@ -85,11 +86,11 @@ public class MySQLTweetFactory implements TweetDAO {
 
 	public boolean tooOldTweet(Date lastUpdated) {
 		date = new Date();
-		System.out.println(date.toString());
-		System.out.println(lastUpdated.toString());
+		// System.out.println(date.toString());
+		// System.out.println(lastUpdated.toString());
 		long deltaDays = (date.getTime() - lastUpdated.getTime())
 				/ MILLSECS_PER_DAY;
-		System.out.println(deltaDays);
+		// System.out.println(deltaDays);
 		if (deltaDays > DAYS_TOO_OLD)
 			return true;
 		else
@@ -101,9 +102,7 @@ public class MySQLTweetFactory implements TweetDAO {
 		Map<String, Object> params = tweetToMap(tweet);
 		int updated = -1;
 		try {
-
-			updated = namedParameterJdbcTemplate.update(SQL_UPDATE_TWEET,
-					params);
+			updated = jdbcTemplate.update(SQL_UPDATE_TWEET, params);
 		} catch (DataAccessException dae) {
 			throw new TweetException();
 		}
@@ -112,12 +111,12 @@ public class MySQLTweetFactory implements TweetDAO {
 
 	@Override
 	public TweetInfo323 selectTweetById(long id) {
-		SqlParameterSource parameterSource = new MapSqlParameterSource("ID", id);
+		SqlParameterSource parameterSource = new MapSqlParameterSource("id", id);
 		TweetInfo323Impl tweet = null;
 		try {
-			tweet = (TweetInfo323Impl) namedParameterJdbcTemplate
-					.queryForObject(SQL_SELECT_TWEET_BY_ID, parameterSource,
-							new TweetRowMapper());
+			tweet = (TweetInfo323Impl) jdbcTemplate.queryForObject(
+					SQL_SELECT_TWEET_BY_ID, parameterSource,
+					new TweetRowMapper());
 		} catch (EmptyResultDataAccessException e) {
 			throw new TweetNotFoundException();
 		}
@@ -126,21 +125,21 @@ public class MySQLTweetFactory implements TweetDAO {
 
 	private Map<String, Object> tweetToMap(TweetInfo323 tweet) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("ID", tweet.getId());
-		params.put("FROM_USER", tweet.getFromUser());
-		params.put("FROM_USER_ID", tweet.getFromUserId());
-		params.put("TO_USER_ID", tweet.getToUserId());
-		params.put("CREATED_AT", tweet.getCreatedAt());
-		params.put("IN_REPLY_TO_STATUS_ID", tweet.getInReplyToStatusId());
-		params.put("LANGUAGE_CODE", tweet.getLanguageCode());
-		params.put("PROFILE_IMAGE_URL", tweet.getProfileImageUrl());
-		params.put("RETWEET_COUNT", tweet.getRetweetCount());
-		params.put("SOURCE", tweet.getSource());
-		params.put("TEXT", tweet.getText());
-		params.put("TWEET_RANK", tweet.getTweetRank());
-		params.put("USER_INFO", tweet.getUserInfo().getId());
+		params.put("id", tweet.getId());
+		params.put("from_user", tweet.getFromUser());
+		params.put("from_user_id", tweet.getFromUserId());
+		params.put("to_user_id", tweet.getToUserId());
+		params.put("created_at", tweet.getCreatedAt());
+		params.put("in_reply_to_status_id", tweet.getInReplyToStatusId());
+		params.put("language_code", tweet.getLanguageCode());
+		params.put("profile_image_url", tweet.getProfileImageUrl());
+		params.put("retweet_count", tweet.getRetweetCount());
+		params.put("source", tweet.getSource());
+		params.put("text", tweet.getText());
+		params.put("tweet_rank", tweet.getTweetRank());
+		params.put("user_info", tweet.getUserInfo().getId());
 		date = new Date();
-		params.put("LAST_UPDATED", dateFormat.format(date));
+		params.put("last_updated", dateFormat.format(date));
 		return params;
 	}
 
@@ -197,8 +196,8 @@ public class MySQLTweetFactory implements TweetDAO {
 	private List<Long> findTweetsWithReTweets() {
 
 		SqlParameterSource parameter = new MapSqlParameterSource(
-				"RETWEET_COUNT", 0);
-		List<Long> list = namedParameterJdbcTemplate.queryForList(
+				"retweet_count", 0);
+		List<Long> list = jdbcTemplate.queryForList(
 				SQL_SECLECT_TWEETS_WITH_RETWEETS, parameter, Long.class);
 		return list;
 	}

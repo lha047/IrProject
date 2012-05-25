@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 
 import uib.info323.twitterAWSM.io.TweetFactory;
+import uib.info323.twitterAWSM.io.impl.TweetFactoryImpl;
 import uib.info323.twitterAWSM.model.impl.TweetInfo323Impl;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
@@ -25,6 +26,7 @@ public class TweetRowMapper implements RowMapper<TweetInfo323> {
 
 	public TweetRowMapper() {
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		tweetFactory = new TweetFactoryImpl();
 	}
 
 	public void setTweetFactory(TweetFactory tweetFactory) {
@@ -35,10 +37,13 @@ public class TweetRowMapper implements RowMapper<TweetInfo323> {
 	public TweetInfo323 mapRow(ResultSet rs, int rowNum) throws SQLException {
 
 		Date createdAt = null;
-		java.sql.Date d = rs.getDate("CREATED_AT");
+		Date lastUpdated = null;
+		java.sql.Date tempCreatedAt = rs.getDate("CREATED_AT");
+		java.sql.Date tempLastUpdate = rs.getDate("last_updated");
 
 		try {
-			createdAt = dateFormat.parse(d.toString());
+			createdAt = dateFormat.parse(tempCreatedAt.toString());
+			lastUpdated = dateFormat.parse(tempLastUpdate.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			System.out.println("ERROR in parsing date in TweetRowMapper");
@@ -55,12 +60,12 @@ public class TweetRowMapper implements RowMapper<TweetInfo323> {
 		TweetInfo323Impl tweet = (TweetInfo323Impl) tweetFactory.createTweet(
 				related, rs.getLong("ID"), rs.getString("TEXT"), createdAt,
 				rs.getString("FROM_USER"), rs.getString("PROFILE_IMAGE_URL"),
-				rs.getLong("TO_USER_ID"), rs.getLong("FORM_USER_ID"),
+				rs.getLong("TO_USER_ID"), rs.getLong("from_user_id"),
 				rs.getString("LANGUAGE_CODE"), rs.getString("SOURCE"),
 				rs.getDouble("TWEET_RANK"),
 				rs.getLong("IN_REPLY_TO_STATUS_ID"),
 				rs.getInt("RETWEET_COUNT"), reTweeters, mentions, tags,
-				userInfo);
+				userInfo, lastUpdated);
 
 		return tweet;
 	}

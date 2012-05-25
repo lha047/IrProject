@@ -34,10 +34,6 @@ public interface TweetFactory {
 			long toUserId, long fromUserId, String languageCode, String source,
 			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
 			List<Long> reTweeters, List<String> mentions, List<String> tags,
-			TwitterUserInfo323 userInfo);
-	//
-	// ID, FROM_USER, FROM_USER_ID, TO_USER_ID, CREATED_AT,
-	// IN_REPLY_TO_STATUS_ID,
-	// + "LANGUAGE_CODE, PROFILE_IMAGE_URL, RETWEET_COUNT,
-	// SOURCE, TEXT, TWEET_RANK, USER_INFO, LAST_UPDATED
+			TwitterUserInfo323 userInfo, Date lastUpdated);
+
 }

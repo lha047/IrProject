@@ -96,11 +96,13 @@ public class JsonUserFactory implements UserSearchFactory {
 	}
 
 	public List<TwitterUserInfo323> parseJsonToUsers(String searchResult) {
+
 		JsonElement element = parser.parse(searchResult);
 		System.out.println("Parsed element: " + element.toString());
 		List<TwitterUserInfo323> users = new ArrayList<TwitterUserInfo323>();
-		JsonObject jsonUsers = element.getAsJsonObject().get("users").getAsJsonObject();
-		for (JsonElement userElement : jsonUsers.getAsJsonArray()) {
+		JsonArray jsonUsers = element.getAsJsonObject().get("users")
+				.getAsJsonArray();
+		for (JsonElement userElement : jsonUsers) {
 			users.add(jsonElementToUser(userElement));
 
 		}
@@ -135,8 +137,9 @@ public class JsonUserFactory implements UserSearchFactory {
 
 		int statusesCount = obj.get("statuses_count").getAsInt();
 
+		float userRank = 0;
 		// TODO endre fittnessScore 0
-		user = new TwitterUserInfo323Impl(0, id, screenName, name, url,
+		user = new TwitterUserInfo323Impl(userRank, id, screenName, name, url,
 				profileImageUrl, description, location, createdDate,
 				favoritesCount, followersCount, friendsCount, language,
 				profileUrl, statusesCount, new Date());

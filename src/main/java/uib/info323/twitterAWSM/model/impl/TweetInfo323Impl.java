@@ -41,7 +41,7 @@ public class TweetInfo323Impl implements TweetInfo323 {
 			long toUserId, long fromUserId, String languageCode, String source,
 			double tweetRank, Long inReplyToStatusId, Integer retweetCount,
 			List<Long> reTweeters, List<String> mentions, List<String> tags,
-			TwitterUserInfo323 userInfo) {
+			TwitterUserInfo323 userInfo, Date lastUpdated) {
 		this.related = related;
 		this.id = id;
 		this.text = text;
@@ -59,6 +59,7 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		this.mentions = mentions;
 		this.tags = tags;
 		this.userInfo = userInfo;
+		this.lastUpdated = lastUpdated;
 	}
 
 	// private List<Tweet> replies;
