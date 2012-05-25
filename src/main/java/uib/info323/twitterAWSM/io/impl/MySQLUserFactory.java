@@ -49,15 +49,11 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_SELECT_SCREEN_NAME = "SELECT screen_name FROM users";
 
-	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (screen_name, user_id, following_screen_name) values (:screen_name, :user_id, :following_screen_name)";
+	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (user_id, following_id) values (:user_id, :following_id)";
 
-	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT follower_screen_name FROM followers";
+	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT follower_id FROM followers";
 
-	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (screen_name, user_id, follower_screen_name) values (:screen_name, :user_id, :follower_screen_name)";
-
-	private static final String SELECT_FOLLOWERS_BY_SCREEN_NAME = "SELECT follower_screen_name FROM followers WHERE screen_name = :screen_name";
-
-	private static final String SELECT_FOLLOWING_BY_SCREEN_NAME = "SELECT following_screen_name FROM following WHERE SCREEN_NAME = :screen_name";
+	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (user_id, follower_id) values (:user_id, :follower_id)";
 
 	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
 	
@@ -234,24 +230,24 @@ public class MySQLUserFactory implements UserDAO {
 		return list;
 	}
 
-	public List<String> selectFollowersByScreenName(String screenName) {
+//	public List<String> selectFollowersByScreenName(String screenName) {
+//
+//		SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
+//				screenName);
+//		List<String> list = namedParameterJdbcTemplate.queryForList(
+//				SELECT_FOLLOWERS_BY_SCREEN_NAME, parameter, String.class);
+//
+//		return list;
+//	}
 
-		SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
-				screenName);
-		List<String> list = namedParameterJdbcTemplate.queryForList(
-				SELECT_FOLLOWERS_BY_SCREEN_NAME, parameter, String.class);
-
-		return list;
-	}
-
-	public List<Long> selectFollowingByScreenName(String screenName) {
-
-		SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
-				screenName);
-		List<Long> list = namedParameterJdbcTemplate.queryForList(
-				SELECT_FOLLOWING_BY_SCREEN_NAME, parameter, Long.class);
-		return list;
-	}
+//	public List<Long> selectFollowingByScreenName(String screenName) {
+//
+//		SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
+//				screenName);
+//		List<Long> list = namedParameterJdbcTemplate.queryForList(
+//				SELECT_FOLLOWING_BY_SCREEN_NAME, parameter, Long.class);
+//		return list;
+//	}
 
 	public void insertUserIdsToFollowersFollowing(String sql,
 			String sqlFollowing) {
@@ -276,10 +272,10 @@ public class MySQLUserFactory implements UserDAO {
 	}
 
 	public void addFollowers(FollowersFollowingResultPage f) {
-
-		String[] followers = f.getFollowersScreenNames();
-		for (String follower : followers) {
-			Map<String, Object> paramMap = followersToMap(f.getScreenName(),
+		System.out.println("add followers");
+		long[] followers = f.getFollowersUserIds();
+		for (long follower : followers) {
+			Map<String, Object> paramMap = followersToMap(f.getUserId(),
 					follower);
 			namedParameterJdbcTemplate.update(SQL_INSERT_FOLLOWERS, paramMap);
 		}
@@ -287,28 +283,28 @@ public class MySQLUserFactory implements UserDAO {
 	}
 
 	public void addFollowing(FollowersFollowingResultPage f) {
-		String[] following = f.getFollowersScreenNames();
-		for (String follow : following) {
-			Map<String, Object> paramMap = followingToMap(f.getScreenName(),
+		long[] following = f.getFollowersUserIds();
+		for (long follow : following) {
+			Map<String, Object> paramMap = followingToMap(f.getUserId(),
 					follow);
 			namedParameterJdbcTemplate.update(SQL_INSERT_FOLLOWING, paramMap);
 		}
 	}
 
-	private Map<String, Object> followersToMap(String screenName,
-			String followerScreenName) {
+	private Map<String, Object> followersToMap(long userId,
+			long followerId) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("screen_name", screenName);
-		params.put("follower_screen_name", followerScreenName);
+		params.put("screen_name", userId);
+		params.put("follower_id", followerId);
 		return params;
 	}
 
-	private Map<String, Object> followingToMap(String screenName,
-			String followingScreenName) {
+	private Map<String, Object> followingToMap(long userId,
+			long followingId) {
 		Map<String, Object> params = new HashMap<String, Object>();
 
-		params.put("screen_name", screenName);
-		params.put("following_screen_name", followingScreenName);
+		params.put("screen_name", userId);
+		params.put("following_id", followingId);
 
 		return params;
 	}
