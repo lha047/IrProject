@@ -138,7 +138,8 @@ public class AjajController {
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
 	public ResponseEntity<String> processFollowers(@RequestParam String userId,
 			String followers) {
-
+		System.out.println("user " + userId);
+		System.out.println("followers " + followers);
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
@@ -146,7 +147,8 @@ public class AjajController {
 	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
 	public ResponseEntity<String> processFollowing(@RequestParam String userId,
 			String following) {
-
+		System.out.println("user " + userId);
+		System.out.println("following " + following);
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
