@@ -6,9 +6,27 @@ var max_id = 0;
 var query = "";
 var rpp = 20;
 
-/*jQuery(document).ajaxError(function(event, request, settings){
+// catches all AJAX errors not caused by jsnonp-requests (namely interaction with the feedjam server)
+jQuery(document).ajaxError(function(event, request, settings){
    console.log("**********ERROR:***********\nevent: " + event + "\nrequest: " + request + "nsettings: " + settings);
-});*/
+});
+
+// pushes loadingdata to the loading scroller
+function loadingMessage(message) {
+	$loading = $('#loading');
+	if(!$('#loading').length) {
+		$('#more').append('<div id="loading" class="two_cols center">' + message + '</div>');
+	} else {
+		$('#loading').html(message);
+	}
+	// todo : sette inn meldinger om hva som skjer i loading knappen (hvis den fortsatt er loading)
+	
+}
+
+// pushes error messages to the frontend
+function displayError(message) {
+	$('header').after('<div class="error">' + message + '</div>');
+}
 
 /*
 	User functions
@@ -17,7 +35,7 @@ var rpp = 20;
 
 // control user ajax requests
 function usrRequests(searchRequest, rpp, searchQuery, usrs) {
-	
+	loadingMessage('Getting user data from Twitter');
 	if(usrs) {
 		// we have users to find
 		var usrLst = usrs.split(",");
@@ -51,11 +69,10 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 			usersToServer(usrJSONData, searchQuery, searchRequest, rpp);
 		},
 		error:function(){
-			console.log('****** ERROR: getUsersFromTwitter() failed *******');                    
+			console.log('****** ERROR: getUsersFromTwitter() failed *******'); 
+			displayError('Could not get userdata: out of Twitter API requests');
 		},
-		complete:function(){
-			console.log('getUsersFromTwitter completed');                    
-		}
+		complete:function(){}
 	});
 	
 	/*$.getJSON('https://api.twitter.com/1/users/lookup.json?user_id=' + usrs + '&include_entities=false&callback=?', function(usrJSONData) {
@@ -67,6 +84,7 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 // sends returned user data to controller (../ajaj/processUsers)
 function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 	console.log('SERVER POST: sending users to server');
+	loadingMessage('Crunching data and generating View');
 	// console.log(searchRequest + ' \n ################# \n' + usrJSONData);
 	var out = "";
 	if(usrJSONData != "") {
@@ -140,10 +158,26 @@ function getFollowingFromTwitter(usr) {
 // sends requests for followers for users to twitter
 function getFollowersFromTwitter(usr) {
 	console.log('REQUEST: Twitter API: requesting followers for ' + usr);
-	$.getJSON('https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + usr + '&callback=?', function(usrFollowersJSON) {
+	
+	$.ajax({
+		url:'https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + usr + '&callback=?',
+		dataType:'jsonp',
+		timeout: 5000,
+		success:function(usrFollowersJSON){
+			console.log('RESPONSE: Twitter API: received response for followers for user: ' + usr);
+			followersToServer(usr, usrFollowersJSON);
+		},
+		error:function(){
+			console.log('****** ERROR: getFollowersFromTwitter() failed *******');
+		},
+		complete:function(){                    
+		}
+	});
+	
+	/*$.getJSON('https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + usr + '&callback=?', function(usrFollowersJSON) {
 		console.log('RESPONSE: Twitter API: received response for followers for user: ' + usr);
 		followersToServer(usr, usrFollowersJSON);
-	});
+	});*/
 }
 
 /*
@@ -153,7 +187,7 @@ function getFollowersFromTwitter(usr) {
 
 // sends the JSON response from twitter to controller (ajaj/processSearch)
 function tweetsToServer(searchResponse, rpp, searchQuery) {
-
+	loadingMessage('crunching tweets');
 	// console.log("searchQuery: " + searchQuery + " and rpp: " + rpp + " returned: " + JSON.stringify(searchResponse));
 	$.post("ajaj/processSearch", { 
 		searchResponse: JSON.stringify(searchResponse) 
@@ -166,12 +200,40 @@ function tweetsToServer(searchResponse, rpp, searchQuery) {
 // sends query to Twitter
 function searchTweets(searchQuery, rpp) {
 	console.log('searching: ' + searchQuery);
+	
+	loadingMessage('querying Twitter for tweets');
+	
 	var query_id = "";
 	if(max_id != 0) {
 		query_id = "&max_id=" + max_id;
 	}
 	console.log('Running query: http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?');
-	$.getJSON('http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?', function(searchResponse) {
+	
+	$.ajax({
+		url:'http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?',
+		dataType:'jsonp',
+		timeout: 5000,
+		success:function(searchResponse){
+			console.log('received response for search: ' + searchResponse);
+	  
+			page = searchResponse.page + 1;
+			max_id = searchResponse.max_id;
+			query = searchResponse.query;
+			rpp = rpp;
+			
+			console.log("page: " + page + "\nmax_id: " + max_id + "\nquery: " + query + "\nrpp: " + rpp);
+			
+			tweetsToServer(searchResponse, rpp, searchQuery);
+		},
+		error:function(){
+			console.log('****** ERROR: getFollowersFromTwitter() failed *******');
+			displayError('Could not search for tweets. Probably out of Twitter API requests.');
+		},
+		complete:function(){                    
+		}
+	});
+	
+	/*$.getJSON('http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?', function(searchResponse) {
 		console.log('received response for search: ' + searchResponse);
 	  
 		page = searchResponse.page + 1;
@@ -182,7 +244,7 @@ function searchTweets(searchQuery, rpp) {
 		console.log("page: " + page + "\nmax_id: " + max_id + "\nquery: " + query + "\nrpp: " + rpp);
 		
 		tweetsToServer(searchResponse, rpp, searchQuery);
-	});
+	});*/
 }
 
 /*
@@ -255,9 +317,7 @@ $('#search_form').submit( function(e) {
 	
 });
 
-function updateScrollMessage(message) {
-	// todo : sette inn meldinger om hva som skjer i loading knappen (hvis den fortsatt er loading)
-}
+
 
 
 // displays returned view, rebinds events, reloads masonry
@@ -267,6 +327,9 @@ function doTheFunkyBusiness(view) {
 	
 	// stop more spinning
 	$('#more').find('.btn').removeClass('disabled no_text spinner');
+	
+	// remove loading message
+	$('#loading').remove();
 	
 	// rebind usrClick
 	usrClick();
