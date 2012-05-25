@@ -9,34 +9,36 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
 import uib.info323.twitterAWSM.exceptions.BadRequestException;
+import uib.info323.twitterAWSM.model.impl.FollowersFollowingResultPageImpl;
 import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
+import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class UserParser {
+public class JsonUserParser {
 
-	
+
 	public static List<TwitterUserInfo323> jsonToUsers(String jsonUsers) {
-		
+
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(jsonUsers);
+		JsonElement jsonUsersElement = element.getAsJsonObject().get("users");
 		
 		List<TwitterUserInfo323> users = new ArrayList<TwitterUserInfo323>();
-		for(JsonElement userElement : element.getAsJsonArray()) {
-			
+		for(JsonElement userElement : jsonUsersElement.getAsJsonArray()) {
+
 			users.add(jsonToUser(userElement.toString()));
-			
+
 		}
-		
 		return users;
-		
 	}
-	
+
 	public static TwitterUserInfo323 jsonToUser(String jsonUser) {
-		
+
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(jsonUser);
 
@@ -81,6 +83,32 @@ public class UserParser {
 				profileUrl, statusesCount, new Date());
 		return user;
 
+	}
+
+	public static FollowersFollowingResultPage jsonToFollowersFollowing(String screenName, String jsonFollowersFollowing) {
+
+		JsonParser parser = new JsonParser();
+		JsonElement element = parser.parse(jsonFollowersFollowing);
+		JsonObject object = element.getAsJsonObject();
+		JsonArray array = object.get("").getAsJsonArray();
+		String[] screenNames = new String[array.size()];
+		System.out.println("number of followers" + array.size());
+		for (int i = 0; i < array.size(); i++) {
+			screenNames[i] = array.get(i).getAsJsonPrimitive().getAsString();
+			System.out.println("ScreenName :" + i + " " + screenNames[i]);
+		}
+
+		int previous = object.get("previous_cursor").getAsInt();
+		int next = -1;
+		if (!object.get("next_cursor").isJsonObject()) {
+			next = object.get("next_cursor").getAsInt();
+		}
+		FollowersFollowingResultPage resPage = new FollowersFollowingResultPageImpl();
+		resPage.setFollowersScreenNames(screenNames);
+		resPage.setNextCursor(next);
+		resPage.setPreviousCursor(previous);
+		resPage.setScreenName(screenName);
+		return resPage;
 	}
 
 }

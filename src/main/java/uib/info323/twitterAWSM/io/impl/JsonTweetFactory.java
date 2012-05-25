@@ -19,7 +19,7 @@ import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
-import uib.info323.twitterAWSM.utils.TweetParser;
+import uib.info323.twitterAWSM.utils.JsonTweetParser;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -115,9 +115,9 @@ public class JsonTweetFactory implements TweetSearchFactory {
 				System.out.println("retweet count: " + retweetCount);
 			}
 
-			ArrayList<String> tags = (ArrayList<String>) TweetParser.getTerms(
+			ArrayList<String> tags = (ArrayList<String>) JsonTweetParser.getTerms(
 					text, "#".charAt(0));
-			ArrayList<String> mentions = (ArrayList<String>) TweetParser
+			ArrayList<String> mentions = (ArrayList<String>) JsonTweetParser
 					.getTerms(text, "@".charAt(0));
 
 			// Get related tweets

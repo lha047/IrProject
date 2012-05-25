@@ -18,6 +18,4 @@ public interface UserSearchFactory {
 
 	public FollowersFollowingResultPage findUsersFriends(String string);
 
-	public List<TwitterUserInfo323> getRetweetedBy(long tweetId);
-
 }

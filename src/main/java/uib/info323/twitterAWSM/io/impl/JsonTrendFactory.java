@@ -18,6 +18,8 @@ import uib.info323.twitterAWSM.model.impl.TrendImpl;
 import uib.info323.twitterAWSM.model.impl.TrendsImpl;
 import uib.info323.twitterAWSM.model.interfaces.Trend;
 import uib.info323.twitterAWSM.model.interfaces.Trends;
+import uib.info323.twitterAWSM.utils.DateParser;
+import uib.info323.twitterAWSM.utils.JsonTrendParser;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,13 +30,10 @@ public class JsonTrendFactory implements TrendFactory {
 	private final String apiUrl = "https://api.twitter.com/";
 	@Autowired
 	private RestTemplate restTemplate;
-	private final SimpleDateFormat requestDateFormatter;
-	private final SimpleDateFormat responseDateFormatter;
 
 	public JsonTrendFactory() {
 		restTemplate = new RestTemplate();
-		requestDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		responseDateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
 	}
 
 	public static void main(String[] args) {
@@ -46,7 +45,12 @@ public class JsonTrendFactory implements TrendFactory {
 	@Override
 	public Trends getDailyTrendsForDate(Date date) throws BadRequestException {
 
-		String formattedDate = requestDateFormatter.format(date);
+		String formattedDate;
+		try {
+			formattedDate = DateParser.parseRequestDate(date);
+		} catch (ParseException e1) {
+			formattedDate = "2012-01-01";
+		}
 
 		// Construct the REST request
 		String requestUrl = apiUrl + "1/trends/daily.json?date={formattedDate}";
@@ -60,46 +64,46 @@ public class JsonTrendFactory implements TrendFactory {
 			throw new BadRequestException();
 		}
 		// Create an object for trends and return this object
-		return jsonToTrends(jsonResponse);
+		return JsonTrendParser.jsonToTrends(jsonResponse);
 	}
 
-	private Trends jsonToTrends(String jsonResponse) {
+//	private Trends jsonToTrends(String jsonResponse) {
+//
+//		// Parse the JSON result
+//		JsonParser parser = new JsonParser();
+//		JsonElement element = parser.parse(jsonResponse);
+//		JsonObject object = element.getAsJsonObject();
+//
+//		// Get trend-info from JSON object
+//		JsonObject jsonTrends = object.get("trends").getAsJsonObject();
+//
+//		HashMap<Date, List<Trend>> trendsByTime = new HashMap<Date, List<Trend>>();
+//
+//		for (Entry<String, JsonElement> trendsEntry : jsonTrends.entrySet()) {
+//			Date date;
+//			try {
+//				date = DateParser.parseResponseDate(trendsEntry.getKey());
+//			} catch (ParseException e) {
+//				date = new Date();
+//			}
+//			List<Trend> trends = jsonToTrendsList(trendsEntry.getValue());
+//			trendsByTime.put(date, trends);
+//		}
+//		return new TrendsImpl(trendsByTime);
+//
+//	}
 
-		// Parse the JSON result
-		JsonParser parser = new JsonParser();
-		JsonElement element = parser.parse(jsonResponse);
-		JsonObject object = element.getAsJsonObject();
-
-		// Get trend-info from JSON object
-		JsonObject jsonTrends = object.get("trends").getAsJsonObject();
-
-		HashMap<Date, List<Trend>> trendsByTime = new HashMap<Date, List<Trend>>();
-
-		for (Entry<String, JsonElement> trendsEntry : jsonTrends.entrySet()) {
-			Date date;
-			try {
-				date = responseDateFormatter.parse(trendsEntry.getKey());
-			} catch (ParseException e) {
-				date = new Date();
-			}
-			List<Trend> trends = jsonToTrendsList(trendsEntry.getValue());
-			trendsByTime.put(date, trends);
-		}
-		return new TrendsImpl(trendsByTime);
-
-	}
-
-	private List<Trend> jsonToTrendsList(JsonElement trends) {
-		List<Trend> trendsList = new LinkedList<Trend>();
-
-		for (JsonElement trendElement : trends.getAsJsonArray()) {
-			JsonObject trendObject = trendElement.getAsJsonObject();
-			String name = trendObject.get("name").getAsString();
-			String query = trendObject.get("query").getAsString();
-			trendsList.add(new TrendImpl(name, query));
-		}
-		return trendsList;
-
-	}
+//	private List<Trend> jsonToTrendsList(JsonElement trends) {
+//		List<Trend> trendsList = new LinkedList<Trend>();
+//
+//		for (JsonElement trendElement : trends.getAsJsonArray()) {
+//			JsonObject trendObject = trendElement.getAsJsonObject();
+//			String name = trendObject.get("name").getAsString();
+//			String query = trendObject.get("query").getAsString();
+//			trendsList.add(new TrendImpl(name, query));
+//		}
+//		return trendsList;
+//
+//	}
 
 }

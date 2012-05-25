@@ -21,7 +21,7 @@ import uib.info323.twitterAWSM.model.interfaces.Trends;
 
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
-import uib.info323.twitterAWSM.utils.TweetParser;
+import uib.info323.twitterAWSM.utils.JsonTweetParser;
 
 /**
  * Handles requests for the application home page.

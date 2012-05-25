@@ -26,6 +26,7 @@ import uib.info323.twitterAWSM.model.impl.TwitterUserInfo323Impl;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
+import uib.info323.twitterAWSM.utils.JsonUserParser;
 
 @Controller
 @RequestMapping(value = "/ajaj")
@@ -91,7 +92,7 @@ public class AjajController {
 
 		if (users.length() > 0) {
 
-			twitterUsers = jsonUserFactory.parseJsonToUsers(users);
+			twitterUsers = JsonUserParser.jsonToUsers(users);
 		}
 		if (twitterUsers != null) {
 			for (TwitterUserInfo323 user : twitterUsers) {
