@@ -67,43 +67,4 @@ public class JsonTrendFactory implements TrendFactory {
 		return JsonTrendParser.jsonToTrends(jsonResponse);
 	}
 
-//	private Trends jsonToTrends(String jsonResponse) {
-//
-//		// Parse the JSON result
-//		JsonParser parser = new JsonParser();
-//		JsonElement element = parser.parse(jsonResponse);
-//		JsonObject object = element.getAsJsonObject();
-//
-//		// Get trend-info from JSON object
-//		JsonObject jsonTrends = object.get("trends").getAsJsonObject();
-//
-//		HashMap<Date, List<Trend>> trendsByTime = new HashMap<Date, List<Trend>>();
-//
-//		for (Entry<String, JsonElement> trendsEntry : jsonTrends.entrySet()) {
-//			Date date;
-//			try {
-//				date = DateParser.parseResponseDate(trendsEntry.getKey());
-//			} catch (ParseException e) {
-//				date = new Date();
-//			}
-//			List<Trend> trends = jsonToTrendsList(trendsEntry.getValue());
-//			trendsByTime.put(date, trends);
-//		}
-//		return new TrendsImpl(trendsByTime);
-//
-//	}
-
-//	private List<Trend> jsonToTrendsList(JsonElement trends) {
-//		List<Trend> trendsList = new LinkedList<Trend>();
-//
-//		for (JsonElement trendElement : trends.getAsJsonArray()) {
-//			JsonObject trendObject = trendElement.getAsJsonObject();
-//			String name = trendObject.get("name").getAsString();
-//			String query = trendObject.get("query").getAsString();
-//			trendsList.add(new TrendImpl(name, query));
-//		}
-//		return trendsList;
-//
-//	}
-
 }
