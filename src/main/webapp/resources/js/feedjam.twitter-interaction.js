@@ -6,9 +6,9 @@ var max_id = 0;
 var query = "";
 var rpp = 20;
 
-jQuery(document).ajaxError(function(event, request, settings){
-   alert("Error");
-});
+/*jQuery(document).ajaxError(function(event, request, settings){
+   console.log("**********ERROR:***********\nevent: " + event + "\nrequest: " + request + "nsettings: " + settings);
+});*/
 
 /*
 	User functions
@@ -41,22 +41,39 @@ function usrRequests(searchRequest, rpp, searchQuery, usrs) {
 // get users from twitter
 function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 	console.log('REQUEST: Twitter API: requesting user data for: ' + usrs);
-	$.getJSON('https://api.twitter.com/1/users/lookup.json?user_id=' + usrs + '&include_entities=false&callback=?', function(usrJSONData) {
+	
+	$.ajax({
+		url:'https://api.twitter.com/1/users/lookup.json?user_id=' + usrs + '&include_entities=false&callback=?',
+		dataType:'jsonp',
+		timeout: 5000,
+		success:function(usrJSONData){
+			console.log('RESPONSE: Twitter API: received user data for ' + usrs);
+			usersToServer(usrJSONData, searchQuery, searchRequest, rpp);
+		},
+		error:function(){
+			console.log('****** ERROR: getUsersFromTwitter() failed *******');                    
+		},
+		complete:function(){
+			console.log('getUsersFromTwitter completed');                    
+		}
+	});
+	
+	/*$.getJSON('https://api.twitter.com/1/users/lookup.json?user_id=' + usrs + '&include_entities=false&callback=?', function(usrJSONData) {
 		console.log('RESPONSE: Twitter API: received user data for ' + usrs);
 		usersToServer(usrJSONData, searchQuery, searchRequest, rpp);
-	});
+	});*/
 }
 
 // sends returned user data to controller (../ajaj/processUsers)
 function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
 	console.log('SERVER POST: sending users to server');
-	console.log(searchRequest + ' \n ################# \n' + usrJSONData);
+	// console.log(searchRequest + ' \n ################# \n' + usrJSONData);
 	var out = "";
 	if(usrJSONData != "") {
 		out = '{"users":' + JSON.stringify(usrJSONData) + '}';
 	}
 	
-	console.log(out);
+	// console.log(out);
 		
 	if(!rpp) {
 		rpp = 20;
@@ -98,10 +115,26 @@ function followersToServer(userId, followersData) {
 // sends requests for following for users to twitter
 function getFollowingFromTwitter(usr) {
 	console.log('REQUEST: Twitter API: requesting following for ' + usr);
-	$.getJSON('https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id=' + usr + '&callback=?', function(usrFollowingJSON) {
+	
+	$.ajax({
+		url:'https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id=' + usr + '&callback=?',
+		dataType:'jsonp',
+		timeout: 5000,
+		success:function(usrFollowingJSON){
+			console.log('RESPONSE: Twitter API: received response for following user: ' + usr);
+			followingToServer(usr, usrFollowingJSON);
+		},
+		error:function(){
+			console.log('****** ERROR: getFollowingFromTwitter() failed *******');                   
+		},
+		complete:function(){                    
+		}
+	});
+	
+	/*$.getJSON('https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id=' + usr + '&callback=?', function(usrFollowingJSON) {
 		console.log('RESPONSE: Twitter API: received response for following user: ' + usr);
 		followingToServer(usr, usrFollowingJSON);
-	});
+	});*/
 }
 
 // sends requests for followers for users to twitter
@@ -121,7 +154,7 @@ function getFollowersFromTwitter(usr) {
 // sends the JSON response from twitter to controller (ajaj/processSearch)
 function tweetsToServer(searchResponse, rpp, searchQuery) {
 
-	console.log("searchQuery: " + searchQuery + " and rpp: " + rpp + " returned: " + JSON.stringify(searchResponse));
+	// console.log("searchQuery: " + searchQuery + " and rpp: " + rpp + " returned: " + JSON.stringify(searchResponse));
 	$.post("ajaj/processSearch", { 
 		searchResponse: JSON.stringify(searchResponse) 
 	},
@@ -137,6 +170,7 @@ function searchTweets(searchQuery, rpp) {
 	if(max_id != 0) {
 		query_id = "&max_id=" + max_id;
 	}
+	console.log('Running query: http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?');
 	$.getJSON('http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?', function(searchResponse) {
 		console.log('received response for search: ' + searchResponse);
 	  
@@ -173,7 +207,10 @@ usrClick();
 var searchQuery = "";
 var searchRpp = "";
 // AJAX request as result of search submit
-$('#search_form').submit( function() {
+$('#search_form').submit( function(e) {
+	
+	// stop form from submitting
+	e.preventDefault();
 	
 	// get query params from search form
 	searchQuery = $('#search_form').find('input').val();
@@ -218,6 +255,10 @@ $('#search_form').submit( function() {
 	
 });
 
+function updateScrollMessage(message) {
+	// todo : sette inn meldinger om hva som skjer i loading knappen (hvis den fortsatt er loading)
+}
+
 
 // displays returned view, rebinds events, reloads masonry
 function doTheFunkyBusiness(view) {
@@ -230,6 +271,4 @@ function doTheFunkyBusiness(view) {
 	// rebind usrClick
 	usrClick();
 }
-
-	
 	
