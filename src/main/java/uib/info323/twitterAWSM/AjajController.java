@@ -97,7 +97,7 @@ public class AjajController {
 		}
 		if (twitterUsers != null) {
 
-			int inserted = mySqlUserFactory.insertBatchUsers(twitterUsers,
+			int inserted = mySqlUserFactory.addBatchUsers(twitterUsers,
 					MySQLUserFactory.SQL_INSERT_USER);
 
 		}

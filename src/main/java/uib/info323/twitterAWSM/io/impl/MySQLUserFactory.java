@@ -70,7 +70,7 @@ public class MySQLUserFactory implements UserDAO {
 	private DateFormat dateFormat;
 	private Date date;
 
-	private UserRowMapper userRowMapper;
+	// private UserRowMapper userRowMapper;
 
 	public MySQLUserFactory() {
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -135,107 +135,9 @@ public class MySQLUserFactory implements UserDAO {
 		MySQLUserFactory userFactory = (MySQLUserFactory) context
 				.getBean("mySqlUserFactory");
 
-		// TwitterUserInfo323Impl s = (TwitterUserInfo323Impl) userFactory
-		// .selectUserByScreenName("lisaHalvors");
-		// System.out.println(s.getId() + " " + s.getScreenName());
-
-		// List<String> users = userFactory
-		// .selectAllScreenNamesFromDB(SQL_SELECT_SCREEN_NAME);
-		// UserSearchFactory uf = new HttpUserFactory();
-		//
-		// List<String> followers = userFactory
-		// .selectAllScreenNamesFromDB(SQL_SELECT_SCREEN_NAME);
-		//
 		userFactory.insertUserIdsToFollowersFollowing(
 				"SELECT DISTINCT  screen_name FROM following",
 				SQL_UPDATE_FOLLOWING_WITH_USER_ID);
-
-		// int START = 393;
-		// int STOP = followers.size();
-		// for (int i = START; i < STOP; i++) {
-		//
-		// TwitterUserInfo323 tu = uf.searchUserByScreenName(followers.get(i));
-		// System.out.println(i + " user " + tu.getId());
-		// userFactory.addUser(tu);
-		//
-		// }
-
-		// UserRank userRank = new UserRank("https://api.twitter.com/",
-		// new RestTemplate());
-
-		// int STOPP = 1;
-		// for (int i = 0; i < STOPP; i++) {
-		// System.out.println("Rank Users " + users.get(i));
-		// double d = userRank.userRank(userFactory.selectUserByScreenName(
-		// "lisaHalvors").getId());
-		// System.out.println("Rank " + d);
-		// TwitterUserInfo323 user = userFactory.selectUserById(users.get(i));
-		// user.setFitnessScore((float) d);
-		// userFactory.updateUser(user);
-		// }
-
-		// To test selectFollowersByUserId(id);
-		// long id = 1;
-		// List<Long> followers = userFactory.selectFollowersByUserId(id );
-		// for (Long l : followers) {
-		// System.out.println(l);
-		// }
-
-		// To run insert follower following
-
-		// int TO_NUMBER = users.size();
-		// FollowersFollowingResultPage[] l = new
-		// FollowersFollowingResultPage[TO_NUMBER];
-		// FollowersFollowingResultPage[] l2 = new
-		// FollowersFollowingResultPage[TO_NUMBER];
-		//
-		// for (int i = 0; i < TO_NUMBER; i++) {
-		// System.out.println("Teller " + i);
-		// System.out.println("*******Twitter " + users.get(i) + "*********");
-		//
-		// FollowersFollowingResultPage f = (FollowersFollowingResultPage) uf
-		// .findUsersFollowers(users.get(i));
-		//
-		// FollowersFollowingResultPage f2 = (FollowersFollowingResultPage) uf
-		// .findUsersFriends(users.get(i));
-		//
-		// System.out.println("*******DB " + f.getScreenName() + " "
-		// + f2.getScreenName() + "*********");
-		// System.out.println("Insert followers and followings into database");
-		// userFactory.addFollowers(f);
-		// userFactory.addFollowing(f2);
-		// try {
-		// Thread.sleep(1000);
-		// } catch (InterruptedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-
-		// int TO_NUMBER = users.size();
-		// FollowersFollowingResultPage[] l = new
-		// FollowersFollowingResultPage[TO_NUMBER];
-		// FollowersFollowingResultPage[] l2 = new
-		// FollowersFollowingResultPage[TO_NUMBER];
-		//
-		// for (int i = 0; i < TO_NUMBER; i++) {
-		// System.out.println("Teller " + i);
-		// System.out.println("*******Twitter " + users.get(i) + "*********");
-		// FollowersFollowingResultPage f = uf
-		// .findUsersFollowers(users.get(i));
-		// FollowersFollowingResultPage f2 = uf.findUsersFriends(users.get(i));
-		//
-		// System.out.println("*******DB " + f.getUserId() + " "
-		// + f2.getUserId() + "*********");
-		// userFactory.addFollowers(f);
-		// userFactory.addFollowing(f2);
-		// try {
-		// Thread.sleep(1000 * 20);
-		// } catch (InterruptedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
 
 	}
 
@@ -245,25 +147,6 @@ public class MySQLUserFactory implements UserDAO {
 
 		return list;
 	}
-
-	// public List<String> selectFollowersByScreenName(String screenName) {
-	//
-	// SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
-	// screenName);
-	// List<String> list = namedParameterJdbcTemplate.queryForList(
-	// SELECT_FOLLOWERS_BY_SCREEN_NAME, parameter, String.class);
-	//
-	// return list;
-	// }
-
-	// public List<Long> selectFollowingByScreenName(String screenName) {
-	//
-	// SqlParameterSource parameter = new MapSqlParameterSource("screen_name",
-	// screenName);
-	// List<Long> list = namedParameterJdbcTemplate.queryForList(
-	// SELECT_FOLLOWING_BY_SCREEN_NAME, parameter, Long.class);
-	// return list;
-	// }
 
 	public void insertUserIdsToFollowersFollowing(String sql,
 			String sqlFollowing) {
@@ -382,8 +265,7 @@ public class MySQLUserFactory implements UserDAO {
 		return params;
 	}
 
-	@Override
-	public int insertBatchUsers(List<TwitterUserInfo323> users, String sql) {
+	public int addBatchUsers(List<TwitterUserInfo323> users, String sql) {
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
 		for (TwitterUserInfo323 tu : users) {
 			parameters.add(new BeanPropertySqlParameterSource(tu));
