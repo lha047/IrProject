@@ -117,7 +117,8 @@ public class AjajController {
 		List<TweetInfo323> tweets = searchResult.getTweets();
 		for (TweetInfo323 t : tweets) {
 			try {
-				double userRank = 0; // find userRank
+				double userRank = t.getUserInfo().getFitnessScore(); // find
+																		// userRank
 				t.setTweetRank(userRank); // sets and calculates tweetRank
 				mySqlTweetFactory.insertTweet(t);
 			} catch (TweetException e) {
