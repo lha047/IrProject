@@ -25,7 +25,13 @@ function loadingMessage(message) {
 
 // pushes error messages to the frontend
 function displayError(message) {
-	$('header').after('<div class="error">' + message + '</div>');
+	$('#more').before('<div class="error">' + message + '</div>');
+	
+	// stop more spinning
+	$('#more').find('.btn').removeClass('disabled no_text spinner');
+	
+	// remove loading message
+	$('#loading').remove();
 }
 
 /*
@@ -37,22 +43,13 @@ function displayError(message) {
 function usrRequests(searchRequest, rpp, searchQuery, usrs) {
 	loadingMessage('Getting user data from Twitter');
 	if(usrs) {
-		// we have users to find
-		var usrLst = usrs.split(",");
-	
 		// get user data
 		getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp);
-		
-		// get followers and following for all users
-		for(var i=0;i<usrLst.length-1;i++) {
-			getFollowingFromTwitter(usrLst[i]);
-			getFollowersFromTwitter(usrLst[i]);
-		}
 		
 	} else {
 		// get the view
 		console.log("No users to fetch, getting view");
-		usersToServer('', searchQuery, searchRequest, rpp);
+		usersToServer('', searchQuery, searchRequest, rpp, false);
 	}
 }
 
@@ -66,7 +63,7 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 		timeout: 5000,
 		success:function(usrJSONData){
 			console.log('RESPONSE: Twitter API: received user data for ' + usrs);
-			usersToServer(usrJSONData, searchQuery, searchRequest, rpp);
+			usersToServer(usrJSONData, searchQuery, searchRequest, rpp, usrs);
 		},
 		error:function(){
 			console.log('****** ERROR: getUsersFromTwitter() failed *******'); 
@@ -82,7 +79,7 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 }
 
 // sends returned user data to controller (../ajaj/processUsers)
-function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
+function usersToServer(usrJSONData, searchQuery, searchRequest, rpp, usrs) {
 	console.log('SERVER POST: sending users to server');
 	loadingMessage('Crunching data and generating View');
 	// console.log(searchRequest + ' \n ################# \n' + usrJSONData);
@@ -105,6 +102,17 @@ function usersToServer(usrJSONData, searchQuery, searchRequest, rpp) {
    function(view) {
 		console.log('RETURNED VIEW');
 		doTheFunkyBusiness(view);
+		// followingFollowers for users
+		if(usrs) {
+			console.log('Starting getting following and followers');
+			var usrLst = usrs.split(",");
+		
+			// get followers and following for all users
+			for(var i=0;i<usrLst.length-1;i++) {
+				getFollowingFromTwitter(usrLst[i]);
+				getFollowersFromTwitter(usrLst[i]);
+			}
+		}
    });
 }
 
