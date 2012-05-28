@@ -42,6 +42,11 @@ public class MySQLTrendingFactory implements TrendDAO {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see uib.info323.twitterAWSM.io.TrendDAO#insertTrends(java.lang.String)
+	 */
 	public boolean insertTrends(String json) {
 		Map<String, Object> paramsMap = trendToMap(json);
 		int inserted = -1;
@@ -54,6 +59,12 @@ public class MySQLTrendingFactory implements TrendDAO {
 		return inserted == 1;
 	}
 
+	/**
+	 * Maps json trend to map
+	 * 
+	 * @param json
+	 * @return Map of trends
+	 */
 	private Map<String, Object> trendToMap(String json) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("trend_date",
@@ -62,6 +73,12 @@ public class MySQLTrendingFactory implements TrendDAO {
 		return params;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * uib.info323.twitterAWSM.io.TrendDAO#selectTrendsByDate(java.lang.String)
+	 */
 	public Trends selectTrendsByDate(String date) {
 		System.out.println("selectedTrendByDAte " + date);
 		SqlParameterSource paramMap = new MapSqlParameterSource("trend_date",
