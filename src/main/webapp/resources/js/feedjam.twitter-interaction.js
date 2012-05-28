@@ -275,7 +275,6 @@ usrClick();
 
 
 var searchQuery = "";
-var searchRpp = "";
 // AJAX request as result of search submit
 $('#search_form').submit( function(e) {
 	
@@ -284,7 +283,7 @@ $('#search_form').submit( function(e) {
 	
 	// get query params from search form
 	searchQuery = $('#search_form').find('input').val();
-	searchRpp = $('#search_form').find('#resultsPerPage').val();
+	rpp = $('#search_form').find('#resultsPerPage').val();
 	
 	// if an actual query is entered
 	if(searchQuery != '') {	
