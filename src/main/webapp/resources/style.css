@@ -390,6 +390,7 @@ px      68    160    252    344    436    528    620    712    804    896    */
 		text-align:center;
 		padding-bottom: 12px;
 		margin-bottom: 24px;
+		padding-right: 125px;
 		border-bottom: 1px solid #ccc;
 	}
 		header:before {

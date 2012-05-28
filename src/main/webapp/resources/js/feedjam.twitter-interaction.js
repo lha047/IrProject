@@ -360,4 +360,3 @@ function doTheFunkyBusiness(view) {
 	// rebind usrClick
 	usrClick();
 }
-	
