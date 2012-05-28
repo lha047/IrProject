@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -192,7 +191,13 @@ public class MySQLUserFactory implements UserDAO {
 				+ followers[0]);
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
 		for (long follower : followers) {
-			parameters.add(new BeanPropertySqlParameterSource(follower));
+			Map<String, Object> map = new HashMap<String, Object>();
+			if (sql.equals(SQL_INSERT_FOLLOWERS)) {
+				map = followersToMap(f.getUserId(), follower);
+			} else if (sql.equals(SQL_INSERT_FOLLOWING)) {
+				map = followingToMap(f.getUserId(), follower);
+			}
+			parameters.add(new MapSqlParameterSource(map));
 		}
 
 		int[] updated = jdbcTemplate.batchUpdate(sql,
@@ -268,7 +273,8 @@ public class MySQLUserFactory implements UserDAO {
 	public int addBatchUsers(List<TwitterUserInfo323> users, String sql) {
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
 		for (TwitterUserInfo323 tu : users) {
-			parameters.add(new BeanPropertySqlParameterSource(tu));
+			Map<String, Object> map = userToMap(tu);
+			parameters.add(new MapSqlParameterSource(map));
 		}
 		int[] updated = jdbcTemplate.batchUpdate(sql,
 				parameters.toArray(new SqlParameterSource[0]));
