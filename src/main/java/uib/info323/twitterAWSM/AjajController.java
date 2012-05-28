@@ -96,11 +96,10 @@ public class AjajController {
 			twitterUsers = JsonUserParser.jsonToUsers(users);
 		}
 		if (twitterUsers != null) {
-			for (TwitterUserInfo323 user : twitterUsers) {
-				boolean inserted = mySqlUserFactory.addUser(user);
-				System.out.println("inserted " + user.getScreenName()
-						+ inserted);
-			}
+
+			int inserted = mySqlUserFactory.insertBatchUsers(twitterUsers,
+					MySQLUserFactory.SQL_INSERT_USER);
+
 		}
 
 		// retrieves user info for tweets from db
@@ -137,26 +136,32 @@ public class AjajController {
 	}
 
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
-	public ResponseEntity<String> processFollowers(
-			@RequestParam String userId, String followers) {
+	public ResponseEntity<String> processFollowers(@RequestParam String userId,
+			String followers) {
 
 		long userIdLong = Long.parseLong(userId);
 		FollowersFollowingResultPage followersResultPage = JsonUserParser
 				.jsonToFollowersFollowing(userIdLong, followers);
-		mySqlUserFactory.addFollowers(followersResultPage);
+		// mySqlUserFactory.addFollowersFollowing(followersResultPage,
+		// MySQLUserFactory.SQL_INSERT_FOLLOWERS);
+		mySqlUserFactory.insertBatchFollowersFollowing(followersResultPage,
+				MySQLUserFactory.SQL_INSERT_FOLLOWERS);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
 
 	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
-	public ResponseEntity<String> processFollowing(
-			@RequestParam String userId, String following) {
+	public ResponseEntity<String> processFollowing(@RequestParam String userId,
+			String following) {
 		System.out.println("processFollowing request.....");
 		long userIdLong = Long.parseLong(userId);
 		FollowersFollowingResultPage followingResultPage = JsonUserParser
 				.jsonToFollowersFollowing(userIdLong, following);
-		mySqlUserFactory.addFollowing(followingResultPage);
+		// mySqlUserFactory.addFollowersFollowing(followingResultPage,
+		// MySQLUserFactory.SQL_INSERT_FOLLOWING);
+		mySqlUserFactory.insertBatchFollowersFollowing(followingResultPage,
+				MySQLUserFactory.SQL_INSERT_FOLLOWING);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 

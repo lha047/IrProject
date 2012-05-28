@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -32,7 +33,7 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 @Component
 public class MySQLUserFactory implements UserDAO {
 
-	private static final String SQL_INSERT_USER = "insert into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
+	public static final String SQL_INSERT_USER = "insert into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
 			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
 
 	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE screen_name = :screen_name";
@@ -49,11 +50,11 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_SELECT_SCREEN_NAME = "SELECT screen_name FROM users";
 
-	private static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (user_id, following_id) values (:user_id, :following_id)";
-
 	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT follower_id FROM followers";
 
-	private static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (user_id, follower_id) values (:user_id, :follower_id)";
+	public static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (user_id, following_id) values (:user_id, :following_id)";
+
+	public static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (user_id, follower_id) values (:user_id, :follower_id)";
 
 	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
 
@@ -286,25 +287,42 @@ public class MySQLUserFactory implements UserDAO {
 		return params;
 	}
 
-	public void addFollowers(FollowersFollowingResultPage f) {
-	
+	public void addFollowersFollowing(FollowersFollowingResultPage f, String sql) {
+
 		long[] followers = f.getFollowersUserIds();
-		System.out.println("USerid: " + f.getUserId() + " -- Followers: " + followers[0]);
+		System.out.println("USerid: " + f.getUserId() + " -- Followers: "
+				+ followers[0]);
+
 		for (long follower : followers) {
 			Map<String, Object> paramMap = followersToMap(f.getUserId(),
 					follower);
-			jdbcTemplate.update(SQL_INSERT_FOLLOWERS, paramMap);
+			jdbcTemplate.update(sql, paramMap);
 		}
 
 	}
 
-	public void addFollowing(FollowersFollowingResultPage f) {
-		long[] following = f.getFollowersUserIds();
-		for (long follow : following) {
-			Map<String, Object> paramMap = followingToMap(f.getUserId(), follow);
-			jdbcTemplate.update(SQL_INSERT_FOLLOWING, paramMap);
+	public void insertBatchFollowersFollowing(FollowersFollowingResultPage f,
+			String sql) {
+
+		long[] followers = f.getFollowersUserIds();
+		System.out.println("USerid: " + f.getUserId() + " -- Followers: "
+				+ followers[0]);
+		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
+		for (long follower : followers) {
+			parameters.add(new BeanPropertySqlParameterSource(follower));
 		}
+
+		int[] updated = jdbcTemplate.batchUpdate(sql,
+				parameters.toArray(new SqlParameterSource[0]));
 	}
+
+	// public void addFollowing(FollowersFollowingResultPage f) {
+	// long[] following = f.getFollowersUserIds();
+	// for (long follow : following) {
+	// Map<String, Object> paramMap = followingToMap(f.getUserId(), follow);
+	// jdbcTemplate.update(SQL_INSERT_FOLLOWING, paramMap);
+	// }
+	// }
 
 	private Map<String, Object> followersToMap(long userId, long followerId) {
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -364,9 +382,14 @@ public class MySQLUserFactory implements UserDAO {
 	}
 
 	@Override
-	public boolean addListUsers(List<TwitterUserInfo323> users) {
-		// TODO Auto-generated method stub
-		return false;
+	public int insertBatchUsers(List<TwitterUserInfo323> users, String sql) {
+		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
+		for (TwitterUserInfo323 tu : users) {
+			parameters.add(new BeanPropertySqlParameterSource(tu));
+		}
+		int[] updated = jdbcTemplate.batchUpdate(sql,
+				parameters.toArray(new SqlParameterSource[0]));
+		return updated.length;
 	}
 
 	@Override
@@ -407,4 +430,5 @@ public class MySQLUserFactory implements UserDAO {
 		}
 		return usersNotInDB;
 	}
+
 }

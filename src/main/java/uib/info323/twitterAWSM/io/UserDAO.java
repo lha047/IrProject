@@ -2,6 +2,7 @@ package uib.info323.twitterAWSM.io;
 
 import java.util.List;
 
+import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public interface UserDAO {
@@ -14,10 +15,13 @@ public interface UserDAO {
 
 	public TwitterUserInfo323 selectUserByScreenName(String screenName);
 
-	public boolean addListUsers(List<TwitterUserInfo323> users);
+	public int insertBatchUsers(List<TwitterUserInfo323> users, String sql);
 
 	public List<Long> selectFollowersByUserId(long userId);
 
 	public List<Long> selectFollowingByUserId(long userId);
+
+	public void insertBatchFollowersFollowing(FollowersFollowingResultPage f,
+			String sql);
 
 }
