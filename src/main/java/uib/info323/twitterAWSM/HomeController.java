@@ -47,19 +47,27 @@ public class HomeController {
 
 		// searches in db for trends of the current time and date
 		Trends t = mySqlTrendingFactory.selectTrendsByDate(DateParser
-				.formatDate(currentDate));
+				.formatDate(currentDate).substring(0, 13));
 
 		if (t != null) {
-			if (t.getTrends().containsKey(DateParser.formatDate(currentDate)))
+			String d = DateParser.formatDate(currentDate);
+			d = d.substring(0, 13);
+			System.out.println(t.getInsertedDateAndTime() + "****" + d);
+			if (t.getInsertedDateAndTime().substring(0, 13).equals(d)) {
+				System.out.println("Trend from db");
+
 				mav.addObject("trends", t);
+			}
 
 		} else {
+			System.out.println("Henter trende fra Twitter");
 			TrendFactory factory = AbstractFeedJamFactory.getFactory(
 					AbstractFeedJamFactory.JSON).getTrendFactory();
 			Trends trends = null;
 			try {
 				String response = factory.getDailyTrendsForDate(currentDate);
-				trends = JsonTrendParser.jsonToTrends(response);
+				trends = JsonTrendParser.jsonToTrends(response, currentDate
+						.toString().substring(0, 13));
 
 				mySqlTrendingFactory.insertTrends(response);
 				// trends

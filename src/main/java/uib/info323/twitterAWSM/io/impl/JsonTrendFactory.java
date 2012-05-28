@@ -26,8 +26,8 @@ public class JsonTrendFactory implements TrendFactory {
 
 	public static void main(String[] args) {
 		JsonTrendFactory factory = new JsonTrendFactory();
-		Trends trends = JsonTrendParser.jsonToTrends(factory
-				.getDailyTrendsForDate(new Date()));
+		Trends trends = JsonTrendParser.jsonToTrends(
+				factory.getDailyTrendsForDate(new Date()), null);
 		System.out.println(trends.getTrends().keySet().size());
 	}
 
