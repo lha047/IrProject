@@ -5,6 +5,7 @@
 
 	
 <jsp:include page="header.jsp"></jsp:include>
+
 	<c:if test="${not empty error}">
 		<div class="error">
 			<c:out value="${error}" />
@@ -22,8 +23,5 @@
 			</div>
 		</div>
 	</c:if>
-	
-	<script type="text/javascript" src="resources/js/feedjam.revolver.js"></script>	
-	<script type="text/javascript" src="resources/js/feedjam.twitter-interaction.js"></script>
 
 <jsp:include page="footer.jsp"></jsp:include>

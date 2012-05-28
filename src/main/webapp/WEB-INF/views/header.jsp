@@ -19,3 +19,4 @@
 		</div>
 	</header>
 	
+	<noscript><div class="error">This site does not run without Javascript enabled (we use it to get data from Twitter!).</div></noscript>
