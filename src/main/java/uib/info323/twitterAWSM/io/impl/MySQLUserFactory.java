@@ -287,8 +287,9 @@ public class MySQLUserFactory implements UserDAO {
 	}
 
 	public void addFollowers(FollowersFollowingResultPage f) {
-		System.out.println("add followers");
+	
 		long[] followers = f.getFollowersUserIds();
+		System.out.println("USerid: " + f.getUserId() + " -- Followers: " + followers[0]);
 		for (long follower : followers) {
 			Map<String, Object> paramMap = followersToMap(f.getUserId(),
 					follower);
@@ -307,7 +308,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	private Map<String, Object> followersToMap(long userId, long followerId) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("screen_name", userId);
+		params.put("user_id", userId);
 		params.put("follower_id", followerId);
 		return params;
 	}
@@ -315,7 +316,7 @@ public class MySQLUserFactory implements UserDAO {
 	private Map<String, Object> followingToMap(long userId, long followingId) {
 		Map<String, Object> params = new HashMap<String, Object>();
 
-		params.put("screen_name", userId);
+		params.put("user_id", userId);
 		params.put("following_id", followingId);
 
 		return params;

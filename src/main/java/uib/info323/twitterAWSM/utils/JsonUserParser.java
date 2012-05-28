@@ -94,12 +94,10 @@ public class JsonUserParser {
 		JsonParser parser = new JsonParser();
 		JsonElement element = parser.parse(jsonFollowersFollowing);
 		JsonObject object = element.getAsJsonObject();
-		JsonArray array = object.get("").getAsJsonArray();
+		JsonArray array = object.get("ids").getAsJsonArray();
 		long[] userIds = new long[array.size()];
-		System.out.println("number of followers" + array.size());
 		for (int i = 0; i < array.size(); i++) {
 			userIds[i] = array.get(i).getAsJsonPrimitive().getAsLong();
-			System.out.println("User id :" + i + " " + userIds[i]);
 		}
 
 		int previous = object.get("previous_cursor").getAsInt();

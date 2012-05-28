@@ -138,11 +138,11 @@ public class AjajController {
 
 	@RequestMapping(value = "/processFollowers", method = RequestMethod.POST)
 	public ResponseEntity<String> processFollowers(
-			@RequestParam String userIdString, String followers) {
+			@RequestParam String userId, String followers) {
 
-		long userId = Long.parseLong(userIdString);
+		long userIdLong = Long.parseLong(userId);
 		FollowersFollowingResultPage followersResultPage = JsonUserParser
-				.jsonToFollowersFollowing(userId, followers);
+				.jsonToFollowersFollowing(userIdLong, followers);
 		mySqlUserFactory.addFollowers(followersResultPage);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
@@ -151,12 +151,12 @@ public class AjajController {
 
 	@RequestMapping(value = "/processFollowing", method = RequestMethod.POST)
 	public ResponseEntity<String> processFollowing(
-			@RequestParam String userIdString, String following) {
-
-		long userId = Long.parseLong(userIdString);
+			@RequestParam String userId, String following) {
+		System.out.println("processFollowing request.....");
+		long userIdLong = Long.parseLong(userId);
 		FollowersFollowingResultPage followingResultPage = JsonUserParser
-				.jsonToFollowersFollowing(userId, following);
-		mySqlUserFactory.addFollowers(followingResultPage);
+				.jsonToFollowersFollowing(userIdLong, following);
+		mySqlUserFactory.addFollowing(followingResultPage);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 
