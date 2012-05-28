@@ -301,7 +301,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	}
 
-	public void insertBatchFollowersFollowing(FollowersFollowingResultPage f,
+	public int insertBatchFollowersFollowing(FollowersFollowingResultPage f,
 			String sql) {
 
 		long[] followers = f.getFollowersUserIds();
@@ -314,6 +314,7 @@ public class MySQLUserFactory implements UserDAO {
 
 		int[] updated = jdbcTemplate.batchUpdate(sql,
 				parameters.toArray(new SqlParameterSource[0]));
+		return updated.length;
 	}
 
 	// public void addFollowing(FollowersFollowingResultPage f) {

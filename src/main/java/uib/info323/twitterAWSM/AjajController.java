@@ -144,9 +144,9 @@ public class AjajController {
 				.jsonToFollowersFollowing(userIdLong, followers);
 		// mySqlUserFactory.addFollowersFollowing(followersResultPage,
 		// MySQLUserFactory.SQL_INSERT_FOLLOWERS);
-		mySqlUserFactory.insertBatchFollowersFollowing(followersResultPage,
-				MySQLUserFactory.SQL_INSERT_FOLLOWERS);
-
+		int updated = mySqlUserFactory.insertBatchFollowersFollowing(
+				followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
+		System.out.println("followers batchinserted " + updated);
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
@@ -160,9 +160,9 @@ public class AjajController {
 				.jsonToFollowersFollowing(userIdLong, following);
 		// mySqlUserFactory.addFollowersFollowing(followingResultPage,
 		// MySQLUserFactory.SQL_INSERT_FOLLOWING);
-		mySqlUserFactory.insertBatchFollowersFollowing(followingResultPage,
-				MySQLUserFactory.SQL_INSERT_FOLLOWING);
-
+		int updated = mySqlUserFactory.insertBatchFollowersFollowing(
+				followingResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWING);
+		System.out.println("following batchinsert " + updated);
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
