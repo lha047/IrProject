@@ -1,7 +1,5 @@
 package uib.info323.twitterAWSM.io;
 
-import java.util.List;
-
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
