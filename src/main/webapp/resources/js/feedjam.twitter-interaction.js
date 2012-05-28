@@ -288,7 +288,7 @@ $('#search_form').submit( function(e) {
 	// if an actual query is entered
 	if(searchQuery != '') {	
 		// start AJAX calls
-		searchTweets(searchQuery, searchRpp);
+		searchTweets(searchQuery, rpp);
 	}
 	
 	getReadyForView();
@@ -348,7 +348,7 @@ function getReadyForView() {
 		console.log('click');
 		$(this).find('.btn').addClass('disabled no_text spinner');
 		
-		searchTweets(searchQuery, searchRpp);
+		searchTweets(searchQuery, rpp);
 	});
 }
 

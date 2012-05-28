@@ -11,6 +11,7 @@
 		<property name="username" value="bobkaare"></property>
 		<property name="password"  value="info323"></property>
 
+
 	</bean>
 
 <!-- 	<jdbc:embedded-database id="dataSource" -->
