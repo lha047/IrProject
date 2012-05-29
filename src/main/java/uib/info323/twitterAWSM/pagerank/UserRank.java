@@ -48,67 +48,6 @@ public class UserRank {
 
 	}
 
-	/**
-	 * Retrieves the users followers, for each of the followers retrieve their
-	 * followers
-	 * 
-	 * @param screen_name
-	 * @return
-	 */
-	public double simplifiedUserRank(long userId) {
-		double userRank = 0;
-		List<Long> followers = userDao.selectFollowersByUserId(userId);
-		int totalNumberOfFollowers = 0;
-		for (int i = 0; i < followers.size(); i++) {
-			TwitterUserInfo323 follower = userDao.selectUserById(followers
-					.get(i));
-			if (follower == null) {
-				// TODO do something if the user is not in the database.
-				// Retrieve from Twitter API.
-				// Find the followers count
-				int numberOfFollowers = follower.getFollowersCount();
-				totalNumberOfFollowers += numberOfFollowers;
-			} else {
-				// find the list of the followers followers
-				List<Long> followersFollowers = userDao
-						.selectFollowersByUserId(follower.getId());
-				if (followersFollowers.size() == 0) {
-					int numberOfFollowers = follower.getFollowersCount();
-					totalNumberOfFollowers += numberOfFollowers;
-				} else {
-
-				}
-
-			}
-
-		}
-		userRank = totalNumberOfFollowers / followers.size();
-		return 0;
-	}
-
-	public double verySimplifiedUserRank(long userId) {
-		double userRank = 0;
-		List<Long> followers = userDao.selectFollowersByUserId(userId);
-		int totalNumberOfFollowers = 0;
-		for (int i = 0; i < followers.size(); i++) {
-			TwitterUserInfo323 follower = userDao.selectUserById(followers
-					.get(i));
-			if (follower == null) {
-				TwitterUserInfo323 tempUser = userFactory
-						.searchUserByScreenName(follower.getScreenName());
-				int numberOfFollowers = tempUser.getFollowersCount();
-				totalNumberOfFollowers += numberOfFollowers;
-			} else {
-				int numberOfFollowers = follower.getFollowersCount();
-				totalNumberOfFollowers += numberOfFollowers;
-			}
-
-		}
-		userRank = (1 - DAMPING_FACTOR) * totalNumberOfFollowers
-				/ followers.size();
-		return 0;
-	}
-
 	public double userRank(long userId) {
 		generateParamsList(userId);
 
@@ -190,24 +129,23 @@ public class UserRank {
 	}
 
 	private long[] getFollowers(long userId) {
-		// FollowersFollowingResultPage resPage = userFactory
-		// .findUsersFollowers(userId);
-		// System.out.println("******" + resPage.getUserId() + " *** "
-		// + resPage.getFollowersIds().length);
-		// long[] followers = resPage.getFollowersIds();
-		//
-		// return followers;
-		Map<Long, long[]> map = new HashMap<Long, long[]>();
-		map.put((long) 123, new long[] { 333, 213 });
-		map.put((long) 213, new long[] { 333, 123 });
-		map.put((long) 333, new long[] { 123 });
+
+		long[] followers = userFactory.findUsersFollowers(userId)
+				.getFollowersUserIds();
+		System.out.println("******" + followers.length);
+
+		return followers;
+		// Map<Long, long[]> map = new HashMap<Long, long[]>();
+		// map.put((long) 123, new long[] { 333, 213 });
+		// map.put((long) 213, new long[] { 333, 123 });
+		// map.put((long) 333, new long[] { 123 });
 		// map.put((long) 4, new long[] { 3, 1, 2 });
 		// map.put((long) 5, new long[] { 1, 7, 8, 9 });
 		// map.put((long) 6, new long[] { 3, 4 });
 		// map.put((long) 7, new long[] { 1, 2, 4, 5, 8, 9 });
 		// map.put((long) 8, new long[] { 3, 2 });
 		// map.put((long) 9, new long[] { 1 });
-		return map.get(userId);
+		// return map.get(userId);
 
 	}
 
@@ -222,7 +160,7 @@ public class UserRank {
 
 	private long[] getFollwing(long userId) {
 
-		// return userFactory.findUsersFriends(userId).getFollowersIds();
+		// return userFactory.findUsersFriends(userId).getFollowersUserIds();
 
 		Map<Long, long[]> map = new HashMap<Long, long[]>();
 		map.put((long) 123, new long[] { 2, 3, 6, 7, 8, 9, 10 });
@@ -238,4 +176,64 @@ public class UserRank {
 		return map.get(userId);
 	}
 
+	/**
+	 * Retrieves the users followers, for each of the followers retrieve their
+	 * followers
+	 * 
+	 * @param screen_name
+	 * @return
+	 */
+	public double simplifiedUserRank(long userId) {
+		double userRank = 0;
+		List<Long> followers = userDao.selectFollowersByUserId(userId);
+		int totalNumberOfFollowers = 0;
+		for (int i = 0; i < followers.size(); i++) {
+			TwitterUserInfo323 follower = userDao.selectUserById(followers
+					.get(i));
+			if (follower == null) {
+				// TODO do something if the user is not in the database.
+				// Retrieve from Twitter API.
+				// Find the followers count
+				int numberOfFollowers = follower.getFollowersCount();
+				totalNumberOfFollowers += numberOfFollowers;
+			} else {
+				// find the list of the followers followers
+				List<Long> followersFollowers = userDao
+						.selectFollowersByUserId(follower.getId());
+				if (followersFollowers.size() == 0) {
+					int numberOfFollowers = follower.getFollowersCount();
+					totalNumberOfFollowers += numberOfFollowers;
+				} else {
+
+				}
+
+			}
+
+		}
+		userRank = totalNumberOfFollowers / followers.size();
+		return 0;
+	}
+
+	public double verySimplifiedUserRank(long userId) {
+		double userRank = 0;
+		List<Long> followers = userDao.selectFollowersByUserId(userId);
+		int totalNumberOfFollowers = 0;
+		for (int i = 0; i < followers.size(); i++) {
+			TwitterUserInfo323 follower = userDao.selectUserById(followers
+					.get(i));
+			if (follower == null) {
+				TwitterUserInfo323 tempUser = userFactory
+						.searchUserByScreenName(follower.getScreenName());
+				int numberOfFollowers = tempUser.getFollowersCount();
+				totalNumberOfFollowers += numberOfFollowers;
+			} else {
+				int numberOfFollowers = follower.getFollowersCount();
+				totalNumberOfFollowers += numberOfFollowers;
+			}
+
+		}
+		userRank = (1 - DAMPING_FACTOR) * totalNumberOfFollowers
+				/ followers.size();
+		return 0;
+	}
 }
