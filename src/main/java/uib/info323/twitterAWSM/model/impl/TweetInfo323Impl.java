@@ -1,5 +1,6 @@
 package uib.info323.twitterAWSM.model.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,12 +9,20 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class TweetInfo323Impl implements TweetInfo323 {
 
-	private static final double ZERO_TO_ONE_TAGS = 1;
-	private static final double TWO_OR_TREE_TAGS = 0;
+	private static final double ZERO_TAGS = 1;
+	private static final double ONE_OR_TWO_TAGS = 3;
+	private static final double TREE_TAGS = 1;
+	private static final double FOUR_OR_MORE_TAGS = 0;
 	private static final double MENTIONS_ZERO = 1;
 	private static final double MENTIONS_ONE = 2;
 	private static final double MENTIONS_TWO_AND_TREE = 3;
 	private static final double MENTIONS__MORE_THAN_TREE = 0;
+	private static final double ZERO_RETWEETS = 0;
+	private static final double ONE_RETWEET = 2;
+	private static final double TWO_TO_TEN_RETWEETS = 4;
+	private static final double ELEVEN_TO_FIFTY_RETWEETS = 5;
+	private static final double HUNDRED_AND_ONE_TO_THOUSAND_RETWEETS = 7;
+	private static final double THOUSAND_PLUSS_RETWEETS = 9;
 	private List<Long> related;
 	private long id;
 	private String text;
@@ -61,119 +70,6 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		this.userInfo = userInfo;
 		this.lastUpdated = lastUpdated;
 	}
-
-	// private List<Tweet> replies;
-	// private double tweetRank;
-	// private Long inReplyToStatusId;
-	// private Integer retweetCount;
-	// private List<String> mentions;
-	// private List<String> tags;
-	// private List<TwitterProfile> retweeters;
-	//
-	// public TweetInfo323() {
-	// super(0, "", new Date(), "", "", (long) 0, (long) 0, "", "");
-	//
-	// }
-	//
-	// public TweetInfo323(long id, String text, Date createdAt, String
-	// fromUser,
-	// String profileImageUrl, Long toUserId, long fromUserId,
-	// String languageCode, String source) {
-	// super(id, text, createdAt, fromUser, profileImageUrl, toUserId,
-	// fromUserId, languageCode, source);
-	// }
-	//
-	// public TweetInfo323(long id, String text, Date createdAt, String
-	// fromUser,
-	// String profileImageUrl, Long toUserId, long fromUserId,
-	// String languageCode, String source, Long inReplyToStatus,
-	// Integer retweetCount, double tweetRank) {
-	// super(id, text, createdAt, fromUser, profileImageUrl, toUserId,
-	// fromUserId, languageCode, source);
-	// this.inReplyToStatusId = inReplyToStatus;
-	// this.retweetCount = retweetCount;
-	// this.tweetRank = tweetRank;
-	// mentions = getMentions();
-	// tags = getTags();
-	// }
-	//
-	// public TweetInfo323(Tweet t, List<Tweet> replies2,
-	// List<TwitterProfile> retweeters) {
-	// super(t.getId(), t.getText(), t.getCreatedAt(), t.getFromUser(), t
-	// .getProfileImageUrl(), t.getToUserId(), t.getFromUserId(), t
-	// .getLanguageCode(), t.getSource());
-	// this.replies = replies2;
-	// this.retweeters = retweeters;
-	// }
-	//
-	// private long checkNull(Long toUserId2) {
-	// if (toUserId2 == null) {
-	// return 0;
-	// }
-	// return toUserId2;
-	// }
-	//
-	// public List<Tweet> getReplies() {
-	// return replies;
-	// }
-	//
-	// public List<String> getTags() {
-	//
-	// return Parser.parseTweets(getText(), '#');
-	// }
-	//
-	// public List<String> getMentions() {
-	// return Parser.parseTweets(getText(), '@');
-	// }
-	//
-	// public Long getInReplyToStatusId() {
-	// return inReplyToStatusId;
-	// }
-	//
-	// public Integer getRetweetCount() {
-	// return retweetCount;
-	// }
-	//
-	// public double getTweetRank() {
-	// return tweetRank;
-	// }
-	//
-	// public void setTweetRank(double tweetRank) {
-	// this.tweetRank = tweetRank;
-	// }
-	//
-	// public void setReplies(List<Tweet> replies) {
-	// this.replies = replies;
-	//
-	// }
-	//
-	// public void setTags(List<String> tags) {
-	// this.tags = tags;
-	// }
-	//
-	// public void setMentions(List<String> mentions) {
-	// this.mentions = mentions;
-	//
-	// }
-	//
-	// public void setInReplyToStatusId(Long inReplyToStatusId) {
-	// this.inReplyToStatusId = inReplyToStatusId;
-	//
-	// }
-	//
-	// public void setRetweetCount(Integer retweetCount) {
-	// this.retweetCount = retweetCount;
-	//
-	// }
-	//
-	// public List<TwitterProfile> getRetweeters() {
-	// return retweeters;
-	// }
-	//
-	// public void setRetweeters(List<TwitterProfile> retweeters) {
-	// this.retweeters = retweeters;
-	//
-	// }
 
 	@Override
 	public int hashCode() {
@@ -292,10 +188,53 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	}
 
 	public void setTweetRank(double tweetRank) {
+		System.out.println(tweetRank);
 		tweetRank += tagPoints();
+		System.out.println("tag " + tweetRank);
 		tweetRank += mentionPoints();
+		System.out.println("metions " + tweetRank);
+		tweetRank += reTweetPoints();
+		System.out.println("retweet " + tweetRank);
 
 		this.tweetRank = tweetRank;
+	}
+
+	public static void main(String[] args) {
+		TweetInfo323Impl tweet = new TweetInfo323Impl();
+		tweet.setRetweetCount(6000);
+		List<String> m = new ArrayList<String>();
+		m.add("HER");
+		m.add("HER");
+		m.add("HER");
+		m.add("HER");
+		tweet.setMentions(m);
+		List<String> t = new ArrayList<String>();
+		// t.add("2");
+		// t.add("2");
+		// t.add("2");
+		// t.add("2");
+		tweet.setTags(t);
+		tweet.setTweetRank(0);
+		System.out.println("TweetRank " + tweet.getTweetRank());
+	}
+
+	private double reTweetPoints() {
+		int reTweetPoints = getRetweetCount();
+		double retweetPoints = 0;
+		if (reTweetPoints <= 0)
+			retweetPoints = ZERO_RETWEETS;
+		else if (reTweetPoints == 1)
+			retweetPoints = ONE_RETWEET;
+		else if (reTweetPoints >= 2 && reTweetPoints <= 10)
+			retweetPoints = TWO_TO_TEN_RETWEETS;
+		else if (reTweetPoints >= 11 && reTweetPoints <= 100)
+			retweetPoints = ELEVEN_TO_FIFTY_RETWEETS;
+		else if (reTweetPoints >= 101 && reTweetPoints <= 1000)
+			retweetPoints = HUNDRED_AND_ONE_TO_THOUSAND_RETWEETS;
+		else
+			retweetPoints = THOUSAND_PLUSS_RETWEETS;
+		System.out.println("retweetpoints " + retweetPoints);
+		return retweetPoints;
 	}
 
 	private double mentionPoints() {
@@ -308,19 +247,22 @@ public class TweetInfo323Impl implements TweetInfo323 {
 			mentionsPoints = MENTIONS_TWO_AND_TREE;
 		} else
 			mentionsPoints = MENTIONS__MORE_THAN_TREE;
-
+		System.out.println("mentionspoint" + mentionsPoints);
 		return mentionsPoints;
 	}
 
 	private double tagPoints() {
 		double tagPoints = 0;
 		int tags = getTags().size();
-		if (tags <= 1) {
-			tagPoints = ZERO_TO_ONE_TAGS;
-		} else if (tags > 1 && tags <= 3) {
-			tagPoints = TWO_OR_TREE_TAGS;
-		} else
-			tagPoints = 0;
+		if (tags <= 0) {
+			tagPoints = ZERO_TAGS;
+		} else if (tags >= 1 && tags <= 2) {
+			tagPoints = ONE_OR_TWO_TAGS;
+		} else if (tags == 3)
+			tagPoints = TREE_TAGS;
+		else
+			tagPoints = FOUR_OR_MORE_TAGS;
+		System.out.println("tag points " + tagPoints);
 		return tagPoints;
 	}
 
