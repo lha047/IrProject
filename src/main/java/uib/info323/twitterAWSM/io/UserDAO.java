@@ -45,7 +45,10 @@ public interface UserDAO {
 
 	public List<Long> selectFollowingByUserId(long userId);
 
-	public int insertBatchFollowersFollowing(FollowersFollowingResultPage f,
+	public int insertBatchFollowers(FollowersFollowingResultPage f,
+			String sql);
+	
+	public int insertBatchFollowing(FollowersFollowingResultPage f,
 			String sql);
 
 }

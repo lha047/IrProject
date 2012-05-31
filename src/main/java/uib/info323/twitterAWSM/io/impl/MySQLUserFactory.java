@@ -1,6 +1,8 @@
 package uib.info323.twitterAWSM.io.impl;
 
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -32,7 +35,7 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 @Component
 public class MySQLUserFactory implements UserDAO {
 
-	public static final String SQL_INSERT_USER = "insert into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
+	public static final String SQL_INSERT_USER = "insert ignore into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
 			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
 
 	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE screen_name = :screen_name";
@@ -157,7 +160,7 @@ public class MySQLUserFactory implements UserDAO {
 					user.getScreenName(), user.getId());
 			int n = jdbcTemplate.update(sqlFollowing, paramMap);
 			System.out
-					.println("user " + user.getScreenName() + " updated " + n);
+			.println("user " + user.getScreenName() + " updated " + n);
 		}
 
 	}
@@ -183,20 +186,33 @@ public class MySQLUserFactory implements UserDAO {
 
 	}
 
-	public int insertBatchFollowersFollowing(FollowersFollowingResultPage f,
+	public int insertBatchFollowers(FollowersFollowingResultPage f,
 			String sql) {
 
 		long[] followers = f.getFollowersUserIds();
-		System.out.println("USerid: " + f.getUserId() + " -- Followers: "
-				+ followers[0]);
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
 		for (long follower : followers) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			if (sql.equals(SQL_INSERT_FOLLOWERS)) {
-				map = followersToMap(f.getUserId(), follower);
-			} else if (sql.equals(SQL_INSERT_FOLLOWING)) {
+
+			map = followersToMap(f.getUserId(), follower);
+
+			parameters.add(new MapSqlParameterSource(map));
+		}
+
+		int[] updated = jdbcTemplate.batchUpdate(sql,
+				parameters.toArray(new SqlParameterSource[0]));
+		return updated.length;
+	}
+
+	public int insertBatchFollowing(FollowersFollowingResultPage f,
+			String sql) {
+
+		long[] followers = f.getFollowersUserIds();
+		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
+		for (long follower : followers) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			
 				map = followingToMap(f.getUserId(), follower);
-			}
 			parameters.add(new MapSqlParameterSource(map));
 		}
 
