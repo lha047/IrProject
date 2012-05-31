@@ -188,19 +188,24 @@ public class MySQLUserFactory implements UserDAO {
 
 	public int insertBatchFollowers(FollowersFollowingResultPage f,
 			String sql) {
-
+		
 		long[] followers = f.getFollowersUserIds();
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
 		for (long follower : followers) {
 			Map<String, Object> map = new HashMap<String, Object>();
-
+			long start = System.currentTimeMillis();
 			map = followersToMap(f.getUserId(), follower);
-
+			long timeToMap = System.currentTimeMillis() - start;
+			System.out.println("Time for followers to map: " + timeToMap);
+			
 			parameters.add(new MapSqlParameterSource(map));
 		}
 
+		long start = System.currentTimeMillis();
 		int[] updated = jdbcTemplate.batchUpdate(sql,
 				parameters.toArray(new SqlParameterSource[0]));
+		long timeToInsert = System.currentTimeMillis() - start;
+		System.out.println("Time for followers to map: " + timeToInsert);
 		return updated.length;
 	}
 
