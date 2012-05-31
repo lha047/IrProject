@@ -205,7 +205,7 @@ public class MySQLUserFactory implements UserDAO {
 		int[] updated = jdbcTemplate.batchUpdate(sql,
 				parameters.toArray(new SqlParameterSource[0]));
 		long timeToInsert = System.currentTimeMillis() - start;
-		System.out.println("Time for followers to map: " + timeToInsert);
+		System.out.println("Time to insert: " + timeToInsert);
 		return updated.length;
 	}
 
