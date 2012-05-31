@@ -191,17 +191,16 @@ public class MySQLUserFactory implements UserDAO {
 		
 		long[] followers = f.getFollowersUserIds();
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
+		long start = System.currentTimeMillis();
 		for (long follower : followers) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			long start = System.currentTimeMillis();
 			map = followersToMap(f.getUserId(), follower);
-			long timeToMap = System.currentTimeMillis() - start;
-			System.out.println("Time for followers to map: " + timeToMap);
-			
 			parameters.add(new MapSqlParameterSource(map));
 		}
+		long timeToMap = System.currentTimeMillis() - start;
+		System.out.println("Time for followers to map: " + timeToMap);
 
-		long start = System.currentTimeMillis();
+		start = System.currentTimeMillis();
 		int[] updated = jdbcTemplate.batchUpdate(sql,
 				parameters.toArray(new SqlParameterSource[0]));
 		long timeToInsert = System.currentTimeMillis() - start;
