@@ -37,7 +37,7 @@ import uib.info323.twitterAWSM.pagerank.UserRank;
 @Component
 public class MySQLUserFactory implements UserDAO {
 
-	public static final String SQL_INSERT_USER = "insert into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
+	public static final String SQL_INSERT_USER = "insert ignore into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
 			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
 
 	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE screen_name = :screen_name";
@@ -229,21 +229,38 @@ public class MySQLUserFactory implements UserDAO {
 		return inserted;
 	}
 
-	public int insertBatchFollowersFollowing(FollowersFollowingResultPage f,
-			String sql) {
+	public int insertBatchFollowers(FollowersFollowingResultPage f, String sql) {
 
 		long[] followers = f.getFollowersUserIds();
-		System.out.println("USerid: " + f.getUserId() + " -- Followers: "
-				+ followers[0]);
+		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
+		long start = System.currentTimeMillis();
+		for (long follower : followers) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map = followersToMap(f.getUserId(), follower);
+			parameters.add(new MapSqlParameterSource(map));
+		}
+		long timeToMap = System.currentTimeMillis() - start;
+		System.out.println("Time for followers to map: " + timeToMap);
+
+		start = System.currentTimeMillis();
+		int[] updated = jdbcTemplate.batchUpdate(sql,
+				parameters.toArray(new SqlParameterSource[0]));
+		long timeToInsert = System.currentTimeMillis() - start;
+		System.out.println("Time to insert: " + timeToInsert);
+		return updated.length;
+	}
+
+	public int insertBatchFollowing(FollowersFollowingResultPage f,
+
+	String sql) {
+
+		long[] followers = f.getFollowersUserIds();
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
 		for (long follower : followers) {
 
 			Map<String, Object> map = new HashMap<String, Object>();
-			if (sql.equals(SQL_INSERT_FOLLOWERS)) {
-				map = followersToMap(f.getUserId(), follower);
-			} else if (sql.equals(SQL_INSERT_FOLLOWING)) {
-				map = followingToMap(f.getUserId(), follower);
-			}
+
+			map = followingToMap(f.getUserId(), follower);
 			parameters.add(new MapSqlParameterSource(map));
 		}
 
@@ -394,5 +411,12 @@ public class MySQLUserFactory implements UserDAO {
 		Map<String, Long> map = new HashMap<String, Long>();
 		List<Long> users = jdbcTemplate.queryForList(sql, map, Long.class);
 		return users;
+	}
+
+	@Override
+	public int insertBatchFollowersFollowing(FollowersFollowingResultPage f,
+			String sql) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

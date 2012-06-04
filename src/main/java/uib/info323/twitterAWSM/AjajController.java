@@ -144,8 +144,12 @@ public class AjajController {
 			String followers) {
 
 		long userIdLong = Long.parseLong(userId);
+		long startParse = System.currentTimeMillis();
 		FollowersFollowingResultPage followersResultPage = JsonUserParser
 				.jsonToFollowersFollowing(userIdLong, followers);
+		long timeToParse = System.currentTimeMillis() - startParse;
+		logger.debug("Time to parse followers: " + timeToParse / 1000
+				+ " seconds");
 		// mySqlUserFactory.addFollowersFollowing(followersResultPage,
 		// MySQLUserFactory.SQL_INSERT_FOLLOWERS);
 
@@ -154,6 +158,14 @@ public class AjajController {
 		// insertBatchFollowersFollowing(
 		// followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
 		System.out.println("followers batchinserted " + updated);
+
+		// long startInsert = System.currentTimeMillis();
+		// int updated = mySqlUserFactory.insertBatchFollowers(
+		// followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
+		// long timeToInsert = System.currentTimeMillis() - startInsert;
+		// logger.debug("Time to insert followers: " + timeToInsert/1000 +
+		// " seconds");
+
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
@@ -167,13 +179,17 @@ public class AjajController {
 				.jsonToFollowersFollowing(userIdLong, following);
 		// mySqlUserFactory.addFollowersFollowing(followingResultPage,
 		// MySQLUserFactory.SQL_INSERT_FOLLOWING);
+
 		// int updated = mySqlUserFactory.insertBatchFollowersFollowing(
 		// followingResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWING);
 		int updated = mySqlUserFactory
 				.newInsertBatchFollowing(followingResultPage);
+
+		// int updated = mySqlUserFactory.insertBatchFollowing(
+		// followingResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWING);
+
 		System.out.println("following batchinsert " + updated);
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
-
 }

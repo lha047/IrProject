@@ -5,8 +5,8 @@
 <div id="wrapper">
 
 	<header class="center cf">
-		<a href="/feedjam" class="logo"><img src="resources/images/feedjam.png" alt="feedjam" /></a>
-		<a href="/feedjam" class="logo-white"><img src="resources/images/feedjam-white.png" alt="feedjam" /></a>
+		<a href="/" class="logo"><img src="resources/images/feedjam.png" alt="feedjam" /></a>
+		<a href="/" class="logo-white"><img src="resources/images/feedjam-white.png" alt="feedjam" /></a>
 		<form method="GET" action="search" class="search" id="search_form">
 			<input type="text" id="q" name="q" placeholder="search terms" <c:if test="${not empty query}">value="<c:out value="${query}" />"</c:if> />
 			<input type="hidden" id="resultsPerPage" name="resultsPerPage" value="20" />
