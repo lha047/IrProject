@@ -24,6 +24,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 
+import com.mysql.jdbc.PreparedStatement;
+
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.rowmapper.UserRowMapper;
@@ -38,32 +40,32 @@ import uib.info323.twitterAWSM.pagerank.UserRank;
 public class MySQLUserFactory implements UserDAO {
 
 	public static final String SQL_INSERT_USER = "insert ignore into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
-			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
+			+ "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE screen_name = :screen_name";
+	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE screen_name = ?";
 
-	private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE id = :id";
+	private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE id = ?";
 
-	private static final String SQL_UPDATE_USER = "UPDATE users	SET screen_name=:screen_name, name=:name, url=:url, profile_image_url=:profile_image_url, description=:description, location=:location, created_date=:created_date, favorites_count=:favorites_count,"
-			+ " followers_count=:favorites_count, friends_count=:friends_count, language=:language, profile_url=:profile_url, statuses_count=:statuses_count, fitness_score=:fitness_score, last_updated=:last_updated "
-			+ "WHERE ID=:ID";
+	private static final String SQL_UPDATE_USER = "UPDATE users	SET screen_name=?, name=?, url=?, profile_image_url=?, description=?, location=?, created_date=?, favorites_count=?,"
+			+ " followers_count=?, friends_count=?, language=?, profile_url=?, statuses_count=?, fitness_score=?, last_updated=? "
+			+ "WHERE id = ?";
 
-	private static final String SQL_UPDATE_FOLLOWERS_WITH_USER_ID = "UPDATE followers SET user_id=:user_id WHERE screen_name=:screen_name";
+	private static final String SQL_UPDATE_FOLLOWERS_WITH_USER_ID = "UPDATE followers SET user_id=? WHERE screen_name=?";
 
-	private static final String SQL_UPDATE_FOLLOWING_WITH_USER_ID = "UPDATE following SET user_id=:user_id WHERE screen_name=:screen_name";
+	private static final String SQL_UPDATE_FOLLOWING_WITH_USER_ID = "UPDATE following SET user_id=? WHERE screen_name=?";
 
 	// private static final String SQL_SELECT_SCREEN_NAME =
 	// "SELECT screen_name FROM users";
 
 	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT follower_id FROM followers";
 
-	public static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (user_id, following_id) values (:user_id, :following_id)";
+	public static final String SQL_INSERT_FOLLOWING = "INSERT IGNORE INTO following (user_id, following_id) values (?, ?)";
 
-	public static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (user_id, follower_id) values (:user_id, :follower_id)";
+	public static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (user_id, follower_id) values (?, ?)";
 
-	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
+	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = ?";
 
-	private static final String SELECT_FOLLOWING_BY_ID = "SELECT followingId FROM following WHERE userId = :userId";
+	private static final String SELECT_FOLLOWING_BY_ID = "SELECT followingId FROM following WHERE userId = ?";
 
 	// Correct logger...
 	private static Logger logger = LoggerFactory
@@ -71,7 +73,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
-
+	private Connection con;
 	private DateFormat dateFormat;
 	private Date date;
 
@@ -79,6 +81,20 @@ public class MySQLUserFactory implements UserDAO {
 
 	public MySQLUserFactory() {
 		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String url = "jdbc??//feedjam.thunemedia.no/feedjam";
+		String user = "bobkaare";
+		String password = "info323";
+
+		Connection con = null;
+		int inserted = -1;
+		try {
+			con = DriverManager.getConnection(url, user, password);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	//
@@ -101,6 +117,7 @@ public class MySQLUserFactory implements UserDAO {
 	public TwitterUserInfo323 selectUserById(long id)
 			throws UserNotFoundException {
 
+		//PreparedStatement ps = c
 		SqlParameterSource namedParameter = new MapSqlParameterSource("id", id);
 		TwitterUserInfo323Impl user = null;
 		try {
@@ -179,7 +196,7 @@ public class MySQLUserFactory implements UserDAO {
 	public void addFollowersFollowing(FollowersFollowingResultPage f, String sql) {
 
 		long[] followers = f.getFollowersUserIds();
-		System.out.println("USerid: " + f.getUserId() + " -- Followers: "
+		System.out.println("USerid? " + f.getUserId() + " -- Followers? "
 				+ followers[0]);
 
 		for (long follower : followers) {
@@ -198,34 +215,32 @@ public class MySQLUserFactory implements UserDAO {
 	}
 
 	public int newInsertBatchFollowers(FollowersFollowingResultPage f) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("INSERT IGNORE INTO followers (user_id, follower_id) values ");
+		try {
+			PreparedStatement stmt = (PreparedStatement) con.prepareStatement(SQL_INSERT_FOLLOWERS);
+			return exec(f, stmt);
+		} catch (SQLException e) {
+			return -1;
+		}
+		
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("INSERT IGNORE INTO followers (user_id, follower_id) values ");
 
-		return exec(f, sb);
+//		return exec(f, sb);
 	}
 
-	public int exec(FollowersFollowingResultPage f, StringBuilder sb) {
+	public int exec(FollowersFollowingResultPage f, PreparedStatement stmt) {
 		long[] ids = f.getFollowersUserIds();
 		for (int i = 0; i < ids.length; i++) {
-			sb.append("(" + f.getUserId() + ", " + ids[i] + "),");
+			stmt.
+//			stmt2.append("(" + f.getUserId() + ", " + ids[i] + "),");
 		}
-		sb.deleteCharAt(sb.toString().length() - 1);
-		sb.append(";");
-
-		String url = "jdbc:mysql://feedjam.thunemedia.no/feedjam";
-		String user = "bobkaare";
-		String password = "info323";
-
-		Connection con = null;
-		int inserted = -1;
-		try {
-			con = DriverManager.getConnection(url, user, password);
-			Statement stmt = con.createStatement();
-			inserted = stmt.executeUpdate(sb.toString());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		stmt2.deleteCharAt(stmt2.toString().length() - 1);
+		stmt2.append(";");
+		
+		
+		Statement stmt = con.createStatement();
+		inserted = stmt.executeUpdate(stmt2.toString());
+		
 		return inserted;
 	}
 
@@ -240,13 +255,13 @@ public class MySQLUserFactory implements UserDAO {
 			parameters.add(new MapSqlParameterSource(map));
 		}
 		long timeToMap = System.currentTimeMillis() - start;
-		System.out.println("Time for followers to map: " + timeToMap);
+		System.out.println("Time for followers to map? " + timeToMap);
 
 		start = System.currentTimeMillis();
 		int[] updated = jdbcTemplate.batchUpdate(sql,
 				parameters.toArray(new SqlParameterSource[0]));
 		long timeToInsert = System.currentTimeMillis() - start;
-		System.out.println("Time to insert: " + timeToInsert);
+		System.out.println("Time to insert? " + timeToInsert);
 		return updated.length;
 	}
 
@@ -271,7 +286,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	// public void addFollowing(FollowersFollowingResultPage f) {
 	// long[] following = f.getFollowersUserIds();
-	// for (long follow : following) {
+	// for (long follow ? following) {
 	// Map<String, Object> paramMap = followingToMap(f.getUserId(), follow);
 	// jdbcTemplate.update(SQL_INSERT_FOLLOWING, paramMap);
 	// }
@@ -391,9 +406,9 @@ public class MySQLUserFactory implements UserDAO {
 		List<Long> distinctFollowersUserIds = selectDistinctUserIdsFrom("followers");
 		System.out.println("distinct users with followers in db "
 				+ distinctFollowersUserIds.size());
-		String sql = "UPDATE `users` SET `fitness_score`= 1 WHERE id = :userId";
+		String sql = "UPDATE `users` SET `fitness_score`= 1 WHERE id = ?";
 		long u = distinctFollowersUserIds.get(0);
-		// for (Long user : distinctFollowersUserIds) {
+		// for (Long user ? distinctFollowersUserIds) {
 		double userRank = ur.userRank(u);
 		System.out.println("user " + u + " rank " + userRank);
 		Map<String, Object> map = new HashMap<String, Object>();
