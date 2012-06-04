@@ -11,6 +11,7 @@ import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.impl.JsonUserFactory;
 import uib.info323.twitterAWSM.io.impl.MySQLUserFactory;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
+import uib.info323.twitterAWSM.utils.LongConverter;
 import Jama.Matrix;
 
 /**
@@ -126,12 +127,14 @@ public class UserRank {
 	}
 
 	private long[] getFollowers(long userId) {
+		List<Long> followers = userDao.selectFollowersByUserId(userId);
+		System.out.println("******" + followers.size());
 
-		long[] followers = userFactory.findUsersFollowers(userId)
-				.getFollowersUserIds();
-		System.out.println("******" + followers.length);
+		// long[] followers = userFactory.findUsersFollowers(userId)
+		// .getFollowersUserIds();
 
-		return followers;
+		return LongConverter.convertObjLongToPrimLong(followers);
+
 		// Map<Long, long[]> map = new HashMap<Long, long[]>();
 		// map.put((long) 123, new long[] { 333, 213 });
 		// map.put((long) 213, new long[] { 333, 123 });
