@@ -211,7 +211,7 @@ public class MySQLUserFactory implements UserDAO {
 		}
 		sb.deleteCharAt(sb.toString().length() - 1);
 		sb.append(";");
-		System.out.println(sb.toString());
+
 		String url = "jdbc:mysql://feedjam.thunemedia.no/feedjam";
 		String user = "bobkaare";
 		String password = "info323";
@@ -413,10 +413,4 @@ public class MySQLUserFactory implements UserDAO {
 		return users;
 	}
 
-	@Override
-	public int insertBatchFollowersFollowing(FollowersFollowingResultPage f,
-			String sql) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }
