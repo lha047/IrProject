@@ -9,20 +9,20 @@ import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 
 public class TweetInfo323Impl implements TweetInfo323 {
 
-	private static final double ZERO_TAGS = 1;
-	private static final double ONE_OR_TWO_TAGS = 3;
-	private static final double TREE_TAGS = 1;
-	private static final double FOUR_OR_MORE_TAGS = 0;
-	private static final double MENTIONS_ZERO = 1;
-	private static final double MENTIONS_ONE = 2;
-	private static final double MENTIONS_TWO_AND_TREE = 3;
-	private static final double MENTIONS__MORE_THAN_TREE = 0;
-	private static final double ZERO_RETWEETS = 0;
-	private static final double ONE_RETWEET = 2;
-	private static final double TWO_TO_TEN_RETWEETS = 4;
-	private static final double ELEVEN_TO_FIFTY_RETWEETS = 5;
-	private static final double HUNDRED_AND_ONE_TO_THOUSAND_RETWEETS = 7;
-	private static final double THOUSAND_PLUSS_RETWEETS = 9;
+	private static final double ZERO_TAGS = 0.2;
+	private static final double ONE_OR_TWO_TAGS = 1;
+	private static final double TREE_TAGS = 0.4;
+	private static final double FOUR_OR_MORE_TAGS = 0.1;
+	private static final double MENTIONS_ZERO = 0.5;
+	private static final double MENTIONS_ONE = 0.7;
+	private static final double MENTIONS_TWO_AND_TREE = 0.9;
+	private static final double MENTIONS__MORE_THAN_TREE = 0.1;
+	private static final double ZERO_RETWEETS = 0.1;
+	private static final double ONE_RETWEET = 0.5;
+	private static final double TWO_TO_TEN_RETWEETS = 0.6;
+	private static final double ELEVEN_TO_HUNDRED_RETWEETS = 0.7;
+	private static final double HUNDRED_AND_ONE_TO_THOUSAND_RETWEETS = 0.8;
+	private static final double THOUSAND_PLUSS_RETWEETS = 0.9;
 	private List<Long> related;
 	private long id;
 	private String text;
@@ -228,7 +228,7 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		else if (reTweetPoints >= 2 && reTweetPoints <= 10)
 			retweetPoints = TWO_TO_TEN_RETWEETS;
 		else if (reTweetPoints >= 11 && reTweetPoints <= 100)
-			retweetPoints = ELEVEN_TO_FIFTY_RETWEETS;
+			retweetPoints = ELEVEN_TO_HUNDRED_RETWEETS;
 		else if (reTweetPoints >= 101 && reTweetPoints <= 1000)
 			retweetPoints = HUNDRED_AND_ONE_TO_THOUSAND_RETWEETS;
 		else

@@ -24,6 +24,8 @@
 		<constructor-arg ref="dataSource" />
 	</bean>
 	
+
+	
 	<bean id="mySqlUserFactory" class="uib.info323.twitterAWSM.io.impl.MySQLUserFactory" autowire="byName">
 		<property name="namedParameterJdbcTemplate" ref="jdbcTemplate"/>
 	</bean>

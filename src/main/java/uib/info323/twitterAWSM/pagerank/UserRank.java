@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.web.client.RestTemplate;
-
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.impl.JsonUserFactory;
@@ -29,15 +27,14 @@ public class UserRank {
 	private UserSearchFactory userFactory;
 	private UserDAO userDao;
 
-	public UserRank(String apiUrl, RestTemplate restTemplate) {
+	public UserRank() {
 		params = new ArrayList<Long>();
 		userFactory = new JsonUserFactory();
 		userDao = new MySQLUserFactory();
 	}
 
 	public static void main(String[] args) {
-		UserRank userRank = new UserRank("https://api.twitter.com/",
-				new RestTemplate());
+		UserRank userRank = new UserRank();
 
 		double rank = userRank.userRank(333);
 		double rank2 = userRank.userRank(123);

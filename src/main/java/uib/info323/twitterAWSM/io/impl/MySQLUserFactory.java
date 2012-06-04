@@ -1,6 +1,10 @@
 package uib.info323.twitterAWSM.io.impl;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +32,7 @@ import uib.info323.twitterAWSM.model.interfaces.FollowersFollowingResultPage;
 import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
+import uib.info323.twitterAWSM.pagerank.UserRank;
 
 @Component
 public class MySQLUserFactory implements UserDAO {
@@ -47,7 +52,8 @@ public class MySQLUserFactory implements UserDAO {
 
 	private static final String SQL_UPDATE_FOLLOWING_WITH_USER_ID = "UPDATE following SET user_id=:user_id WHERE screen_name=:screen_name";
 
-	private static final String SQL_SELECT_SCREEN_NAME = "SELECT screen_name FROM users";
+	// private static final String SQL_SELECT_SCREEN_NAME =
+	// "SELECT screen_name FROM users";
 
 	private static final String SQL_SELECT_ALL_FOLLOWERS = "SELECT follower_id FROM followers";
 
@@ -134,9 +140,10 @@ public class MySQLUserFactory implements UserDAO {
 		MySQLUserFactory userFactory = (MySQLUserFactory) context
 				.getBean("mySqlUserFactory");
 
-		userFactory.insertUserIdsToFollowersFollowing(
-				"SELECT DISTINCT  screen_name FROM following",
-				SQL_UPDATE_FOLLOWING_WITH_USER_ID);
+		userFactory.createUserRankForUsers();
+		// userFactory.insertUserIdsToFollowersFollowing(
+		// "SELECT DISTINCT  screen_name FROM following",
+		// SQL_UPDATE_FOLLOWING_WITH_USER_ID);
 
 	}
 
@@ -183,6 +190,45 @@ public class MySQLUserFactory implements UserDAO {
 
 	}
 
+	public int newInsertBatchFollowing(FollowersFollowingResultPage f) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("INSERT IGNORE INTO following (user_id, following_id) values ");
+
+		return exec(f, sb);
+	}
+
+	public int newInsertBatchFollowers(FollowersFollowingResultPage f) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("INSERT IGNORE INTO followers (user_id, follower_id) values ");
+
+		return exec(f, sb);
+	}
+
+	public int exec(FollowersFollowingResultPage f, StringBuilder sb) {
+		long[] ids = f.getFollowersUserIds();
+		for (int i = 0; i < ids.length; i++) {
+			sb.append("(" + f.getUserId() + ", " + ids[i] + "),");
+		}
+		sb.deleteCharAt(sb.toString().length() - 1);
+		sb.append(";");
+		System.out.println(sb.toString());
+		String url = "jdbc:mysql://feedjam.thunemedia.no/feedjam";
+		String user = "bobkaare";
+		String password = "info323";
+
+		Connection con = null;
+		int inserted = -1;
+		try {
+			con = DriverManager.getConnection(url, user, password);
+			Statement stmt = con.createStatement();
+			inserted = stmt.executeUpdate(sb.toString());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return inserted;
+	}
+
 	public int insertBatchFollowersFollowing(FollowersFollowingResultPage f,
 			String sql) {
 
@@ -191,6 +237,7 @@ public class MySQLUserFactory implements UserDAO {
 				+ followers[0]);
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
 		for (long follower : followers) {
+
 			Map<String, Object> map = new HashMap<String, Object>();
 			if (sql.equals(SQL_INSERT_FOLLOWERS)) {
 				map = followersToMap(f.getUserId(), follower);
@@ -320,4 +367,32 @@ public class MySQLUserFactory implements UserDAO {
 		return usersNotInDB;
 	}
 
+	public void createUserRankForUsers() {
+		UserRank ur = new UserRank();
+		// int[] followers = selectFollowersByUserId(userId);
+		// int[] following = selectFollowingByUserId(userId);
+		List<Long> distinctFollowersUserIds = selectDistinctUserIdsFrom("followers");
+		System.out.println("distinct users with followers in db "
+				+ distinctFollowersUserIds.size());
+		String sql = "UPDATE `users` SET `fitness_score`= 1 WHERE id = :userId";
+		long u = distinctFollowersUserIds.get(0);
+		// for (Long user : distinctFollowersUserIds) {
+		double userRank = ur.userRank(u);
+		System.out.println("user " + u + " rank " + userRank);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", u);
+		map.put("fitness_score", userRank);
+		int updated = jdbcTemplate.update(sql, map);
+		System.out.println("user " + u + " rank " + userRank + " update "
+				+ updated);
+		// }
+	}
+
+	private List<Long> selectDistinctUserIdsFrom(String table) {
+
+		String sql = "SELECT DISTINCT user_id FROM " + table;
+		Map<String, Long> map = new HashMap<String, Long>();
+		List<Long> users = jdbcTemplate.queryForList(sql, map, Long.class);
+		return users;
+	}
 }

@@ -132,6 +132,7 @@ public class AjajController {
 						+ " user in index 0:"
 						+ searchResult.getTweets().get(0).getUserInfo()
 								.getScreenName());
+
 		mav.addObject("query", searchQuery);
 		mav.addObject("results", searchResult);
 		return mav;
@@ -147,8 +148,11 @@ public class AjajController {
 				.jsonToFollowersFollowing(userIdLong, followers);
 		// mySqlUserFactory.addFollowersFollowing(followersResultPage,
 		// MySQLUserFactory.SQL_INSERT_FOLLOWERS);
-		int updated = mySqlUserFactory.insertBatchFollowersFollowing(
-				followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
+
+		int updated = mySqlUserFactory
+				.newInsertBatchFollowers(followersResultPage);
+		// insertBatchFollowersFollowing(
+		// followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
 		System.out.println("followers batchinserted " + updated);
 		return new ResponseEntity<String>(HttpStatus.OK);
 
@@ -163,8 +167,10 @@ public class AjajController {
 				.jsonToFollowersFollowing(userIdLong, following);
 		// mySqlUserFactory.addFollowersFollowing(followingResultPage,
 		// MySQLUserFactory.SQL_INSERT_FOLLOWING);
-		int updated = mySqlUserFactory.insertBatchFollowersFollowing(
-				followingResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWING);
+		// int updated = mySqlUserFactory.insertBatchFollowersFollowing(
+		// followingResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWING);
+		int updated = mySqlUserFactory
+				.newInsertBatchFollowing(followingResultPage);
 		System.out.println("following batchinsert " + updated);
 		return new ResponseEntity<String>(HttpStatus.OK);
 
