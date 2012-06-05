@@ -34,7 +34,7 @@ import uib.info323.twitterAWSM.utils.JsonUserParser;
 public class AjajController {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(HomeController.class);
+			.getLogger(AjajController.class);
 
 	private TweetSearchFactory tweetSearchFactory;
 

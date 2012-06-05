@@ -6,10 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 
-import uib.info323.twitterAWSM.exceptions.BadRequestException;
 import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
@@ -32,10 +32,13 @@ public class UserRank {
 	private UserSearchFactory userFactory;
 	@Autowired
 	private UserDAO mySqlUserFactory;
-    private static final double ZERO_FOLLOWING = 1;
-    private static final double DEVIDED_BY_ZERO= 0;
+	private static final Logger logger = LoggerFactory
+			.getLogger(UserRank.class);
 
-    public UserRank(UserDAO u) {
+	private static final double ZERO_FOLLOWING = 1;
+	private static final double DEVIDED_BY_ZERO = 0;
+
+	public UserRank(UserDAO u) {
 		params = new ArrayList<Long>();
 		userFactory = new JsonUserFactory();
 		mySqlUserFactory = u;
@@ -54,9 +57,19 @@ public class UserRank {
 	}
 
 	public double userRank(long userId) {
+		long startInsert = System.currentTimeMillis();
+
 		generateParamsList(userId);
 
+		long timeToInsert = System.currentTimeMillis() - startInsert;
+		logger.debug("Time generateParamsList: " + timeToInsert / 1000
+				+ " seconds");
+
+		long startInsert2 = System.currentTimeMillis();
 		Matrix matrix = new Matrix(generateMatrix());
+		long timeToInsert2 = System.currentTimeMillis() - startInsert2;
+		logger.debug("Time generateMatrix: " + timeToInsert2 / 1000
+				+ " seconds");
 
 		double[][] arrB = new double[params.size()][1];
 
@@ -65,8 +78,10 @@ public class UserRank {
 		}
 
 		Matrix matrixB = new Matrix(arrB);
-
+		long startInsert3 = System.currentTimeMillis();
 		Matrix x = matrix.solve(matrixB);
+		long timeToInsert3 = System.currentTimeMillis() - startInsert3;
+		logger.debug("Time solve: " + timeToInsert3 / 1000 + " seconds");
 
 		int ind = 0;
 
@@ -109,15 +124,15 @@ public class UserRank {
 				if (l == linkId) {
 					// double factor = -1
 					// * (DAMPING_FACTOR / getFollwing(linkId).length);
-                    double factor = 0;
+					double factor = 0;
 					try {
-                    factor = -1
-							* (DAMPING_FACTOR / getNumberOfFollwing(linkId));
-                     } catch (ArithmeticException ae) {
-                        return DEVIDED_BY_ZERO;
-                    }
-                    return factor;
-                }
+						factor = -1
+								* (DAMPING_FACTOR / getNumberOfFollwing(linkId));
+					} catch (ArithmeticException ae) {
+						return DEVIDED_BY_ZERO;
+					}
+					return factor;
+				}
 			}
 		}
 		return 0;
@@ -129,7 +144,7 @@ public class UserRank {
 			for (int j = 0; j < params.size(); j++) {
 				double multiFactor = getMultiFactor(params.get(i),
 						params.get(j));
-				System.out.println("multifactor " + multiFactor);
+				// System.out.println("multifactor " + multiFactor);
 				matrix[i][j] = multiFactor;
 			}
 		}
@@ -172,33 +187,24 @@ public class UserRank {
 		TwitterUserInfo323 user = null;
 		try {
 			user = mySqlUserFactory.selectUserById(linkId);
-			if (user.getFriendsCount() >= 0){
-                System.out.println("Fant bruker i users " + user.getFriendsCount());
+			if (user.getFriendsCount() >= 0) {
+				System.out.println("Fant bruker i users "
+						+ user.getFriendsCount());
 				return user.getFriendsCount();
-            }
+			}
 		} catch (UserNotFoundException unfe) {
 			int numberOfFollowing = mySqlUserFactory.selectFollowingByUserId(
 					linkId).size();
 			if (numberOfFollowing > 0) {
-                System.out.println("Fant bruker i following " + numberOfFollowing);
-                return numberOfFollowing;
-            } else{
-				try {
-					user = userFactory.searchUserByNameId(linkId);
-					if (user != null) {
-						mySqlUserFactory.addUser(user);
-                        System.out.println("Fant bruker i API " + user.getFriendsCount());
-                        return user.getFriendsCount();
-                    }
-				} catch (DataAccessException dae) { // if the json search fails
-					return ZERO_FOLLOWING;
-				} catch (BadRequestException bae) {
-                    return ZERO_FOLLOWING;
-                }
+				System.out.println("Fant bruker i following "
+						+ numberOfFollowing);
+				return numberOfFollowing;
+			} else {
+				return ZERO_FOLLOWING;
 			}
 		}
-        return ZERO_FOLLOWING;
-    }
+		return ZERO_FOLLOWING;
+	}
 
 	private long[] getFollwing(long userId) {
 
