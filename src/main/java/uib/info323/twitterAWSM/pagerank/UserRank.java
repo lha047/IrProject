@@ -45,22 +45,12 @@ public class UserRank {
 	}
 
 	public static void main(String[] args) {
-		// UserRank userRank = new UserRank();
-		//
-		// double rank = userRank.userRank(333);
-		// double rank2 = userRank.userRank(123);
-		// double rank3 = userRank.userRank(213);
-		// System.out.println(rank);
-		// System.out.println(rank2);
-		// System.out.println(rank3);
 
 	}
 
 	public double userRank(long userId) {
 		long startInsert = System.currentTimeMillis();
-
 		generateParamsList(userId);
-
 		long timeToInsert = System.currentTimeMillis() - startInsert;
 		logger.debug("Time generateParamsList: " + timeToInsert / 1000
 				+ " seconds");
@@ -109,7 +99,7 @@ public class UserRank {
 
 		for (int i = 0; i < followers.length; i++) {
 			if (!params.contains(followers[i])) {
-				System.out.println(followers[i]);
+
 				generateParamsList(followers[i]);
 			}
 		}
@@ -144,7 +134,6 @@ public class UserRank {
 			for (int j = 0; j < params.size(); j++) {
 				double multiFactor = getMultiFactor(params.get(i),
 						params.get(j));
-				// System.out.println("multifactor " + multiFactor);
 				matrix[i][j] = multiFactor;
 			}
 		}

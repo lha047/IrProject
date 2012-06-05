@@ -197,7 +197,7 @@ public class MySQLUserFactory implements UserDAO {
 		}
 		sb.deleteCharAt(sb.toString().length() - 1);
 		sb.append(";");
-		System.out.println(sb.toString());
+		// System.out.println(sb.toString());
 		String url = "jdbc:mysql://feedjam.thunemedia.no/feedjam";
 		String user = "bobkaare";
 		String password = "info323";
@@ -218,7 +218,7 @@ public class MySQLUserFactory implements UserDAO {
 	public int insertBatchFollowers(FollowersFollowingResultPage f) {
 
 		long[] followers = f.getFollowersUserIds();
-		System.out.println("Number of followers: " + followers.length);
+		// System.out.println("Number of followers: " + followers.length);
 
 		// Build INSERT SQL statement
 		StringBuilder sb = new StringBuilder();
@@ -236,12 +236,12 @@ public class MySQLUserFactory implements UserDAO {
 		}
 
 		long timeToMap = System.currentTimeMillis() - start;
-		System.out.println("Time for followers to map? " + timeToMap);
+		// System.out.println("Time for followers to map? " + timeToMap);
 
 		start = System.currentTimeMillis();
 		int updated = jdbcTemplate.update(sb.toString(), map);
 		long timeToInsert = System.currentTimeMillis() - start;
-		System.out.println("Time to insert? " + timeToInsert);
+		// System.out.println("Time to insert? " + timeToInsert);
 		return updated;
 	}
 
@@ -265,12 +265,12 @@ public class MySQLUserFactory implements UserDAO {
 		}
 
 		long timeToMap = System.currentTimeMillis() - start;
-		System.out.println("Time for following to map? " + timeToMap);
+		// System.out.println("Time for following to map? " + timeToMap);
 
 		start = System.currentTimeMillis();
 		int updated = jdbcTemplate.update(sb.toString(), map);
 		long timeToInsert = System.currentTimeMillis() - start;
-		System.out.println("Time to insert? " + timeToInsert);
+		// System.out.println("Time to insert? " + timeToInsert);
 		return updated;
 	}
 
@@ -355,7 +355,7 @@ public class MySQLUserFactory implements UserDAO {
 	public List<Long> selectFollowersByUserId(long userId) {
 		SqlParameterSource parameter = new MapSqlParameterSource("userId",
 				userId);
-		System.out.println();
+
 		List<Long> list = jdbcTemplate.queryForList(SELECT_FOLLOWERS_BY_ID,
 				parameter, Long.class);
 		return list;
@@ -396,14 +396,15 @@ public class MySQLUserFactory implements UserDAO {
 		// int[] followers = selectFollowersByUserId(userId);
 		// int[] following = selectFollowingByUserId(userId);
 		List<Long> distinctFollowersUserIds = selectDistinctUserIdsFrom("followers");
-		System.out.println("distinct users with followers in db "
-				+ distinctFollowersUserIds.size());
-		String sql = "UPDATE `users` SET `fitness_score`= 1 WHERE id = ?";
+		// System.out.println("distinct users with followers in db "
+		// + distinctFollowersUserIds.size());
+		// String sql = "UPDATE `users` SET `fitness_score`= 1 WHERE id = ?";
 		// long u = distinctFollowersUserIds.get(0);
 		long u = 594326498;
 		long u2 = 12720;
 		// for (Long user ? distinctFollowersUserIds) {
 		double userRank = ur.userRank(u);
+		System.out.println("user " + u + " rank " + userRank);
 		double userRank2 = ur.userRank(u2);
 		System.out.println("user " + u + " rank " + userRank);
 		System.out.println("user " + u2 + " rank " + userRank2);
