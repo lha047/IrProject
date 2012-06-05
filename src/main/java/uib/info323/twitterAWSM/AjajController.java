@@ -160,7 +160,7 @@ public class AjajController {
 
 		long startInsert = System.currentTimeMillis();
 		int updated = mySqlUserFactory.insertBatchFollowers(
-				followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
+				followersResultPage);
 		long timeToInsert = System.currentTimeMillis() - startInsert;
 		logger.debug("Time to insert followers: " + timeToInsert / 1000
 				+ " seconds");
@@ -186,7 +186,7 @@ public class AjajController {
 		// .newInsertBatchFollowing(followingResultPage);
 
 		int updated = mySqlUserFactory.insertBatchFollowing(
-				followingResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWING);
+				followingResultPage);
 
 		System.out.println("following batchinsert " + updated);
 		return new ResponseEntity<String>(HttpStatus.OK);
