@@ -25,7 +25,12 @@ function loadingMessage(message) {
 
 // pushes error messages to the frontend
 function displayError(message) {
-	$('#more').before('<div class="error">' + message + '</div>');
+	$('#more').before('<div class="error">' + message + '<div class="close"></div></div>');
+	
+	// bind remove to close Button
+	$('.error').find('.close').click(function () {
+		$(this).parent().remove();
+	});
 	
 	// stop more spinning
 	$('#more').find('.btn').removeClass('disabled no_text spinner');
@@ -260,10 +265,9 @@ function searchTweets(searchQuery, rpp) {
 	---------- */
 
 // toggle user info
-var usrClickVar = $('.user');
-function usrClick() {
+function usrClick(usrClickVar) {
+	var usrClickVar = $('.user');
 	usrClickVar.unbind();
-	usrClickVar = $('.user');
 	usrClickVar.click(function () {
 		active = true;
 		console.log("clicked user");
@@ -273,6 +277,16 @@ function usrClick() {
 				
 usrClick();
 
+// close user on click outside user_info
+$(document).click(function (e)
+{
+    var container = $(".user_info");
+	var userContainer = $(".user");
+
+    if (container.has(e.target).length === 0 && userContainer.has(e.target).length === 0) {
+		container.hide().parent().removeClass("full_opacity").find('.user').removeClass('active');
+    }
+});
 
 var searchQuery = "";
 // AJAX request as result of search submit
@@ -367,3 +381,4 @@ function doTheFunkyBusiness(view) {
 	// rebind usrClick
 	usrClick();
 }
+

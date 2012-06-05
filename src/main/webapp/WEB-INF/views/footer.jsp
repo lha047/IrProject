@@ -26,6 +26,6 @@
   })();
 
 </script>
-
+<script type="text/javascript" src="resources/js/eval_tools.js"></script>
 </body>
 </html>
