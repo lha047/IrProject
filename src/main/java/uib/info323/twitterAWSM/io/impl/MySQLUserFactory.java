@@ -62,9 +62,9 @@ public class MySQLUserFactory implements UserDAO {
 
 	public static final String SQL_INSERT_FOLLOWERS = "INSERT IGNORE INTO followers (user_id, follower_id) values (:user_id, :follower_id)";
 
-	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT followerId FROM followers WHERE userId = :userId";
+	private static final String SELECT_FOLLOWERS_BY_ID = "SELECT follower_id FROM followers WHERE user_id = :userId";
 
-	private static final String SELECT_FOLLOWING_BY_ID = "SELECT followingId FROM following WHERE userId = :userId";
+	private static final String SELECT_FOLLOWING_BY_ID = "SELECT following_id FROM following WHERE user_id = :userId";
 
 	// Correct logger...
 	private static Logger logger = LoggerFactory
