@@ -9,7 +9,7 @@
 	<!-- Scans within the base package of the application for @Components to 
 		configure as beans -->
 	<context:component-scan base-package="uib.info323.twitterAWSM" />
-
+	<context:annotation-config/>
 	<mvc:annotation-driven />
 
 	<mvc:resources mapping="/resources/**" location="/resources/" />

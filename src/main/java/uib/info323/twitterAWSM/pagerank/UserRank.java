@@ -6,10 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+
+import uib.info323.twitterAWSM.exceptions.BadRequestException;
+import uib.info323.twitterAWSM.exceptions.UserNotFoundException;
 import uib.info323.twitterAWSM.io.UserDAO;
 import uib.info323.twitterAWSM.io.UserSearchFactory;
 import uib.info323.twitterAWSM.io.impl.JsonUserFactory;
-import uib.info323.twitterAWSM.io.impl.MySQLUserFactory;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 import uib.info323.twitterAWSM.utils.LongConverter;
 import Jama.Matrix;
@@ -26,23 +30,26 @@ public class UserRank {
 	private static final double DAMPING_FACTOR = 0.85;
 	private List<Long> params;
 	private UserSearchFactory userFactory;
-	private UserDAO userDao;
+	@Autowired
+	private UserDAO mySqlUserFactory;
+    private static final double ZERO_FOLLOWING = 1;
+    private static final double DEVIDED_BY_ZERO= 0;
 
-	public UserRank() {
+    public UserRank(UserDAO u) {
 		params = new ArrayList<Long>();
 		userFactory = new JsonUserFactory();
-		userDao = new MySQLUserFactory();
+		mySqlUserFactory = u;
 	}
 
 	public static void main(String[] args) {
-		UserRank userRank = new UserRank();
-
-		double rank = userRank.userRank(333);
-		double rank2 = userRank.userRank(123);
-		double rank3 = userRank.userRank(213);
-		System.out.println(rank);
-		System.out.println(rank2);
-		System.out.println(rank3);
+		// UserRank userRank = new UserRank();
+		//
+		// double rank = userRank.userRank(333);
+		// double rank2 = userRank.userRank(123);
+		// double rank3 = userRank.userRank(213);
+		// System.out.println(rank);
+		// System.out.println(rank2);
+		// System.out.println(rank3);
 
 	}
 
@@ -71,11 +78,8 @@ public class UserRank {
 
 			if (currentUser == userId)
 				ind = cnt;
-
 			cnt++;
-
 		}
-
 		return x.getArray()[ind][0];
 	}
 
@@ -84,7 +88,9 @@ public class UserRank {
 		if (!params.contains(userId)) {
 			params.add(userId);
 		}
-		long[] followers = getFollowers(userId);
+		long[] followers = getFollowers(userId); // often there is no followers
+													// of the followers so 0 is
+													// returned
 
 		for (int i = 0; i < followers.length; i++) {
 			if (!params.contains(followers[i])) {
@@ -103,11 +109,15 @@ public class UserRank {
 				if (l == linkId) {
 					// double factor = -1
 					// * (DAMPING_FACTOR / getFollwing(linkId).length);
-					double factor = -1
+                    double factor = 0;
+					try {
+                    factor = -1
 							* (DAMPING_FACTOR / getNumberOfFollwing(linkId));
-					System.out.println("Factor " + factor);
-					return factor;
-				}
+                     } catch (ArithmeticException ae) {
+                        return DEVIDED_BY_ZERO;
+                    }
+                    return factor;
+                }
 			}
 		}
 		return 0;
@@ -127,8 +137,10 @@ public class UserRank {
 	}
 
 	private long[] getFollowers(long userId) {
-		List<Long> followers = userDao.selectFollowersByUserId(userId);
-		System.out.println("******" + followers.size());
+		List<Long> followers = mySqlUserFactory.selectFollowersByUserId(userId);
+		if (followers.size() == 0 || followers == null) {
+			return new long[0];
+		}
 
 		// long[] followers = userFactory.findUsersFollowers(userId)
 		// .getFollowersUserIds();
@@ -149,14 +161,44 @@ public class UserRank {
 
 	}
 
+	/**
+	 * if the user is following 0 1 is returned to avoid aritmeticexception
+	 * divied by 0.
+	 * 
+	 * @param linkId
+	 * @return
+	 */
 	private double getNumberOfFollwing(long linkId) {
-		TwitterUserInfo323 user = userDao.selectUserById(linkId);
-		if (user == null) {
-			user = userFactory.searchUserByNameId(linkId);
+		TwitterUserInfo323 user = null;
+		try {
+			user = mySqlUserFactory.selectUserById(linkId);
+			if (user.getFriendsCount() >= 0){
+                System.out.println("Fant bruker i users " + user.getFriendsCount());
+				return user.getFriendsCount();
+            }
+		} catch (UserNotFoundException unfe) {
+			int numberOfFollowing = mySqlUserFactory.selectFollowingByUserId(
+					linkId).size();
+			if (numberOfFollowing > 0) {
+                System.out.println("Fant bruker i following " + numberOfFollowing);
+                return numberOfFollowing;
+            } else{
+				try {
+					user = userFactory.searchUserByNameId(linkId);
+					if (user != null) {
+						mySqlUserFactory.addUser(user);
+                        System.out.println("Fant bruker i API " + user.getFriendsCount());
+                        return user.getFriendsCount();
+                    }
+				} catch (DataAccessException dae) { // if the json search fails
+					return ZERO_FOLLOWING;
+				} catch (BadRequestException bae) {
+                    return ZERO_FOLLOWING;
+                }
+			}
 		}
-		// return user.getFriendsCount();
-		return 2;
-	}
+        return ZERO_FOLLOWING;
+    }
 
 	private long[] getFollwing(long userId) {
 
@@ -180,16 +222,16 @@ public class UserRank {
 	 * Retrieves the users followers, for each of the followers retrieve their
 	 * followers
 	 * 
-	 * @param screen_name
+	 * @param userId
 	 * @return
 	 */
 	public double simplifiedUserRank(long userId) {
 		double userRank = 0;
-		List<Long> followers = userDao.selectFollowersByUserId(userId);
+		List<Long> followers = mySqlUserFactory.selectFollowersByUserId(userId);
 		int totalNumberOfFollowers = 0;
 		for (int i = 0; i < followers.size(); i++) {
-			TwitterUserInfo323 follower = userDao.selectUserById(followers
-					.get(i));
+			TwitterUserInfo323 follower = mySqlUserFactory
+					.selectUserById(followers.get(i));
 			if (follower == null) {
 				// TODO do something if the user is not in the database.
 				// Retrieve from Twitter API.
@@ -198,7 +240,7 @@ public class UserRank {
 				totalNumberOfFollowers += numberOfFollowers;
 			} else {
 				// find the list of the followers followers
-				List<Long> followersFollowers = userDao
+				List<Long> followersFollowers = mySqlUserFactory
 						.selectFollowersByUserId(follower.getId());
 				if (followersFollowers.size() == 0) {
 					int numberOfFollowers = follower.getFollowersCount();
@@ -216,11 +258,11 @@ public class UserRank {
 
 	public double verySimplifiedUserRank(long userId) {
 		double userRank = 0;
-		List<Long> followers = userDao.selectFollowersByUserId(userId);
+		List<Long> followers = mySqlUserFactory.selectFollowersByUserId(userId);
 		int totalNumberOfFollowers = 0;
 		for (int i = 0; i < followers.size(); i++) {
-			TwitterUserInfo323 follower = userDao.selectUserById(followers
-					.get(i));
+			TwitterUserInfo323 follower = mySqlUserFactory
+					.selectUserById(followers.get(i));
 			if (follower == null) {
 				TwitterUserInfo323 tempUser = userFactory
 						.searchUserByScreenName(follower.getScreenName());
