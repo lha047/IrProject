@@ -34,7 +34,7 @@ import uib.info323.twitterAWSM.utils.JsonUserParser;
 public class AjajController {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(HomeController.class);
+			.getLogger(AjajController.class);
 
 	private TweetSearchFactory tweetSearchFactory;
 
@@ -150,17 +150,17 @@ public class AjajController {
 		long timeToParse = System.currentTimeMillis() - startParse;
 		logger.debug("Time to parse followers: " + timeToParse / 1000
 				+ " seconds");
-		// mySqlUserFactory.addFollowersFollowing(followersResultPage,
-		// MySQLUserFactory.SQL_INSERT_FOLLOWERS);
-		//
-		// int updated = mySqlUserFactory
-		// .newInsertBatchFollowers(followersResultPage);
-		// insertBatchFollowersFollowing(
-		// followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
 
 		long startInsert = System.currentTimeMillis();
-		int updated = mySqlUserFactory.insertBatchFollowers(
-				followersResultPage);
+
+		// int updated = mySqlUserFactory
+		// .newInsertBatchFollowers(followersResultPage);
+		// int updated = mySqlUserFactory.insertBatchFollowers(
+		// followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
+
+		int updated = mySqlUserFactory
+				.insertBatchFollowers(followersResultPage);
+
 		long timeToInsert = System.currentTimeMillis() - startInsert;
 		logger.debug("Time to insert followers: " + timeToInsert / 1000
 				+ " seconds");
@@ -177,16 +177,12 @@ public class AjajController {
 		long userIdLong = Long.parseLong(userId);
 		FollowersFollowingResultPage followingResultPage = JsonUserParser
 				.jsonToFollowersFollowing(userIdLong, following);
-		// mySqlUserFactory.addFollowersFollowing(followingResultPage,
-		// MySQLUserFactory.SQL_INSERT_FOLLOWING);
 
-		// int updated = mySqlUserFactory.insertBatchFollowersFollowing(
-		// followingResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWING);
 		// int updated = mySqlUserFactory
 		// .newInsertBatchFollowing(followingResultPage);
 
-		int updated = mySqlUserFactory.insertBatchFollowing(
-				followingResultPage);
+		int updated = mySqlUserFactory
+				.insertBatchFollowing(followingResultPage);
 
 		System.out.println("following batchinsert " + updated);
 		return new ResponseEntity<String>(HttpStatus.OK);
