@@ -414,7 +414,7 @@ public class MySQLUserFactory implements UserDAO {
             //System.out.println("user " + u + " rank " + userRank);
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("id", u);
-            map.put("fitness_score", userRank);
+            map.put("fitness_score", (float)userRank);
             map.put("last_updated", new Date());
             int updated = jdbcTemplate.update(sql, map);
             System.out.println("user " + u + " rank " + userRank + " update "

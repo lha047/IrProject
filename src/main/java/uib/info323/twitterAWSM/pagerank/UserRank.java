@@ -98,7 +98,8 @@ public class UserRank {
 				ind = cnt;
 			cnt++;
 		}
-            return x.getArray()[ind][0];
+            double temp = x.getArray()[ind][0];
+            return temp/params.size();
         }
          else {
 		    return OVER_1000_FOLLOWERS;
