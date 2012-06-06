@@ -39,10 +39,11 @@ public class UserRank {
 	private static final Logger logger = LoggerFactory
 			.getLogger(UserRank.class);
 
-	private static final double ZERO_FOLLOWING = 1;
+	private static final int ZERO_FOLLOWING = 1;
 	private static final double DEVIDED_BY_ZERO = 0;
+    private static final double OVER_1000_FOLLOWERS = 1000;
 
-	public UserRank(UserDAO u) {
+    public UserRank(UserDAO u) {
 		params = new ArrayList<Long>();
 		userFactory = new JsonUserFactory();
 		mySqlUserFactory = (MySQLUserFactory) u;
@@ -60,13 +61,16 @@ public class UserRank {
 				+ " seconds");
 		System.out.println("Params size " + params.size());
 
-		Map<Long, Long[]> allFollowers = new HashMap<Long, Long[]>();
+        Map<Long, Long[]> allFollowers = new HashMap<Long, Long[]>(params.size());
+        Map<Long, Integer> allNumberOfFollowing = new HashMap<Long, Integer>(params.size());
 		for (int i = 0; i < params.size(); i++) {
-			allFollowers.put(params.get(i), LongConverter.convertListToArray(getFollowers(params.get(i))));
+            long id = params.get(i);
+            allFollowers.put(id, LongConverter.convertListToArray(getFollowers(params.get(i))));
+            allNumberOfFollowing.put(id, getNumberOfFollowing(id));
 		}
-//		long[] followers = getFollowers(sourceId);
-
-		long startInsert2 = System.currentTimeMillis();
+        if(params.size() < 1000) {
+            long startInsert2 = System.currentTimeMillis();
+      
 		Matrix matrix = new Matrix(generateMatrix(allFollowers));
 		long timeToInsert2 = System.currentTimeMillis() - startInsert2;
 		logger.debug("Time generateMatrix: " + timeToInsert2 / 1000
@@ -85,18 +89,17 @@ public class UserRank {
 		logger.debug("Time solve: " + timeToInsert3 / 1000 + " seconds");
 
 		int ind = 0;
-
 		int cnt = 0;
-
 		for (Iterator it = params.iterator(); it.hasNext();) {
-
 			long currentUser = (Long) it.next();
-
 			if (currentUser == userId)
 				ind = cnt;
 			cnt++;
 		}
-		return x.getArray()[ind][0];
+            return x.getArray()[ind][0];
+        } else {
+		    return OVER_1000_FOLLOWERS;
+        }
 	}
 
 	private void generateParamsList(long userId) {
@@ -189,7 +192,7 @@ public class UserRank {
 	 * @param linkId
 	 * @return number of following
 	 */
-	private double getNumberOfFollowing(long linkId) {
+	private int getNumberOfFollowing(long linkId) {
 		TwitterUserInfo323 user = null;
 
 		try {
