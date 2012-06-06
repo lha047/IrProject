@@ -400,22 +400,23 @@ public class MySQLUserFactory implements UserDAO {
         List<Long> distinctFollowersUserIds = selectDistinctUserIdsFrom("followers");
         // System.out.println("distinct users with followers in db "
         // + distinctFollowersUserIds.size());
-        // long u = distinctFollowersUserIds.get(0);
         //long u = 594326498;
-        long u2 = 15913;
-        // for (Long user ? distinctFollowersUserIds) {
-        //double userRank = ur.userRank(u);
-        //System.out.println("user " + u + " rank " + userRank);
-        double userRank2 = ur.userRank(u2);
+        //long u2 = 15913;
         String sql = "UPDATE users SET fitness_score = :fitness_score WHERE id = :id";
-        //System.out.println("user " + u + " rank " + userRank);
-        //System.out.println("user " + u + " rank " + userRank);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("id", u2);
-        map.put("fitness_score", userRank2);
-        int updated = jdbcTemplate.update(sql, map);
-        System.out.println("user " + u2 + " rank " + userRank2 + " update "
-                + updated);
+        for (int i = 0; i < distinctFollowersUserIds.size(); i++) {
+            long u = distinctFollowersUserIds.get(i);
+            double userRank = ur.userRank(u);
+            //System.out.println("user " + u + " rank " + userRank);
+            //double userRank2 = ur.userRank(u2);
+            //System.out.println("user " + u + " rank " + userRank);
+            //System.out.println("user " + u + " rank " + userRank);
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("id", u);
+            map.put("fitness_score", userRank);
+            int updated = jdbcTemplate.update(sql, map);
+            System.out.println("user " + u + " rank " + userRank + " update "
+                    + updated);
+        }
     }
 
 
