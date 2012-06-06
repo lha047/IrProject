@@ -278,6 +278,17 @@ px      68    160    252    344    436    528    620    712    804    896    */
 			position:absolute;
 			left: 7px;
 		}
+		.error .close {
+			position:absolute;
+			right: 5px;
+			top: 50%;
+			margin-top: -10px;
+			width: 20px;
+			height: 20px;
+			background: url(images/close.png) center center no-repeat #BF1F1F;
+			border-radius: 10px;
+			cursor: pointer;
+		}
 	/*	Forms
 		----- */
 	.btn {
