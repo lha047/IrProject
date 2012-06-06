@@ -54,6 +54,13 @@ public class UserRank {
 		long timeToInsert = System.currentTimeMillis() - startInsert;
 		logger.debug("Time generateParamsList: " + timeToInsert / 1000
 				+ " seconds");
+		System.out.println("Params size " + params.size());
+
+		ArrayList<Long[]> allFollowers = new ArrayList<Long[]>();
+		for (int i = 0; i < params.size(); i++) {
+			allFollowers.add(LongConverter.convertListToArray(getFollowers(params.get(i))));
+		}
+//		long[] followers = getFollowers(sourceId);
 
 		long startInsert2 = System.currentTimeMillis();
 		Matrix matrix = new Matrix(generateMatrix());
@@ -96,10 +103,8 @@ public class UserRank {
 		long[] followers = getFollowers(userId); // often there is no followers
 													// of the followers so 0 is
 													// returned
-
 		for (int i = 0; i < followers.length; i++) {
 			if (!params.contains(followers[i])) {
-
 				generateParamsList(followers[i]);
 			}
 		}
@@ -109,15 +114,21 @@ public class UserRank {
 		if (sourceId == linkId) {
 			return 1;
 		} else {
-			long[] followers = getFollowers(sourceId);
-			for (long l : followers) {
-				if (l == linkId) {
+
+			for (long follower : followers) {
+				if (follower == linkId) {
 					// double factor = -1
 					// * (DAMPING_FACTOR / getFollwing(linkId).length);
 					double factor = 0;
 					try {
+						long start = System.currentTimeMillis();
+						System.out.println("Get following...");
 						factor = -1
 								* (DAMPING_FACTOR / getNumberOfFollwing(linkId));
+						long timeToGetFollowing = System.currentTimeMillis()
+								- start;
+						// logger.debug("Time to get following "
+						// + timeToGetFollowing);
 					} catch (ArithmeticException ae) {
 						return DEVIDED_BY_ZERO;
 					}
@@ -130,12 +141,14 @@ public class UserRank {
 
 	private double[][] generateMatrix() {
 		double[][] matrix = new double[params.size()][params.size()];
+
 		for (int i = 0; i < params.size(); i++) {
 			for (int j = 0; j < params.size(); j++) {
 				double multiFactor = getMultiFactor(params.get(i),
 						params.get(j));
 				matrix[i][j] = multiFactor;
 			}
+			System.out.println("params" + params.size() + " i " + i);
 		}
 		return matrix;
 	}
@@ -174,25 +187,28 @@ public class UserRank {
 	 */
 	private double getNumberOfFollwing(long linkId) {
 		TwitterUserInfo323 user = null;
+
 		try {
 			user = mySqlUserFactory.selectUserById(linkId);
-			if (user.getFriendsCount() >= 0) {
+			if (user.getFriendsCount() > 0) {
 				System.out.println("Fant bruker i users "
 						+ user.getFriendsCount());
 				return user.getFriendsCount();
-			}
-		} catch (UserNotFoundException unfe) {
-			int numberOfFollowing = mySqlUserFactory.selectFollowingByUserId(
-					linkId).size();
-			if (numberOfFollowing > 0) {
-				System.out.println("Fant bruker i following "
-						+ numberOfFollowing);
-				return numberOfFollowing;
-			} else {
+			} else
 				return ZERO_FOLLOWING;
-			}
+
+		} catch (UserNotFoundException unfe) {
+			// System.out.println("UserNotFound ex");
 		}
-		return ZERO_FOLLOWING;
+		int numberOfFollowing = mySqlUserFactory
+				.selectFollowingByUserId(linkId).size();
+		if (numberOfFollowing > 0) {
+			System.out.println("Fant bruker i following " + numberOfFollowing);
+			return numberOfFollowing;
+		} else {
+			return ZERO_FOLLOWING;
+		}
+
 	}
 
 	private long[] getFollwing(long userId) {

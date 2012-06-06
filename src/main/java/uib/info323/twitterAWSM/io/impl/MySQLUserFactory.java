@@ -103,7 +103,6 @@ public class MySQLUserFactory implements UserDAO {
 	public TwitterUserInfo323 selectUserById(long id)
 			throws UserNotFoundException {
 
-		// PreparedStatement ps = c
 		SqlParameterSource namedParameter = new MapSqlParameterSource("id", id);
 		TwitterUserInfo323Impl user = null;
 		try {
@@ -403,10 +402,10 @@ public class MySQLUserFactory implements UserDAO {
 		long u = 594326498;
 		long u2 = 12720;
 		// for (Long user ? distinctFollowersUserIds) {
-		double userRank = ur.userRank(u);
-		System.out.println("user " + u + " rank " + userRank);
+		// double userRank = ur.userRank(u);
+		// System.out.println("user " + u + " rank " + userRank);
 		double userRank2 = ur.userRank(u2);
-		System.out.println("user " + u + " rank " + userRank);
+		// System.out.println("user " + u + " rank " + userRank);
 		System.out.println("user " + u2 + " rank " + userRank2);
 		// Map<String, Object> map = new HashMap<String, Object>();
 		// map.put("id", u);
