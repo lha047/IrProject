@@ -61,6 +61,8 @@ public class UserRank {
 				+ " seconds");
 		System.out.println("Params size " + params.size());
 
+        if(params.size() < 2500) { // Runs all users with less than 2500 followers
+
         Map<Long, Long[]> allFollowers = new HashMap<Long, Long[]>(params.size());
         Map<Long, Integer> allNumberOfFollowing = new HashMap<Long, Integer>(params.size());
 		for (int i = 0; i < params.size(); i++) {
@@ -68,9 +70,9 @@ public class UserRank {
             allFollowers.put(id, LongConverter.convertListToArray(getFollowers(params.get(i))));
             allNumberOfFollowing.put(id, getNumberOfFollowing(id));
 		}
-        if(params.size() < 1000) {
+
             long startInsert2 = System.currentTimeMillis();
-      
+
 		Matrix matrix = new Matrix(generateMatrix(allFollowers));
 		long timeToInsert2 = System.currentTimeMillis() - startInsert2;
 		logger.debug("Time generateMatrix: " + timeToInsert2 / 1000
@@ -97,7 +99,8 @@ public class UserRank {
 			cnt++;
 		}
             return x.getArray()[ind][0];
-        } else {
+        }
+         else {
 		    return OVER_1000_FOLLOWERS;
         }
 	}

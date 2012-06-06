@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +35,7 @@ import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 import uib.info323.twitterAWSM.pagerank.UserRank;
+import uib.info323.twitterAWSM.utils.DateParser;
 
 @Component
 public class MySQLUserFactory implements UserDAO {
@@ -402,7 +404,7 @@ public class MySQLUserFactory implements UserDAO {
         // + distinctFollowersUserIds.size());
         //long u = 594326498;
         //long u2 = 15913;
-        String sql = "UPDATE users SET fitness_score = :fitness_score WHERE id = :id";
+        String sql = "UPDATE users SET fitness_score = :fitness_score, last_updated = :last_updated WHERE id = :id";
         for (int i = 0; i < distinctFollowersUserIds.size(); i++) {
             long u = distinctFollowersUserIds.get(i);
             double userRank = ur.userRank(u);
@@ -413,6 +415,7 @@ public class MySQLUserFactory implements UserDAO {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("id", u);
             map.put("fitness_score", userRank);
+            map.put("last_updated", new Date());
             int updated = jdbcTemplate.update(sql, map);
             System.out.println("user " + u + " rank " + userRank + " update "
                     + updated);
