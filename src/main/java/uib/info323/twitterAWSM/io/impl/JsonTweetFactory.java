@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,7 +31,8 @@ public class JsonTweetFactory implements TweetSearchFactory {
 
 	private final String searchApiUrl;
 	private final String apiUrl;
-	@Autowired
+    @Qualifier("restTemplate")
+    @Autowired
 	private final RestTemplate restTemplate;
 	private final SimpleDateFormat dateFormatter;
 	private JsonParser parser;

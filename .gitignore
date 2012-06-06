@@ -1,0 +1,4 @@
+src/main/webapp/WEB-INF/spring/appServlet/db-context.xml
+.classpath
+.settings
+bin
