@@ -54,6 +54,7 @@ public class UserRank {
 	}
 
 	public double userRank(long userId) {
+        params.clear();
 		long startInsert = System.currentTimeMillis();
 		generateParamsList(userId);
 		long timeToInsert = System.currentTimeMillis() - startInsert;
@@ -61,7 +62,7 @@ public class UserRank {
 				+ " seconds");
 		System.out.println("Params size " + params.size());
 
-        if(params.size() > 5000) { // Runs all users with less than 2500 followers
+        if(params.size() >= 10000) { // Runs all users with less than 2500 followers
 
         Map<Long, Long[]> allFollowers = new HashMap<Long, Long[]>(params.size());
         Map<Long, Integer> allNumberOfFollowing = new HashMap<Long, Integer>(params.size());
@@ -98,10 +99,11 @@ public class UserRank {
 				ind = cnt;
 			cnt++;
 		}
-            return x.getArray()[ind][0];
+            double temp = x.getArray()[ind][0];
+            return temp/params.size();
         }
          else {
-		    return OVER_1000_FOLLOWERS;
+		    return -1;
         }
 	}
 
