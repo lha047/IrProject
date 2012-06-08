@@ -64,7 +64,7 @@ public class UserRank {
 				+ " seconds");
 		System.out.println("Params size " + params.size());
 
-        if(params.size() <= 1000) { // Runs all users with less than 2500 followers
+        if(params.size() >= 10000) { // Runs all users with less than 2500 followers
 
         Map<Long, Long[]> allFollowers = new HashMap<Long, Long[]>(params.size());
         Map<Long, Integer> allNumberOfFollowing = new HashMap<Long, Integer>(params.size());
@@ -105,7 +105,7 @@ public class UserRank {
             return temp/params.size();
         }
          else {
-		    return OVER_1000_FOLLOWERS;
+		    return -1;
         }
 	}
 
