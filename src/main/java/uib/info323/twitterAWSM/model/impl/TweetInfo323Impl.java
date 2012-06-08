@@ -187,16 +187,18 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		return tweetRank;
 	}
 
-	public void setTweetRank(double tweetRank) {
+	public void setTweetRank(double userRank) {
 		System.out.println(tweetRank);
+		double tweetRank = 0;
 		tweetRank += tagPoints();
 		System.out.println("tag " + tweetRank);
 		tweetRank += mentionPoints();
 		System.out.println("metions " + tweetRank);
 		tweetRank += reTweetPoints();
 		System.out.println("retweet " + tweetRank);
+		tweetRank = tweetRank / 3;
 
-		this.tweetRank = tweetRank;
+		this.tweetRank = tweetRank + userRank;
 	}
 
 	public static void main(String[] args) {

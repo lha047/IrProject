@@ -54,7 +54,9 @@ public class UserRank {
 	}
 
 	public double userRank(long userId) {
+        System.out.println("Before "+ params.size());
         params.clear();
+        System.out.println("After "+ params.size());
 		long startInsert = System.currentTimeMillis();
 		generateParamsList(userId);
 		long timeToInsert = System.currentTimeMillis() - startInsert;
