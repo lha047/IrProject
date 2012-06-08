@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,14 +34,13 @@ import uib.info323.twitterAWSM.model.interfaces.TweetInfo323;
 import uib.info323.twitterAWSM.model.interfaces.TweetSearchResults;
 import uib.info323.twitterAWSM.model.interfaces.TwitterUserInfo323;
 import uib.info323.twitterAWSM.pagerank.UserRank;
-import uib.info323.twitterAWSM.utils.DateParser;
 
 @Component
 public class MySQLUserFactory implements UserDAO {
 
 	public static final String SQL_INSERT_USER = "insert ignore into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
 
-            + "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
+			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
 
 	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE screen_name = :screen_name";
 
@@ -72,7 +70,6 @@ public class MySQLUserFactory implements UserDAO {
 	// Correct logger...
 	private static Logger logger = LoggerFactory
 			.getLogger(MySQLUserFactory.class);
-
 
 	@Qualifier("jdbcTemplate")
 	@Autowired
@@ -338,10 +335,34 @@ public class MySQLUserFactory implements UserDAO {
 		params.put("language", user.getLanguage());
 		params.put("profile_url", user.getProfileUrl());
 		params.put("statuses_count", user.getStatusesCount());
-		params.put("fitness_score", user.getFitnessScore());
+		params.put("fitness_score", findFitnessScore(user.getFollowersCount()));
 		date = new Date();
 		params.put("last_updated", dateFormat.format(date));
 		return params;
+	}
+
+	private float findFitnessScore(int favoritesCount) {
+		if (favoritesCount < 100) {
+			return (float) 0.1;
+		} else if (favoritesCount >= 100 && favoritesCount <= 500) {
+			return (float) 0.2;
+		} else if (favoritesCount > 500 && favoritesCount <= 1000) {
+			return (float) 0.3;
+		} else if (favoritesCount > 1000 && favoritesCount <= 2000) {
+			return (float) 0.4;
+		} else if (favoritesCount >= 2000 && favoritesCount <= 4000) {
+			return (float) 0.5;
+		} else if (favoritesCount >= 4000 && favoritesCount <= 6000) {
+			return (float) 0.6;
+		} else if (favoritesCount >= 6000 && favoritesCount <= 8000) {
+			return (float) 0.7;
+		} else if (favoritesCount >= 8000 && favoritesCount <= 10000) {
+			return (float) 0.8;
+		} else if (favoritesCount >= 10000 && favoritesCount <= 100000) {
+			return (float) 0.9;
+		} else
+			return (float) 0.5;
+
 	}
 
 	public int addBatchUsers(List<TwitterUserInfo323> users, String sql) {
@@ -376,7 +397,7 @@ public class MySQLUserFactory implements UserDAO {
 
 	/**
 	 * Checks if the tweeters of the tweets in the searchResult exists in DB.
-	 *
+	 * 
 	 * @param searchResult
 	 * @return list of users not in DB.
 	 */
@@ -402,28 +423,27 @@ public class MySQLUserFactory implements UserDAO {
 		List<Long> distinctFollowersUserIds = selectDistinctUserIdsFrom("followers");
 		// System.out.println("distinct users with followers in db "
 		// + distinctFollowersUserIds.size());
-		//long u = 594326498;
-		//long u2 = 15913;
+		// long u = 594326498;
+		// long u2 = 15913;
 		String sql = "UPDATE users SET fitness_score = :fitness_score, last_updated = :last_updated WHERE id = :id";
 		for (int i = 0; i < distinctFollowersUserIds.size(); i++) {
 			long u = distinctFollowersUserIds.get(i);
 			double userRank = ur.userRank(u);
-			if(userRank != -1) {
-				//System.out.println("user " + u + " rank " + userRank);
-				//double userRank2 = ur.userRank(u2);
-				//System.out.println("user " + u + " rank " + userRank);
-				//System.out.println("user " + u + " rank " + userRank);
+			if (userRank != -1) {
+				// System.out.println("user " + u + " rank " + userRank);
+				// double userRank2 = ur.userRank(u2);
+				// System.out.println("user " + u + " rank " + userRank);
+				// System.out.println("user " + u + " rank " + userRank);
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("id", u);
-				map.put("fitness_score", (float)userRank);
+				map.put("fitness_score", (float) userRank);
 				map.put("last_updated", new Date());
 				int updated = jdbcTemplate.update(sql, map);
-				System.out.println("user " + u + " rank " + userRank + " update "
-						+ updated);
+				System.out.println("user " + u + " rank " + userRank
+						+ " update " + updated);
 			}
 		}
 	}
-
 
 	private List<Long> selectDistinctUserIdsFrom(String table) {
 
