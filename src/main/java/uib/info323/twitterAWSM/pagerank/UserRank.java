@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,20 +33,22 @@ public class UserRank {
 
 	private static final double DAMPING_FACTOR = 0.85;
 	private List<Long> params;
+	private Set<Long> paramsSet;
 	private UserSearchFactory userFactory;
 
-    @Qualifier("mySqlUserFactory")
-    @Autowired
+	@Qualifier("mySqlUserFactory")
+	@Autowired
 	private MySQLUserFactory mySqlUserFactory;
 	private static final Logger logger = LoggerFactory
 			.getLogger(UserRank.class);
 
 	private static final int ZERO_FOLLOWING = 1;
 	private static final double DEVIDED_BY_ZERO = 0;
-    private static final double OVER_1000_FOLLOWERS = 1000;
+	private static final double OVER_1000_FOLLOWERS = 1000;
 
-    public UserRank(UserDAO u) {
+	public UserRank(UserDAO u) {
 		params = new ArrayList<Long>();
+		paramsSet = new TreeSet<Long>();
 		userFactory = new JsonUserFactory();
 		mySqlUserFactory = (MySQLUserFactory) u;
 	}
@@ -54,75 +58,77 @@ public class UserRank {
 	}
 
 	public double userRank(long userId) {
-        params.clear();
+		params.clear();
+		paramsSet.clear();
 		long startInsert = System.currentTimeMillis();
 		generateParamsList(userId);
+		params.addAll(paramsSet);
 		long timeToInsert = System.currentTimeMillis() - startInsert;
 		logger.debug("Time generateParamsList: " + timeToInsert / 1000
 				+ " seconds");
 		System.out.println("Params size " + params.size());
 
-        if(params.size() >= 10000) { // Runs all users with less than 2500 followers
+		if(params.size() >= 10000) { // Runs all users with less than 2500 followers
 
-        Map<Long, Long[]> allFollowers = new HashMap<Long, Long[]>(params.size());
-        Map<Long, Integer> allNumberOfFollowing = new HashMap<Long, Integer>(params.size());
-		for (int i = 0; i < params.size(); i++) {
-            long id = params.get(i);
-            allFollowers.put(id, LongConverter.convertListToArray(getFollowers(params.get(i))));
-            allNumberOfFollowing.put(id, getNumberOfFollowing(id));
+			Map<Long, Long[]> allFollowers = new HashMap<Long, Long[]>(params.size());
+			Map<Long, Integer> allNumberOfFollowing = new HashMap<Long, Integer>(params.size());
+			for (int i = 0; i < params.size(); i++) {
+				long id = params.get(i);
+				allFollowers.put(id, LongConverter.convertListToArray(getFollowers(params.get(i))));
+				allNumberOfFollowing.put(id, getNumberOfFollowing(id));
+			}
+
+			long startInsert2 = System.currentTimeMillis();
+
+			Matrix matrix = new Matrix(generateMatrix(allFollowers, allNumberOfFollowing));
+			long timeToInsert2 = System.currentTimeMillis() - startInsert2;
+			logger.debug("Time generateMatrix: " + timeToInsert2 / 1000
+					+ " seconds");
+
+			double[][] arrB = new double[params.size()][1];
+
+			for (int i = 0; i < params.size(); i++) {
+				arrB[i][0] = 1 - DAMPING_FACTOR;
+			}
+
+			Matrix matrixB = new Matrix(arrB);
+			long startInsert3 = System.currentTimeMillis();
+			Matrix x = matrix.solve(matrixB);
+			long timeToInsert3 = System.currentTimeMillis() - startInsert3;
+			logger.debug("Time solve: " + timeToInsert3 / 1000 + " seconds");
+
+			int ind = 0;
+			int cnt = 0;
+			for (Iterator it = params.iterator(); it.hasNext();) {
+				long currentUser = (Long) it.next();
+				if (currentUser == userId)
+					ind = cnt;
+				cnt++;
+			}
+			double temp = x.getArray()[ind][0];
+			return temp/params.size();
 		}
-
-            long startInsert2 = System.currentTimeMillis();
-
-		Matrix matrix = new Matrix(generateMatrix(allFollowers));
-		long timeToInsert2 = System.currentTimeMillis() - startInsert2;
-		logger.debug("Time generateMatrix: " + timeToInsert2 / 1000
-				+ " seconds");
-
-		double[][] arrB = new double[params.size()][1];
-
-		for (int i = 0; i < params.size(); i++) {
-			arrB[i][0] = 1 - DAMPING_FACTOR;
+		else {
+			return -1;
 		}
-
-		Matrix matrixB = new Matrix(arrB);
-		long startInsert3 = System.currentTimeMillis();
-		Matrix x = matrix.solve(matrixB);
-		long timeToInsert3 = System.currentTimeMillis() - startInsert3;
-		logger.debug("Time solve: " + timeToInsert3 / 1000 + " seconds");
-
-		int ind = 0;
-		int cnt = 0;
-		for (Iterator it = params.iterator(); it.hasNext();) {
-			long currentUser = (Long) it.next();
-			if (currentUser == userId)
-				ind = cnt;
-			cnt++;
-		}
-            double temp = x.getArray()[ind][0];
-            return temp/params.size();
-        }
-         else {
-		    return -1;
-        }
 	}
 
 	private void generateParamsList(long userId) {
 
-		if (!params.contains(userId)) {
-			params.add(userId);
+		if (!paramsSet.contains(userId)) {
+			paramsSet.add(userId);
 		}
 		long[] followers = getFollowers(userId); // often there is no followers
-													// of the followers so 0 is
-													// returned
+		// of the followers so 0 is
+		// returned
 		for (int i = 0; i < followers.length; i++) {
-			if (!params.contains(followers[i])) {
+			if (!paramsSet.contains(followers[i])) {
 				generateParamsList(followers[i]);
 			}
 		}
 	}
 
-	private double getMultiFactor(long sourceId, long linkId, Map<Long, Long[]> followers) {
+	private double getMultiFactor(long sourceId, long linkId, Map<Long, Long[]> followers, Map<Long, Integer> allNumberOfFollowing) {
 		if (sourceId == linkId) {
 			return 1;
 		} else {
@@ -136,7 +142,7 @@ public class UserRank {
 						long start = System.currentTimeMillis();
 						//System.out.println("Get following...");
 						factor = -1
-								* (DAMPING_FACTOR / getNumberOfFollowing(linkId));
+								* (DAMPING_FACTOR / allNumberOfFollowing.get(linkId));
 						long timeToGetFollowing = System.currentTimeMillis()
 								- start;
 						// logger.debug("Time to get following "
@@ -151,13 +157,13 @@ public class UserRank {
 		return 0;
 	}
 
-	private double[][] generateMatrix(Map<Long, Long[]> followers) {
+	private double[][] generateMatrix(Map<Long, Long[]> followers, Map<Long, Integer> allNumberOfFollowing) {
 		double[][] matrix = new double[params.size()][params.size()];
 
 		for (int i = 0; i < params.size(); i++) {
 			for (int j = 0; j < params.size(); j++) {
 				double multiFactor = getMultiFactor(params.get(i),
-						params.get(j), followers);
+						params.get(j), followers, allNumberOfFollowing);
 				matrix[i][j] = multiFactor;
 			}
 			//System.out.println("params" + params.size() + " i " + i);
