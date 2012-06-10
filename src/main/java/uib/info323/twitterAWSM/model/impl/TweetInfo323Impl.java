@@ -13,9 +13,9 @@ public class TweetInfo323Impl implements TweetInfo323 {
 	private static final double ONE_OR_TWO_TAGS = 1;
 	private static final double TREE_TAGS = 0.4;
 	private static final double FOUR_OR_MORE_TAGS = 0.1;
-	private static final double MENTIONS_ZERO = 0.5;
-	private static final double MENTIONS_ONE = 0.7;
-	private static final double MENTIONS_TWO_AND_TREE = 0.9;
+	private static final double MENTIONS_ZERO = 0.2;
+	private static final double MENTIONS_ONE = 0.3;
+	private static final double MENTIONS_TWO_AND_TREE = 0.4;
 	private static final double MENTIONS__MORE_THAN_TREE = 0.1;
 	private static final double ZERO_RETWEETS = 0.1;
 	private static final double ONE_RETWEET = 0.5;
@@ -187,16 +187,18 @@ public class TweetInfo323Impl implements TweetInfo323 {
 		return tweetRank;
 	}
 
-	public void setTweetRank(double tweetRank) {
+	public void setTweetRank(double userRank) {
 		System.out.println(tweetRank);
+		double tweetRank = 0;
 		tweetRank += tagPoints();
 		System.out.println("tag " + tweetRank);
 		tweetRank += mentionPoints();
 		System.out.println("metions " + tweetRank);
 		tweetRank += reTweetPoints();
 		System.out.println("retweet " + tweetRank);
+		tweetRank = tweetRank / 3;
 
-		this.tweetRank = tweetRank;
+		this.tweetRank = tweetRank + userRank;
 	}
 
 	public static void main(String[] args) {
