@@ -11,7 +11,7 @@
 
 		<property name="url" value="jdbc:mysql://localhost/feedjam"></property>
 		<property name="username" value="root"></property> 
-		<property name="password"  value="root"></property>
+		<property name="password"  value="info323"></property>
 
 
 	</bean>
