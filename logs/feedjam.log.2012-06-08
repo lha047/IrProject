@@ -1,0 +1,4 @@
+2012-06-08 15:07:33,010 DEBUG: uib.info323.twitterAWSM.pagerank.UserRank - Time generateParamsList: 3 seconds
+2012-06-08 15:07:42,217 DEBUG: uib.info323.twitterAWSM.pagerank.UserRank - Time generateMatrix: 0 seconds
+2012-06-08 15:07:42,346 DEBUG: uib.info323.twitterAWSM.pagerank.UserRank - Time solve: 0 seconds
+2012-06-08 15:42:14,238 DEBUG: uib.info323.twitterAWSM.pagerank.UserRank - Time generateParamsList: 3 seconds

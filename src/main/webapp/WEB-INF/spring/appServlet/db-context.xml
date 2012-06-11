@@ -15,7 +15,11 @@
 		<!--<property name="url" value="jdbc:mysql://localhost/feedjam"></property> -->
 		<!--<property name="username" value="root"></property> -->
 
+<<<<<<< HEAD
 		<property name="password"  value="root"></property>
+=======
+		<property name="password"  value=""></property>
+>>>>>>> b3a2b7e3b179ee764751ca6b5745fc24536d397e
 
 	</bean>
 
