@@ -61,7 +61,7 @@ public class UserRank {
 		params.clear();
 		paramsSet.clear();
 		long startInsert = System.currentTimeMillis();
-		generateParamsList(userId);
+		generateParamsList(userId, 0);
 		params.addAll(paramsSet);
 		long timeToInsert = System.currentTimeMillis() - startInsert;
 		logger.debug("Time generateParamsList: " + timeToInsert / 1000
@@ -113,8 +113,13 @@ public class UserRank {
 		}
 	}
 
-	private void generateParamsList(long userId) {
-
+	private void generateParamsList(long userId, int recursion) {
+		if(recursion > 3) {
+			System.out.println("Param set size: " + paramsSet.size());
+			System.out.println("Deep enough, return...");
+			return;
+		}
+		
 		if (!paramsSet.contains(userId)) {
 			paramsSet.add(userId);
 		}
@@ -123,7 +128,7 @@ public class UserRank {
 		// returned
 		for (int i = 0; i < followers.length; i++) {
 			if (!paramsSet.contains(followers[i])) {
-				generateParamsList(followers[i]);
+				generateParamsList(followers[i], recursion+1);
 			}
 		}
 	}
@@ -135,18 +140,11 @@ public class UserRank {
 
 			for (long follower : followers.get(sourceId)) {
 				if (follower == linkId) {
-					// double factor = -1
-					// * (DAMPING_FACTOR / getFollwing(linkId).length);
 					double factor = 0;
 					try {
 						long start = System.currentTimeMillis();
-						//System.out.println("Get following...");
 						factor = -1
 								* (DAMPING_FACTOR / allNumberOfFollowing.get(linkId));
-						long timeToGetFollowing = System.currentTimeMillis()
-								- start;
-						// logger.debug("Time to get following "
-						// + timeToGetFollowing);
 					} catch (ArithmeticException ae) {
 						return DEVIDED_BY_ZERO;
 					}

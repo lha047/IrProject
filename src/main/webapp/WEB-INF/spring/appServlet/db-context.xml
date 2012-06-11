@@ -17,6 +17,8 @@
 
 		<property name="password"  value="info323"></property>
 
+		<property name="password"  value="root"></property>
+
 	</bean>
 
 <!-- 	<jdbc:embedded-database id="dataSource" -->

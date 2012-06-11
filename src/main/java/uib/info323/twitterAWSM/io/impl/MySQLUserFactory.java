@@ -171,50 +171,50 @@ public class MySQLUserFactory implements UserDAO {
 	//
 	// return exec(f, sb);
 	// }
+//
+//	public int newInsertBatchFollowers(FollowersFollowingResultPage f) {
+//
+//		// try {
+//		// PreparedStatement stmt = (PreparedStatement) con
+//		// .prepareStatement(SQL_INSERT_FOLLOWERS);
+//		// return exec(f, stmt);
+//		// } catch (SQLException e) {
+//		// return -1;
+//		// }
+//
+//		StringBuilder sb = new StringBuilder();
+//
+//		sb.append("INSERT IGNORE INTO followers (user_id, follower_id) values ");
+//
+//		return exec(f, sb);
+//	}
 
-	public int newInsertBatchFollowers(FollowersFollowingResultPage f) {
-
-		// try {
-		// PreparedStatement stmt = (PreparedStatement) con
-		// .prepareStatement(SQL_INSERT_FOLLOWERS);
-		// return exec(f, stmt);
-		// } catch (SQLException e) {
-		// return -1;
-		// }
-
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("INSERT IGNORE INTO followers (user_id, follower_id) values ");
-
-		return exec(f, sb);
-	}
-
-	public int exec(FollowersFollowingResultPage f, StringBuilder sb) {
-		long[] ids = f.getFollowersUserIds();
-
-		for (int i = 0; i < ids.length; i++) {
-
-			sb.append("(" + f.getUserId() + ", " + ids[i] + "),");
-		}
-		sb.deleteCharAt(sb.toString().length() - 1);
-		sb.append(";");
-		// System.out.println(sb.toString());
-		String url = "jdbc:mysql://feedjam.thunemedia.no/feedjam";
-		String user = "bobkaare";
-		String password = "info323";
-
-		Connection con = null;
-		int inserted = -1;
-		try {
-			con = DriverManager.getConnection(url, user, password);
-			Statement stmt = con.createStatement();
-			inserted = stmt.executeUpdate(sb.toString());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return inserted;
-	}
+//	public int exec(FollowersFollowingResultPage f, StringBuilder sb) {
+//		long[] ids = f.getFollowersUserIds();
+//
+//		for (int i = 0; i < ids.length; i++) {
+//
+//			sb.append("(" + f.getUserId() + ", " + ids[i] + "),");
+//		}
+//		sb.deleteCharAt(sb.toString().length() - 1);
+//		sb.append(";");
+//		// System.out.println(sb.toString());
+//		String url = "jdbc:mysql://feedjam.thunemedia.no/feedjam";
+//		String user = "bobkaare";
+//		String password = "info323";
+//
+//		Connection con = null;
+//		int inserted = -1;
+//		try {
+//			con = DriverManager.getConnection(url, user, password);
+//			Statement stmt = con.createStatement();
+//			inserted = stmt.executeUpdate(sb.toString());
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return inserted;
+//	}
 
 	public int insertBatchFollowers(FollowersFollowingResultPage f) {
 
