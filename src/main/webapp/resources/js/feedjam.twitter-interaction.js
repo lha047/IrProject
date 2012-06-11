@@ -76,18 +76,13 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 		},
 		complete:function(){}
 	});
-	
-	/*$.getJSON('https://api.twitter.com/1/users/lookup.json?user_id=' + usrs + '&include_entities=false&callback=?', function(usrJSONData) {
-		console.log('RESPONSE: Twitter API: received user data for ' + usrs);
-		usersToServer(usrJSONData, searchQuery, searchRequest, rpp);
-	});*/
 }
 
 // sends returned user data to controller (../ajaj/processUsers)
 function usersToServer(usrJSONData, searchQuery, searchRequest, rpp, usrs) {
 	console.log('SERVER POST: sending users to server');
 	loadingMessage('Crunching data and generating View');
-	// console.log(searchRequest + ' \n ################# \n' + usrJSONData);
+
 	var out = "";
 	if(usrJSONData != "") {
 		out = '{"users":' + JSON.stringify(usrJSONData) + '}';
@@ -161,11 +156,6 @@ function getFollowingFromTwitter(usr) {
 		complete:function(){                    
 		}
 	});
-	
-	/*$.getJSON('https://api.twitter.com/1/friends/ids.json?cursor=-1&user_id=' + usr + '&callback=?', function(usrFollowingJSON) {
-		console.log('RESPONSE: Twitter API: received response for following user: ' + usr);
-		followingToServer(usr, usrFollowingJSON);
-	});*/
 }
 
 // sends requests for followers for users to twitter
@@ -186,11 +176,6 @@ function getFollowersFromTwitter(usr) {
 		complete:function(){                    
 		}
 	});
-	
-	/*$.getJSON('https://api.twitter.com/1/followers/ids.json?cursor=-1&user_id=' + usr + '&callback=?', function(usrFollowersJSON) {
-		console.log('RESPONSE: Twitter API: received response for followers for user: ' + usr);
-		followersToServer(usr, usrFollowersJSON);
-	});*/
 }
 
 /*
@@ -245,23 +230,10 @@ function searchTweets(searchQuery, rpp) {
 		complete:function(){                    
 		}
 	});
-	
-	/*$.getJSON('http://search.twitter.com/search.json?q=' + searchQuery + '&rpp=' + rpp + '&page=' + page + query_id + '&include_entities=true&result_type=mixed&callback=?', function(searchResponse) {
-		console.log('received response for search: ' + searchResponse);
-	  
-		page = searchResponse.page + 1;
-		max_id = searchResponse.max_id;
-		query = searchResponse.query;
-		rpp = rpp;
-		
-		console.log("page: " + page + "\nmax_id: " + max_id + "\nquery: " + query + "\nrpp: " + rpp);
-		
-		tweetsToServer(searchResponse, rpp, searchQuery);
-	});*/
 }
 
 /*
-	Init stuff
+	Bind event listeners to interface interactions
 	---------- */
 
 // toggle user info
@@ -271,7 +243,7 @@ function usrClick(usrClickVar) {
 	usrClickVar.click(function () {
 		active = true;
 		console.log("clicked user");
-		$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().toggleClass("full_opacity");
+		$(this).toggleClass('active').parent().find('.user_info').fadeToggle("fast", "linear").parent().parent().toggleClass("full_opacity");
 	});
 }
 				
@@ -280,11 +252,12 @@ usrClick();
 // close user on click outside user_info
 $(document).click(function (e)
 {
-    var container = $(".user_info");
-	var userContainer = $(".user");
+    var container = $(".user_wrapper");
 
-    if (container.has(e.target).length === 0 && userContainer.has(e.target).length === 0) {
-		container.hide().parent().removeClass("full_opacity").find('.user').removeClass('active');
+    if (container.has(e.target).length === 0) {
+		container.find('.user_info').hide();
+		container.find('.user').removeClass('active');
+		container.parent().removeClass("full_opacity");
     }
 });
 
@@ -324,6 +297,11 @@ $('.trend').click(function(e) {
 	console.log(searchQuery);
 	getReadyForView();
 	
+});
+
+// display infobox on information button click
+$('#information_toggle').click(function() {
+	$('#info').toggle();
 });
 
 // makes view ready to receive tweets, inits masonry and binds click events
