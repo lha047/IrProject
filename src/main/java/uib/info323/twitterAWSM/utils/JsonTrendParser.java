@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import uib.info323.twitterAWSM.model.impl.TrendImpl;
 import uib.info323.twitterAWSM.model.impl.TrendsImpl;
@@ -29,7 +31,7 @@ public class JsonTrendParser {
 		// Get trend-info from JSON object
 		JsonObject jsonTrendsObject = object.get("trends").getAsJsonObject();
 
-		HashMap<Date, List<Trend>> trendsByTime = new HashMap<Date, List<Trend>>();
+		Map<Date, List<Trend>> trendsByTime = new TreeMap<Date, List<Trend>>();
 
 		for (Entry<String, JsonElement> trendsEntry : jsonTrendsObject
 				.entrySet()) {
