@@ -16,12 +16,12 @@ public class UserFactoryImpl implements UserFactory {
 			String screenName, String name, String url, String profileImageUrl,
 			String description, String location, Date createdDate,
 			int favoritesCount, int followersCount, int friendsCount,
-			String language, String profileUrl, int statusesCount, Date lastUpdated) {
+			String language, String profileUrl, int statusesCount, Date lastUpdated, Date lastRanked) {
 
 		return new TwitterUserInfo323Impl(fitnessScore, id, screenName, name,
 				url, profileImageUrl, description, location, createdDate,
 				favoritesCount, followersCount, friendsCount, language,
-				profileUrl, statusesCount, lastUpdated);
+				profileUrl, statusesCount, lastUpdated, lastRanked);
 	}
 
 }

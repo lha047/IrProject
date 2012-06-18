@@ -45,11 +45,11 @@ public class AjajController {
 
 	private JsonUserFactory jsonUserFactory;
 
-    @Qualifier("mySqlUserFactory")
-    @Autowired
+	@Qualifier("mySqlUserFactory")
+	@Autowired
 	private MySQLUserFactory mySqlUserFactory;
-    @Qualifier("mySqlTweetFactory")
-    @Autowired
+	@Qualifier("mySqlTweetFactory")
+	@Autowired
 	private MySQLTweetFactory mySqlTweetFactory;
 
 	public AjajController() {
@@ -121,7 +121,7 @@ public class AjajController {
 		for (TweetInfo323 t : tweets) {
 			try {
 				double userRank = t.getUserInfo().getFitnessScore(); // find
-																		// userRank
+				// userRank
 				t.setTweetRank(userRank); // sets and calculates tweetRank
 				mySqlTweetFactory.insertTweet(t);
 			} catch (TweetException e) {
@@ -130,11 +130,11 @@ public class AjajController {
 			}
 		}
 		System.out
-				.println("SearchResult "
-						+ searchResult.getTweets().size()
-						+ " user in index 0:"
-						+ searchResult.getTweets().get(0).getUserInfo()
-								.getScreenName());
+		.println("SearchResult "
+				+ searchResult.getTweets().size()
+				+ " user in index 0:"
+				+ searchResult.getTweets().get(0).getUserInfo()
+				.getScreenName());
 
 		mav.addObject("query", searchQuery);
 		mav.addObject("results", searchResult);
@@ -147,28 +147,22 @@ public class AjajController {
 			String followers) {
 
 		long userIdLong = Long.parseLong(userId);
-		long startParse = System.currentTimeMillis();
+//		long startParse = System.currentTimeMillis();
 		FollowersFollowingResultPage followersResultPage = JsonUserParser
 				.jsonToFollowersFollowing(userIdLong, followers);
-		long timeToParse = System.currentTimeMillis() - startParse;
-		logger.debug("Time to parse followers: " + timeToParse / 1000
-				+ " seconds");
+//		long timeToParse = System.currentTimeMillis() - startParse;
+//		logger.debug("Time to parse followers: " + timeToParse / 1000
+//				+ " seconds");
+//		long startInsert = System.currentTimeMillis();
 
-		long startInsert = System.currentTimeMillis();
-
-		// int updated = mySqlUserFactory
-		// .newInsertBatchFollowers(followersResultPage);
-		// int updated = mySqlUserFactory.insertBatchFollowers(
-		// followersResultPage, MySQLUserFactory.SQL_INSERT_FOLLOWERS);
-
-		int updated = mySqlUserFactory
-				.insertBatchFollowers(followersResultPage);
-
-		long timeToInsert = System.currentTimeMillis() - startInsert;
-		logger.debug("Time to insert followers: " + timeToInsert / 1000
-				+ " seconds");
-		System.out.println("followers batchinserted " + updated);
-
+		if(followersResultPage.getFollowersUserIds().length > 0) {
+			int updated = mySqlUserFactory
+					.insertBatchFollowers(followersResultPage);
+			logger.debug("followers batchinserted " + updated);
+		}
+//		long timeToInsert = System.currentTimeMillis() - startInsert;
+//		logger.debug("Time to insert followers: " + timeToInsert / 1000
+//				+ " seconds");
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}
@@ -183,11 +177,11 @@ public class AjajController {
 
 		// int updated = mySqlUserFactory
 		// .newInsertBatchFollowing(followingResultPage);
-
-		int updated = mySqlUserFactory
-				.insertBatchFollowing(followingResultPage);
-
-		System.out.println("following batchinsert " + updated);
+		if(followingResultPage.getFollowersUserIds().length > 0) {
+			int updated = mySqlUserFactory
+					.insertBatchFollowing(followingResultPage);
+			logger.debug("following batchinsert " + updated);
+		}
 		return new ResponseEntity<String>(HttpStatus.OK);
 
 	}

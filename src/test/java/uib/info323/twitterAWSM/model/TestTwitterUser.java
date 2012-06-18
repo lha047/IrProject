@@ -28,7 +28,7 @@ public class TestTwitterUser {
 	public void setUp() throws Exception {
 		user = new TwitterUserInfo323Impl(0, 1, "blabla", "blabla sen",
 				"example.com", "example.com/profileImage", "hmm", "location",
-				new Date(), 10, 10, 12, "No", "example.com/profile", 23, new Date());
+				new Date(), 10, 10, 12, "No", "example.com/profile", 23, new Date(), new Date());
 
 	}
 

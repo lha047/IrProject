@@ -38,16 +38,16 @@ import uib.info323.twitterAWSM.pagerank.UserRank;
 @Component
 public class MySQLUserFactory implements UserDAO {
 
-	public static final String SQL_INSERT_USER = "insert ignore into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated) "
+	public static final String SQL_INSERT_USER = "insert ignore into users(id, screen_name, name, url, profile_image_url, description, location, created_date, favorites_count, followers_count, friends_count, language, profile_url, statuses_count, fitness_score, last_updated ) "
 
-			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated)";
+			+ "values(:id, :screen_name, :name, :url, :profile_image_url, :description, :location, :created_date, :favorites_count, :followers_count, :friends_count, :language, :profile_url, :statuses_count, :fitness_score, :last_updated )";
 
 	private static final String SQL_SELECT_USER_BY_SCREEN_NAME = "SELECT * FROM users WHERE screen_name = :screen_name";
 
 	private static final String SQL_SELECT_USER_BY_ID = "SELECT * FROM users WHERE id = :id";
 
 	private static final String SQL_UPDATE_USER = "UPDATE users	SET screen_name=:screen_name, name=:name, url=:url, profile_image_url=:profile_image_url, description=:description, location=:location, created_date=:created_date, favorites_count=:favorites_count,"
-			+ " followers_count=:favorites_count, friends_count=:friends_count, language=:language, profile_url=:profile_url, statuses_count=:statuses_count, fitness_score=:fitness_score, last_updated=:last_updated "
+			+ " followers_count=:favorites_count, friends_count=:friends_count, language=:language, profile_url=:profile_url, statuses_count=:statuses_count, fitness_score=:fitness_score, last_updated=:last_updated, last_ranked:last_ranked "
 			+ "WHERE ID=:ID";
 
 	private static final String SQL_UPDATE_FOLLOWERS_WITH_USER_ID = "UPDATE followers SET user_id=:user_id WHERE screen_name=:screen_name";
@@ -215,6 +215,7 @@ public class MySQLUserFactory implements UserDAO {
 		// System.out.println("Time for following to map? " + timeToMap);
 
 		start = System.currentTimeMillis();
+		System.out.println("SQL query");
 		int updated = jdbcTemplate.update(sb.toString(), map);
 		long timeToInsert = System.currentTimeMillis() - start;
 		// System.out.println("Time to insert? " + timeToInsert);
@@ -315,6 +316,8 @@ public class MySQLUserFactory implements UserDAO {
 		List<SqlParameterSource> parameters = new ArrayList<SqlParameterSource>();
 		for (TwitterUserInfo323 tu : users) {
 			Map<String, Object> map = userToMap(tu);
+			System.out.println("Map parameter size: " + map.size());
+			System.out.println("Last ranked: " + map.get("last_ranked"));
 			parameters.add(new MapSqlParameterSource(map));
 		}
 		int[] updated = jdbcTemplate.batchUpdate(sql,
@@ -367,29 +370,38 @@ public class MySQLUserFactory implements UserDAO {
 
 		List<Long> distinctFollowersUserIds = selectDistinctUserIdsFrom("followers");
 
-		String sql = "UPDATE users SET fitness_score = :fitness_score, last_updated = :last_updated WHERE id = :id";
+		String sql = "UPDATE users SET fitness_score = :fitness_score, last_ranked = :last_ranked WHERE id = :id";
 		for (int i = 0; i < distinctFollowersUserIds.size(); i++) {
-			// Get user id
+			// Get user id and user
 			long u = distinctFollowersUserIds.get(i);
-			// Check date of last update
-			Date lastUpdated = f.selectUserById(u).getLastUpdated();
-			long millisSecondsSinceUpdate = ((new Date()).getTime() - lastUpdated.getTime());
-			int daysSinceUpdate = Math.round((((millisSecondsSinceUpdate/1000)/60)/60)/24);
-			if(daysSinceUpdate > 14) {
-				logger.debug("User + " + u + " outdated, calculate user rank");
-				double userRank = ur.userRank(u);
-				if (userRank != -1) {
+			try { 
+				TwitterUserInfo323 user = f.selectUserById(u);
+				// Check date of last update
 
-					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("id", u);
-					map.put("fitness_score", (float) userRank);
-					map.put("last_updated", new Date());
-					int updated = jdbcTemplate.update(sql, map);
-					System.out.println("user " + u + " rank " + userRank
-							+ " update " + updated);
+				Date lastUpdated = f.selectUserById(u).getLastRanked();
+				int daysSinceUpdate = 15;
+				if(lastUpdated != null) {
+					long millisSecondsSinceUpdate = ((new Date()).getTime() - lastUpdated.getTime());
+					daysSinceUpdate = Math.round((((millisSecondsSinceUpdate/1000)/60)/60)/24);
 				}
-			} else {
-				logger.debug("User + " + u + " not outdated, no need to calculate rank");
+				if(daysSinceUpdate > 14) {
+					logger.debug("User + " + u + " outdated, calculate user rank");
+					double userRank = ur.userRank(u);
+					if (userRank != -1) {
+
+						Map<String, Object> map = new HashMap<String, Object>();
+						map.put("id", u);
+						map.put("fitness_score", (float) userRank);
+						map.put("last_ranked", new Date());
+						int updated = jdbcTemplate.update(sql, map);
+						logger.debug("user " + u + " rank " + userRank
+								+ " update " + updated);
+					}
+				} else {
+					logger.debug("User + " + u + " not outdated, no need to calculate rank");
+				}
+			} catch(UserNotFoundException e) {
+				logger.debug("No user with id " + u + " in table users");
 			}
 		}
 	}

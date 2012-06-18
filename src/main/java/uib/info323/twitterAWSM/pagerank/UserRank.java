@@ -66,7 +66,6 @@ public class UserRank {
 		long timeToInsert = System.currentTimeMillis() - startInsert;
 		logger.debug("Time generateParamsList: " + timeToInsert / 1000
 				+ " seconds");
-		System.out.println("Params size " + params.size());
 
 		if(params.size() < 5000) { // Runs all users with less than 2500 followers
 

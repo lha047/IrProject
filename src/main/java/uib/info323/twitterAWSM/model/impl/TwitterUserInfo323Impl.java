@@ -29,6 +29,7 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 	private String profileUrl;
 	private int statusesCount;
 	private Date lastUpdated;
+	private Date lastRanked;
 
 	public TwitterUserInfo323Impl() {
 	}
@@ -57,7 +58,7 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 			String screenName, String name, String url, String profileImageUrl,
 			String description, String location, Date createdDate,
 			int favoritesCount, int followersCount, int friendsCount,
-			String language, String profileUrl, int statusesCount, Date lastUpdated) {
+			String language, String profileUrl, int statusesCount, Date lastUpdated, Date lastRanked) {
 		this.fitnessScore = fitnessScore;
 		this.id = id;
 		this.screenName = screenName;
@@ -74,12 +75,12 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 		this.profileUrl = profileUrl;
 		this.statusesCount = statusesCount;
 		this.lastUpdated = lastUpdated;
+		this.lastRanked = lastRanked;
 	}
 
 	private float calculateFitnessScore() {
 
 		fitnessScore = statusesCount + friendsCount + followersCount;
-		System.out.println(fitnessScore);
 		return fitnessScore;
 	}
 
@@ -218,6 +219,17 @@ public class TwitterUserInfo323Impl implements TwitterUserInfo323 {
 			return 1;
 		} else
 			return -1;
+	}
+
+	@Override
+	public Date getLastRanked() {
+		return lastRanked;
+	}
+
+	@Override
+	public void setLastRanked(Date lastRanked) {
+		this.lastRanked = lastRanked;
+		
 	}
 
 }

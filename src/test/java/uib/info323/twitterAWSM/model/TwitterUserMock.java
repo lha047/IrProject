@@ -17,6 +17,7 @@ public class TwitterUserMock implements TwitterUserInfo323 {
 	private String screenName;
 	private int statusesCount;
 	private Date lastUpdated;
+	private Date lastRanked;
 
 	public TwitterUserMock() {
 		this.fitnessScoew = 10;
@@ -30,6 +31,7 @@ public class TwitterUserMock implements TwitterUserInfo323 {
 		this.screenName = "@lisaHalvors";
 		this.statusesCount = 213;
 		this.lastUpdated = new Date();
+		this.lastRanked = new Date();
 	}
 
 	public int compareTo(TwitterUserInfo323 o) {
@@ -216,6 +218,18 @@ public class TwitterUserMock implements TwitterUserInfo323 {
 
 	@Override
 	public void setLastUpdated(Date lastUpdated) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Date getLastRanked() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setLastRanked(Date lastRanked) {
 		// TODO Auto-generated method stub
 		
 	}

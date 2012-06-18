@@ -68,5 +68,9 @@ public interface TwitterUserInfo323 extends Comparable<TwitterUserInfo323> {
 	public Date getLastUpdated();
 	
 	public void setLastUpdated(Date lastUpdated);
+	
+	public Date getLastRanked();
+	
+	public void setLastRanked(Date lastRanked);
 
 }

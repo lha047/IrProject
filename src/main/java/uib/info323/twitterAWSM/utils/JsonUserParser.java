@@ -84,7 +84,7 @@ public class JsonUserParser {
 		TwitterUserInfo323 user = new TwitterUserInfo323Impl(0, id, screenName, name, url,
 				profileImageUrl, description, location, createdDate,
 				favoritesCount, followersCount, friendsCount, language,
-				profileUrl, statusesCount, new Date());
+				profileUrl, statusesCount, new Date(), null);
 		return user;
 
 	}
