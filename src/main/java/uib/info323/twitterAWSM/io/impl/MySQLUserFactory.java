@@ -145,9 +145,6 @@ public class MySQLUserFactory implements UserDAO {
 				.getBean("mySqlUserFactory");
 
 		userFactory.createUserRankForUsers(userFactory);
-		// userFactory.insertUserIdsToFollowersFollowing(
-		// "SELECT DISTINCT  screen_name FROM following",
-		// SQL_UPDATE_FOLLOWING_WITH_USER_ID);
 
 	}
 
@@ -164,57 +161,6 @@ public class MySQLUserFactory implements UserDAO {
 		params.put("user_id", id);
 		return params;
 	}
-
-	// public int newInsertBatchFollowing(FollowersFollowingResultPage f) {
-	// StringBuilder sb = new StringBuilder();
-	// sb.append("INSERT IGNORE INTO following (user_id, following_id) values ");
-	//
-	// return exec(f, sb);
-	// }
-//
-//	public int newInsertBatchFollowers(FollowersFollowingResultPage f) {
-//
-//		// try {
-//		// PreparedStatement stmt = (PreparedStatement) con
-//		// .prepareStatement(SQL_INSERT_FOLLOWERS);
-//		// return exec(f, stmt);
-//		// } catch (SQLException e) {
-//		// return -1;
-//		// }
-//
-//		StringBuilder sb = new StringBuilder();
-//
-//		sb.append("INSERT IGNORE INTO followers (user_id, follower_id) values ");
-//
-//		return exec(f, sb);
-//	}
-
-//	public int exec(FollowersFollowingResultPage f, StringBuilder sb) {
-//		long[] ids = f.getFollowersUserIds();
-//
-//		for (int i = 0; i < ids.length; i++) {
-//
-//			sb.append("(" + f.getUserId() + ", " + ids[i] + "),");
-//		}
-//		sb.deleteCharAt(sb.toString().length() - 1);
-//		sb.append(";");
-//		// System.out.println(sb.toString());
-//		String url = "jdbc:mysql://feedjam.thunemedia.no/feedjam";
-//		String user = "bobkaare";
-//		String password = "info323";
-//
-//		Connection con = null;
-//		int inserted = -1;
-//		try {
-//			con = DriverManager.getConnection(url, user, password);
-//			Statement stmt = con.createStatement();
-//			inserted = stmt.executeUpdate(sb.toString());
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return inserted;
-//	}
 
 	public int insertBatchFollowers(FollowersFollowingResultPage f) {
 
@@ -418,29 +364,32 @@ public class MySQLUserFactory implements UserDAO {
 
 	public void createUserRankForUsers(MySQLUserFactory f) {
 		UserRank ur = new UserRank(f);
-		// int[] followers = selectFollowersByUserId(userId);
-		// int[] following = selectFollowingByUserId(userId);
+
 		List<Long> distinctFollowersUserIds = selectDistinctUserIdsFrom("followers");
-		// System.out.println("distinct users with followers in db "
-		// + distinctFollowersUserIds.size());
-		// long u = 594326498;
-		// long u2 = 15913;
+
 		String sql = "UPDATE users SET fitness_score = :fitness_score, last_updated = :last_updated WHERE id = :id";
 		for (int i = 0; i < distinctFollowersUserIds.size(); i++) {
+			// Get user id
 			long u = distinctFollowersUserIds.get(i);
-			double userRank = ur.userRank(u);
-			if (userRank != -1) {
-				// System.out.println("user " + u + " rank " + userRank);
-				// double userRank2 = ur.userRank(u2);
-				// System.out.println("user " + u + " rank " + userRank);
-				// System.out.println("user " + u + " rank " + userRank);
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("id", u);
-				map.put("fitness_score", (float) userRank);
-				map.put("last_updated", new Date());
-				int updated = jdbcTemplate.update(sql, map);
-				System.out.println("user " + u + " rank " + userRank
-						+ " update " + updated);
+			// Check date of last update
+			Date lastUpdated = f.selectUserById(u).getLastUpdated();
+			long millisSecondsSinceUpdate = ((new Date()).getTime() - lastUpdated.getTime());
+			int daysSinceUpdate = Math.round((((millisSecondsSinceUpdate/1000)/60)/60)/24);
+			if(daysSinceUpdate > 14) {
+				logger.debug("User + " + u + " outdated, calculate user rank");
+				double userRank = ur.userRank(u);
+				if (userRank != -1) {
+
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("id", u);
+					map.put("fitness_score", (float) userRank);
+					map.put("last_updated", new Date());
+					int updated = jdbcTemplate.update(sql, map);
+					System.out.println("user " + u + " rank " + userRank
+							+ " update " + updated);
+				}
+			} else {
+				logger.debug("User + " + u + " not outdated, no need to calculate rank");
 			}
 		}
 	}
