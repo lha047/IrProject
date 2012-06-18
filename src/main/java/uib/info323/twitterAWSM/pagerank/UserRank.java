@@ -68,7 +68,7 @@ public class UserRank {
 				+ " seconds");
 		System.out.println("Params size " + params.size());
 
-		if(params.size() >= 10000) { // Runs all users with less than 2500 followers
+		if(params.size() < 5000) { // Runs all users with less than 2500 followers
 
 			Map<Long, Long[]> allFollowers = new HashMap<Long, Long[]>(params.size());
 			Map<Long, Integer> allNumberOfFollowing = new HashMap<Long, Integer>(params.size());
@@ -114,9 +114,7 @@ public class UserRank {
 	}
 
 	private void generateParamsList(long userId, int recursion) {
-		if(recursion > 3) {
-			System.out.println("Param set size: " + paramsSet.size());
-			System.out.println("Deep enough, return...");
+		if(recursion > 2) {
 			return;
 		}
 		
