@@ -82,38 +82,45 @@ function getUsersFromTwitter(usrs, searchQuery, searchRequest, rpp) {
 function usersToServer(usrJSONData, searchQuery, searchRequest, rpp, usrs) {
 	console.log('SERVER POST: sending users to server');
 	loadingMessage('Crunching data and generating View');
-
-	var out = "";
-	if(usrJSONData != "") {
-		out = '{"users":' + JSON.stringify(usrJSONData) + '}';
-	}
 	
-	// console.log(out);
+	if(searchRequest.results != "") {
 		
-	if(!rpp) {
-		rpp = 20;
-	}
-	$.post("ajaj/processUsers", { 
-		users: out, 
-		searchQuery: searchQuery, 
-		searchRequest: JSON.stringify(searchRequest), 
-		rpp: rpp
-	},
-   function(view) {
-		console.log('RETURNED VIEW');
-		doTheFunkyBusiness(view);
-		// followingFollowers for users
-		if(usrs) {
-			console.log('Starting getting following and followers');
-			var usrLst = usrs.split(",");
-		
-			// get followers and following for all users
-			for(var i=0;i<usrLst.length-1;i++) {
-				getFollowingFromTwitter(usrLst[i]);
-				getFollowersFromTwitter(usrLst[i]);
-			}
+		var out = "";
+		if(usrJSONData != "") {
+			out = '{"users":' + JSON.stringify(usrJSONData) + '}';
 		}
-   });
+		
+		// console.log(out);
+			
+		if(!rpp) {
+			rpp = 20;
+		}
+		$.post("ajaj/processUsers", { 
+			users: out, 
+			searchQuery: searchQuery, 
+			searchRequest: JSON.stringify(searchRequest), 
+			rpp: rpp
+		},
+	   function(view) {
+			console.log('RETURNED VIEW');
+			doTheFunkyBusiness(view);
+			// followingFollowers for users
+			if(usrs) {
+				console.log('Starting getting following and followers');
+				var usrLst = usrs.split(",");
+			
+				// get followers and following for all users
+				for(var i=0;i<usrLst.length-1;i++) {
+					getFollowingFromTwitter(usrLst[i]);
+					getFollowersFromTwitter(usrLst[i]);
+				}
+			}
+	   });
+   
+    } else {
+		console.log('Twitter did not return any results');
+		displayError('Twitter did not return anything for query "' + searchQuery + '".');
+	}
 }
 
 // sends following to controller (ajaj/processFollowing)
@@ -272,13 +279,19 @@ $('#search_form').submit( function(e) {
 	searchQuery = $('#search_form').find('input').val();
 	rpp = $('#search_form').find('#resultsPerPage').val();
 	
+	// reset page counter
+	page = 1;
+	
 	// if an actual query is entered
 	if(searchQuery != '') {	
 		// start AJAX calls
 		searchTweets(searchQuery, rpp);
+		
+		// prepare view for tweets
+		getReadyForView();
 	}
 	
-	getReadyForView();
+	
 		
 	});
 
