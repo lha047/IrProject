@@ -115,8 +115,6 @@ public class UserRank {
 
 	private void generateParamsList(long userId, int recursion) {
 		if(recursion > 2) {
-			System.out.println("Param set size: " + paramsSet.size());
-			System.out.println("Deep enough, return...");
 			return;
 		}
 		
